@@ -20,7 +20,7 @@
             />
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/btnDonorReg"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -28,7 +28,7 @@
             android:layout_margin="3dp"/>
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btnNGOReg"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -36,7 +36,7 @@
             android:layout_margin="3dp"/>
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/btnAdmin"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
