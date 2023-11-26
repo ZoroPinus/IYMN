@@ -17,29 +17,22 @@ class UserOptFragment : Fragment(R.layout.fragment_useropt) {
         val btnNGOReg: Button = view.findViewById(R.id.btnNGOReg)
         val btnAdmin: Button = view.findViewById(R.id.btnAdmin)
 
-        // Set click listener for the button
-        btnDonorReg.setOnClickListener {
-            // Create an intent to navigate to the other activity
-            val intent = Intent(activity, DonorRegActivity::class.java)
-
-            // Start the activity
+        fun navigateToNextActivity(buttonName: String) {
+            val intent = Intent(activity, RegistrationFormActivity::class.java)
+            intent.putExtra("BUTTON_NAME", buttonName)
             startActivity(intent)
+        }
+
+        btnDonorReg.setOnClickListener {
+            navigateToNextActivity("Button 1")
         }
 
         btnNGOReg.setOnClickListener {
-            // Create an intent to navigate to the other activity
-            val intent = Intent(activity, NGORegActivity::class.java)
-
-            // Start the activity
-            startActivity(intent)
+            navigateToNextActivity("Button 2")
         }
 
         btnAdmin.setOnClickListener {
-            // Create an intent to navigate to the other activity
-            val intent = Intent(activity, DonorRegActivity::class.java)
-
-            // Start the activity
-            startActivity(intent)
+            navigateToNextActivity("Button 3")
         }
     }
 }
