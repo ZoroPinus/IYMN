@@ -19,7 +19,7 @@ class UserOptFragment : Fragment(R.layout.fragment_useropt) {
 
         fun navigateToNextActivity(buttonName: String) {
             val intent = Intent(activity, RegistrationFormActivity::class.java)
-            intent.putExtra("BUTTON_NAME", buttonName)
+            intent.putExtra("ACCOUNT_TYPE", buttonName)
             startActivity(intent)
         }
 

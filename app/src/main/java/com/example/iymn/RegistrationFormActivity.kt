@@ -10,11 +10,11 @@ class RegistrationFormActivity : AppCompatActivity() {
         setContentView(R.layout.activity_registration_form)
 
         // Retrieve the buttonName from the intent extras
-        val buttonName = intent.getStringExtra("BUTTON_NAME")
+        val accountType = intent.getStringExtra("ACCOUNT_TYPE")
 
         // Now you can use the buttonName as needed in this activity
         // For example, set it to a TextView
         val textView: TextView = findViewById(R.id.textView)
-        textView.text = "You clicked: $buttonName"
+        textView.text = "$accountType"
     }
 }
