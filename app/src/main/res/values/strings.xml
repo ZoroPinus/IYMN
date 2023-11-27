@@ -11,4 +11,9 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+    <string name="facebook_application_id" translatable="false">com.example.iymnD</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">com.example.iymn</string>
+    <string name="default_web_client_id">159964349995-n6uao8uspce77cf1otubjdtisir96sit.apps.googleusercontent.com</string>
+    <string name="default_web_secret">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</string>
 </resources>

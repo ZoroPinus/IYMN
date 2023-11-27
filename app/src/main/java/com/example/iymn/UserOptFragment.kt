@@ -24,15 +24,16 @@ class UserOptFragment : Fragment(R.layout.fragment_useropt) {
         }
 
         btnDonorReg.setOnClickListener {
-            navigateToNextActivity("Button 1")
+            navigateToNextActivity("Donor")
         }
 
         btnNGOReg.setOnClickListener {
-            navigateToNextActivity("Button 2")
+            navigateToNextActivity("NGO")
         }
 
         btnAdmin.setOnClickListener {
-            navigateToNextActivity("Button 3")
+            val intent = Intent(activity, AdminLoginActivity::class.java)
+            startActivity(intent)
         }
     }
 }
