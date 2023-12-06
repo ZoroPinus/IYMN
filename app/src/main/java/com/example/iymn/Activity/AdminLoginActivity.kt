@@ -1,4 +1,4 @@
-package com.example.iymn
+package com.example.iymn.Activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.iymn.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -27,7 +28,6 @@ class AdminLoginActivity : AppCompatActivity() {
     lateinit var btnLogin: Button
     lateinit var etUsername: EditText
     lateinit var etPassword: EditText
-
     // [END declare_auth]
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

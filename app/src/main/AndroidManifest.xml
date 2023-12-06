@@ -16,19 +16,19 @@
             android:name=".AdminRegistrationActivity"
             android:exported="false" />
         <activity
-            android:name=".RecentDonationsActivity"
+            android:name=".Activity.RecentDonationsActivity"
             android:exported="false" />
         <activity
-            android:name=".AdminLoginActivity"
+            android:name=".Activity.AdminLoginActivity"
             android:exported="false" />
         <activity
-            android:name=".DonationFormActivity"
+            android:name=".Activity.DonationFormActivity"
             android:exported="false" />
         <activity
-            android:name=".RegistrationFormActivity"
+            android:name=".Activity.RegistrationFormActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

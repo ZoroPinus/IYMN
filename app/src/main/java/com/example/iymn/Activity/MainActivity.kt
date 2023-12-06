@@ -1,7 +1,9 @@
-package com.example.iymn
+package com.example.iymn.Activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.iymn.R
+import com.example.iymn.Fragments.StartFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
