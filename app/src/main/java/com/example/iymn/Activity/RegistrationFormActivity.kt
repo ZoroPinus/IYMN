@@ -1,6 +1,5 @@
 package com.example.iymn.Activity
 
-import android.content.ContentValues.TAG
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,9 +8,6 @@ import android.widget.EditText
 import android.widget.Toast
 import com.example.iymn.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -36,10 +32,12 @@ class RegistrationFormActivity : AppCompatActivity() {
         etContact = findViewById(R.id.etContact)
         etConfPassword = findViewById(R.id.etConfPassword)
         etPassword = findViewById(R.id.etPassword)
-        btnRegister = findViewById(R.id.btnRegister)
+        btnRegister = findViewById(R.id.btnLogin)
 
         // Initialising auth object
         auth = FirebaseAuth.getInstance()
+
+        db = Firebase.firestore
 
 
         btnRegister.setOnClickListener {
@@ -75,7 +73,6 @@ class RegistrationFormActivity : AppCompatActivity() {
             if (it.isSuccessful) {
                 val firebaseUser = auth.currentUser
                 val userId = firebaseUser?.uid.toString()
-                Toast.makeText(this, "Successfully Singed Up", Toast.LENGTH_SHORT).show()
                 saveUserData(userId, name, email, contact, accountType)
                 finish()
             } else {
@@ -101,11 +98,9 @@ class RegistrationFormActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 // Handle errors
-                Toast.makeText(this, "Error saving user data: ${e.message}", Toast.LENGTH_SHORT).show()
+                val errorMessage = "Error saving user data: ${e.message}"
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+                Log.e("Firestore", errorMessage)
             }
-
     }
-
-
-
 }

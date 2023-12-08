@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 
 
-class AdminLoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
     // [START declare_auth]
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -63,7 +63,7 @@ class AdminLoginActivity : AppCompatActivity() {
             startActivity(
                 Intent(
                     this,
-                    RecentDonationsActivity::class.java
+                    DashboardActivity::class.java
                 ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             )
         }
