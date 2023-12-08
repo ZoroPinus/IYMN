@@ -44,7 +44,12 @@ class DashboardActivity : AppCompatActivity() {
             Toast.makeText(this, "About Us", Toast.LENGTH_SHORT).show()
         }
         binding.btnDonationHistory.setOnClickListener {
-            Toast.makeText(this, "Donation History", Toast.LENGTH_SHORT).show()
+            startActivity(
+                Intent(
+                    this,
+                    DonationHistoryActivity::class.java
+                ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
         }
         binding.btnNotifications.setOnClickListener {
             Toast.makeText(this, "Notifications", Toast.LENGTH_SHORT).show()

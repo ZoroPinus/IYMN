@@ -68,4 +68,11 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.cardview:cardview:1.0.0")
+
+    implementation("com.github.bumptech.glide:glide:4.15.1") // Use the latest version
+    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+
+
 }
