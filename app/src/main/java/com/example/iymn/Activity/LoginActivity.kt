@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
     // [END declare_auth]
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_admin_login)
+        setContentView(R.layout.activity_login)
 
         // Assign variable
         btnGoogleLogin = findViewById(R.id.btnGoogleSignin)
