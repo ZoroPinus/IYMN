@@ -28,14 +28,16 @@ import java.util.UUID
 
 class DonationFormActivity : AppCompatActivity() {
     lateinit var etVegName: EditText
-    lateinit var etWeight: EditText
+    lateinit var etQuantity: EditText
     lateinit var etRecipient: Spinner
+    lateinit var spinnerQuantityType: Spinner
     lateinit var etAddress: EditText
     lateinit var etDescription: EditText
     private lateinit var btnInsertImg: Button
     private lateinit var btnDonate: Button
     private lateinit var auth: FirebaseAuth
-    private var selectedOption: String = ""
+    private var selectedOptionNgo: String = ""
+    private var selectedOptionQuantity: String = ""
     private var selectedImage: Uri? = null
     lateinit var db: FirebaseFirestore
     lateinit var storage: FirebaseStorage
@@ -48,8 +50,9 @@ class DonationFormActivity : AppCompatActivity() {
 
         // View Bindings
         etRecipient = findViewById(R.id.etRecipient)
+        spinnerQuantityType = findViewById(R.id.spinnerQuantityType)
+        etQuantity = findViewById(R.id.etQuantity)
         etVegName = findViewById(R.id.etVegName)
-        etWeight = findViewById(R.id.etWeight)
         etAddress = findViewById(R.id.etAddress)
         etDescription = findViewById(R.id.etDescription)
         btnInsertImg = findViewById(R.id.btnInsertImg)
@@ -64,16 +67,21 @@ class DonationFormActivity : AppCompatActivity() {
         db = Firebase.firestore
 
         // Define your list of options
-        val options = arrayOf("Cordillera Youth Center", "Zero Waste Baguio")
+        val ngoOptions = arrayOf("Cordillera Youth Center", "Zero Waste Baguio")
+        val quantityOptions = arrayOf("Kg", "Sack/s", "Piece/s")
+
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, options)
+        val ngoAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, ngoOptions)
+        val quantityAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, quantityOptions)
 
         // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        ngoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        quantityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         // Apply the adapter to the spinner
-        etRecipient.adapter = adapter
+        etRecipient.adapter = ngoAdapter
+        spinnerQuantityType.adapter = quantityAdapter
 
         // Set a listener to handle item selections
         etRecipient.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -84,7 +92,23 @@ class DonationFormActivity : AppCompatActivity() {
                 id: Long
             ) {
                 // Handle the selected item here
-                selectedOption = options[position]
+                selectedOptionNgo = ngoOptions[position]
+                // Do something with the selected item
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Handle no selection if needed
+            }
+        }// Set a listener to handle item selections
+        spinnerQuantityType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                // Handle the selected item here
+                selectedOptionQuantity = quantityOptions[position]
                 // Do something with the selected item
             }
 
@@ -113,22 +137,18 @@ class DonationFormActivity : AppCompatActivity() {
 
         btnDonate.setOnClickListener {
             val vegNameString = etVegName.text.toString()
-            val weightString = etWeight.text.toString()
+            val weightString = etQuantity.text.toString()
             val addressString = etAddress.text.toString()
             val descriptionString = etDescription.text.toString()
-
-            submitDonation(vegNameString,selectedImage, descriptionString, addressString, weightString, selectedOption)
-
+            submitDonation(vegNameString,selectedImage, descriptionString, addressString, weightString, selectedOptionNgo, selectedOptionQuantity)
         }
-
     }
 
     private fun submitDonation(vegName: String, imageUri: Uri?, description: String, address:String, quantity: String,
-                               recipient: String ) {
+                               recipient: String, quantityType: String ) {
 
         if (vegName.isBlank() || description.isBlank() || quantity.isBlank() || address.isBlank() || recipient.isBlank()  ) {
             Toast.makeText(this, "Kindly Complete the form", Toast.LENGTH_SHORT).show()
-
             return
         }
 
@@ -147,6 +167,7 @@ class DonationFormActivity : AppCompatActivity() {
             "vegName" to vegName,
             "description" to description,
             "quantity" to quantity,
+            "quantityType" to quantityType,
             "address" to address,
             "image" to "",
             "recipient" to recipient,

@@ -28,7 +28,6 @@ class VegItemAdapter(private var mList: List<VegItemViewModel>) : RecyclerView.A
         onItemClickListener = listener
     }
 
-
     // create new views
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)

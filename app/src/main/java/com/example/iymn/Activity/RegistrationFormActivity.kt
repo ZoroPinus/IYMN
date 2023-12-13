@@ -103,4 +103,8 @@ class RegistrationFormActivity : AppCompatActivity() {
                 Log.e("Firestore", errorMessage)
             }
     }
+
+    private fun checkAccType(){
+
+    }
 }

@@ -32,10 +32,13 @@ class DonationDetailsActivity : AppCompatActivity() {
                 val data = documentSnapshot.data
                 val vegName : TextView = findViewById(R.id.tvVegName)
                 val description : TextView = findViewById(R.id.tvDescription)
-                val imagePath= data?.get("image") as String
-                vegName.text = data?.get("vegName") as String
-                description.text = data.get("description") as String
-
+                val quantity : TextView = findViewById(R.id.tvQuantity)
+                val fetchedQuantity = data?.get("quantity") as String
+                val fetchedQuantityType = data["quantityType"] as String
+                val imagePath= data["image"] as String
+                vegName.text = data["vegName"] as String
+                description.text = data["description"] as String
+                quantity.text = getString(R.string.formatted_quantity, fetchedQuantity, fetchedQuantityType)
             }
             .addOnFailureListener { e ->
                 Log.w("DonationHistoryActivity", "Error fetching data", e)

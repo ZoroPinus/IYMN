@@ -16,4 +16,5 @@
     <string name="facebook_login_protocol_scheme" translatable="false">com.example.iymn</string>
     <string name="default_web_client_id">159964349995-n6uao8uspce77cf1otubjdtisir96sit.apps.googleusercontent.com</string>
     <string name="default_web_secret">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</string>
+    <string name="formatted_quantity">%1$s %2$s</string>
 </resources>
