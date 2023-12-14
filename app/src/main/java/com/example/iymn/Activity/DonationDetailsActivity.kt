@@ -6,11 +6,8 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import com.bumptech.glide.Glide
-import com.example.iymn.Models.VegItemViewModel
 import com.example.iymn.R
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 
 class DonationDetailsActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()

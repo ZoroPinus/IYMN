@@ -11,15 +11,22 @@ import com.example.iymn.Adapters.VegItemAdapter
 import com.example.iymn.Models.VegItemViewModel
 import com.example.iymn.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 
 class DonationHistoryActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     private lateinit var adapter: VegItemAdapter
     val dataList: MutableList<VegItemViewModel> = ArrayList()
+    private lateinit var auth: FirebaseAuth
+    private var currentUser: FirebaseUser? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_donation_history)
+
+
+        auth = FirebaseAuth.getInstance()
+        currentUser = auth.currentUser
 
         // getting the recyclerview by its id
         val recyclerview = findViewById<RecyclerView>(R.id.recyclerview)
@@ -31,7 +38,7 @@ class DonationHistoryActivity : AppCompatActivity() {
         recyclerview.adapter = adapter
 
         // Fetch data from Firestore and update the adapter's data list
-        fetchDataFromFirestore()
+        fetchDataBasedOnUserType()
         // Set item click listener in the activity
         adapter.setOnItemClickListener(object : VegItemAdapter.OnItemClickListener {
             override fun onItemClick(documentId: String) {
@@ -43,29 +50,76 @@ class DonationHistoryActivity : AppCompatActivity() {
             }
         })
     }
-    private fun fetchDataFromFirestore() {
-        // Get Firebase Authentication instance
-        val auth = FirebaseAuth.getInstance()
-        val currentUser = auth.currentUser?.uid
+
+    private fun fetchDataBasedOnUserType() {
+        if (currentUser == null) {
+            handleUserNotLoggedIn()
+        } else {
+            val uid = currentUser!!.uid
+            db.collection("users").document(uid).get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val accountType = documentSnapshot.getString("accountType")
+                    when (accountType) {
+                        "NGO", "Admin" -> fetchForAdminAndNgo()
+                        else -> fetchForDonor()
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w("DonationHistoryActivity", "Error fetching user data", e)
+                    Toast.makeText(this, "Error fetching user data", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun fetchForDonor() {
         db.collection("donations")
-            .whereEqualTo("donorUID", currentUser)// Replace with your collection name
+            .whereEqualTo("donorUID", currentUser?.uid)
             .get()
             .addOnSuccessListener { documents ->
                 val dataList: MutableList<VegItemViewModel> = mutableListOf()
-
                 for (document in documents) {
                     val docId = document.id
                     val imagePath = document.getString("image") ?: ""
                     val itemName = document.getString("vegName") ?: "Default Item Name"
-
                     dataList.add(VegItemViewModel(docId, imagePath, itemName))
                 }
-
-                adapter.updateData(dataList) // Update adapter data with fetched items
+                adapter.updateData(dataList)
             }
             .addOnFailureListener { e ->
-                Log.w("DonationHistoryActivity", "Error fetching data", e)
-                Toast.makeText(this, "Error fetching data", Toast.LENGTH_SHORT).show()
+                handleFetchDataFailure(e)
             }
     }
+
+    private fun fetchForAdminAndNgo() {
+        // Example: Fetching only donations with status "approved" for Admin and NGO
+        db.collection("donations")
+            .get()
+            .addOnSuccessListener { documents ->
+                val dataList: MutableList<VegItemViewModel> = mutableListOf()
+                for (document in documents) {
+                    val docId = document.id
+                    val imagePath = document.getString("image") ?: ""
+                    val itemName = document.getString("vegName") ?: "Default Item Name"
+                    dataList.add(VegItemViewModel(docId, imagePath, itemName))
+                }
+                adapter.updateData(dataList)
+            }
+            .addOnFailureListener { e ->
+                handleFetchDataFailure(e)
+            }
+    }
+
+    private fun handleFetchDataFailure(e: Exception) {
+        Log.w("DonationHistoryActivity", "Error fetching data", e)
+        Toast.makeText(this, "Error fetching data", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handleUserNotLoggedIn() {
+        auth.signOut()
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
+    }
+
+
+
 }

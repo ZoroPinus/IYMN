@@ -7,10 +7,11 @@
     >
 
     <!-- Header Section -->
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:background="@color/greenLight">
 
         <!-- Logo -->
@@ -24,6 +25,30 @@
             android:layout_marginBottom="16dp"
             android:src="@drawable/templogo" />
 
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvWelcomeUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp"
+            />
+
+            <TextView
+            android:id="@+id/tvAccType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp"
+            />
+
+        </LinearLayout>
+
         <!-- Profile Icon -->
         <ImageView
             android:id="@+id/profileIconImageView"
@@ -36,7 +61,7 @@
             android:layout_marginBottom="16dp"
             android:src="@drawable/ic_profile" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <!-- Body Section: Grid of 3x3 buttons -->
 
@@ -159,7 +184,7 @@
 
         <!-- Home Button -->
         <Button
-            android:id="@+id/homeButton"
+            android:id="@+id/btnHome"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -167,11 +192,11 @@
 
         <!-- Profile Button -->
         <Button
-            android:id="@+id/profileButton"
+            android:id="@+id/btnProfile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Profile" />
+            android:text="Logout" />
 
     </LinearLayout>
 </RelativeLayout>
