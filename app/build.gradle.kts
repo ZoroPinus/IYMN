@@ -72,6 +72,7 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
 
     implementation("com.github.bumptech.glide:glide:4.15.1") // Use the latest version
+    implementation ("com.squareup.picasso:picasso:2.8")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
 

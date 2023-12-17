@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.DonorDashboardFragment">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomNavigationLayout"
+        android:layout_below="@id/headerLayout"
+        android:alignmentMode="alignMargins"
+        android:columnCount="3"
+        android:columnOrderPreserved="false"
+        android:padding="8dp"
+        android:rowCount="3">
+
+        <!-- Button 1 -->
+        <Button
+            android:id="@+id/btnDonate"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:drawableTop="@drawable/baseline_image_search_24"
+            android:layout_margin="8dp"
+            android:text="Donate" />
+
+        <!-- Button 2 -->
+        <Button
+            android:id="@+id/btnNGOPartners"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:text="NGO Partners" />
+
+        <Button
+            android:id="@+id/btnInbox"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:text="Inbox" />
+
+        <Button
+            android:id="@+id/btnFoodMap"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:text="Food Map" />
+
+        <Button
+            android:id="@+id/btnAddFeedback"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:text="Add Feedback" />
+
+        <Button
+            android:id="@+id/btnTopDonors"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:text="Top Donors" />
+
+        <Button
+            android:id="@+id/btnAboutUs"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:drawableTop="@drawable/baseline_image_search_24"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:text="About Us" />
+
+        <Button
+            android:id="@+id/btnDonationHistory"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:text="Donation History" />
+
+        <Button
+            android:id="@+id/btnNotifications"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:text="Notifications" />
+
+
+    </GridLayout>
+
+</FrameLayout>

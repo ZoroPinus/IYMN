@@ -7,13 +7,16 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import com.example.iymn.Fragments.AdminDashboardFragment
+import com.example.iymn.Fragments.DonorDashboardFragment
+import com.example.iymn.Fragments.NGODashboardFragment
 import com.example.iymn.R
 import com.example.iymn.databinding.ActivityDashboardBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class DashboardActivity : AppCompatActivity() {
-      private lateinit var binding: ActivityDashboardBinding
+    private lateinit var binding: ActivityDashboardBinding
     private lateinit var auth: FirebaseAuth
     private val db = FirebaseFirestore.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,53 +32,7 @@ class DashboardActivity : AppCompatActivity() {
             val userId = currentUser.uid // Get current user's UID
             fetchUserData(userId) // Fetch user data using the UID
         } else {
-            startActivity(
-                Intent(
-                    this,
-                    LoginActivity::class.java
-                ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
-        }
-
-
-
-        // Access your views through the binding object
-        binding.btnDonate.setOnClickListener {
-            startActivity(
-                Intent(
-                    this,
-                    DonationFormActivity::class.java
-                ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
-        }
-        binding.btnNGOPartners.setOnClickListener {
-            Toast.makeText(this, "NGO Partners", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnInbox.setOnClickListener {
-            Toast.makeText(this, "Inbox", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnFoodMap.setOnClickListener {
-            Toast.makeText(this, "Food Map", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnAddFeedback.setOnClickListener {
-            Toast.makeText(this, "Add Feedback", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnTopDonors.setOnClickListener {
-            Toast.makeText(this, "Top Donors", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnAboutUs.setOnClickListener {
-            Toast.makeText(this, "About Us", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnDonationHistory.setOnClickListener {
-            startActivity(
-                Intent(
-                    this,
-                    DonationHistoryActivity::class.java
-                ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
-        }
-        binding.btnNotifications.setOnClickListener {
-            Toast.makeText(this, "Notifications", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "You are logged Out", Toast.LENGTH_SHORT).show()
         }
 
         binding.btnProfile.setOnClickListener {
@@ -97,7 +54,7 @@ class DashboardActivity : AppCompatActivity() {
                     val tvAccountType: TextView = findViewById(R.id.tvAccType)
                     tvUsername.text = getString(R.string.welcome_user, name)
                     tvAccountType.text = getString(R.string.account_type, accountType)
-
+                    displayFragmentForAccountType(accountType)
                 } else {
                     Log.d("DashboardActivity", "No such document")
                 }
@@ -112,5 +69,27 @@ class DashboardActivity : AppCompatActivity() {
         // Redirect to the login or sign-in activity
         startActivity(Intent(this, LoginActivity::class.java))
         finish() // Close the DashboardActivity
+    }
+
+    private fun displayFragmentForAccountType(accountType: String) {
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        when (accountType) {
+            "Admin" -> {
+                val adminFragment = AdminDashboardFragment()
+                fragmentTransaction.replace(R.id.fragmentContainer, adminFragment)
+            }
+            "Donor" -> {
+                val donorFragment = DonorDashboardFragment()
+                fragmentTransaction.replace(R.id.fragmentContainer, donorFragment)
+            }
+            "NGO" -> {
+                val ngoFragment = NGODashboardFragment()
+                fragmentTransaction.replace(R.id.fragmentContainer, ngoFragment)
+            }
+            else -> {
+                // Handle default case or show a default fragment
+            }
+        }
+        fragmentTransaction.commit()
     }
 }
