@@ -23,7 +23,7 @@ class AdminDashboardFragment : Fragment() {
         _binding = FragmentAdminDashboardBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        binding.btnDonationHistory.setOnClickListener {
+        binding.btnReports.setOnClickListener {
             startActivity(
                 Intent(
                     requireContext(),
@@ -31,26 +31,17 @@ class AdminDashboardFragment : Fragment() {
                 ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             )
         }
-        binding.btnNGOPartners.setOnClickListener {
+        binding.btnRegisteredAccounts.setOnClickListener {
             Toast.makeText(requireContext(), "NGO Partners", Toast.LENGTH_SHORT).show()
         }
-        binding.btnInbox.setOnClickListener {
+        binding.btnNgoPartners.setOnClickListener {
             Toast.makeText(requireContext(), "Inbox", Toast.LENGTH_SHORT).show()
         }
-        binding.btnAboutUs.setOnClickListener {
+        binding.btnFoodMapAdmin.setOnClickListener {
             Toast.makeText(requireContext(), "Food Map", Toast.LENGTH_SHORT).show()
         }
-        binding.btnFoodMap.setOnClickListener {
-            Toast.makeText(requireContext(), "Add Feedback", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnRegisteredAccounts.setOnClickListener {
-            Toast.makeText(requireContext(), "Top Donors", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnNotifications.setOnClickListener {
-            Toast.makeText(requireContext(), "About Us", Toast.LENGTH_SHORT).show()
-        }
         binding.btnFeedbacks.setOnClickListener {
-            Toast.makeText(requireContext(), "Notifications", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Add Feedback", Toast.LENGTH_SHORT).show()
         }
 
         return view

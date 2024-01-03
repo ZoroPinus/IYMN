@@ -23,8 +23,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 class LoginActivity : AppCompatActivity() {
     // [START declare_auth]
     private lateinit var auth: FirebaseAuth
-    private lateinit var googleSignInClient: GoogleSignInClient
-    lateinit var btnGoogleLogin: SignInButton
+//    private lateinit var googleSignInClient: GoogleSignInClient
+//    lateinit var btnGoogleLogin: SignInButton
     lateinit var btnLogin: Button
     lateinit var etUsername: EditText
     lateinit var etPassword: EditText
@@ -34,24 +34,24 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         // Assign variable
-        btnGoogleLogin = findViewById(R.id.btnGoogleSignin)
+//        btnGoogleLogin = findViewById(R.id.btnGoogleSignin)
         btnLogin = findViewById(R.id.btnLogin)
         etUsername = findViewById(R.id.etEmail)
-        etPassword = findViewById(R.id.etConfPassword)
+        etPassword = findViewById(R.id.etPassword)
 
         // Initialize sign in options the client-id is copied form google-services.json file
-        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-
-        // Initialize sign in client
-        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
-        btnGoogleLogin.setOnClickListener { // Initialize sign in intent
-            val intent: Intent = googleSignInClient.signInIntent
-            // Start activity for result
-            startActivityForResult(intent, 100)
-        }
+//        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//            .requestIdToken(getString(R.string.default_web_client_id))
+//            .requestEmail()
+//            .build()
+//
+//        // Initialize sign in client
+//        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
+//        btnGoogleLogin.setOnClickListener { // Initialize sign in intent
+//            val intent: Intent = googleSignInClient.signInIntent
+//            // Start activity for result
+//            startActivityForResult(intent, 100)
+//        }
 
         // Initialize firebase auth
         auth = FirebaseAuth.getInstance()

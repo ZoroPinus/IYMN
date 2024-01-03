@@ -1,70 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/bg_dashboard"
     tools:context=".Activity.DashboardActivity"
     >
 
-    <!-- Header Section -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/greenLight">
+        android:paddingVertical="10dp"
+        android:orientation="horizontal">
 
-        <!-- Logo -->
         <ImageView
             android:id="@+id/logoImageView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="66dp"
+            android:layout_height="60dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/templogo" />
+            android:src="@drawable/app_logo"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvWelcomeUser"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="10dp"
-            />
-
-            <TextView
-            android:id="@+id/tvAccType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="10dp"
-            />
-
-        </LinearLayout>
-
-        <!-- Profile Icon -->
         <ImageView
             android:id="@+id/profileIconImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_profile" />
+            android:src="@drawable/ic_profile"
+            android:background="@drawable/img_placeholder"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/profileIconImageView"
+            app:layout_constraintStart_toEndOf="@+id/logoImageView"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Body Section: Grid of 3x3 buttons -->
+            <TextView
+                android:id="@+id/tvWelcomeUser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                tools:layout_editor_absoluteX="190dp"
+                tools:layout_editor_absoluteY="7dp" />
 
+            <TextView
+                android:id="@+id/tvAccType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                tools:layout_editor_absoluteX="190dp"
+                tools:layout_editor_absoluteY="32dp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:id="@+id/fragmentContainer"
@@ -72,7 +74,6 @@
         android:layout_above="@+id/bottomNavigationLayout"
         android:layout_below="@id/headerLayout"
         android:layout_height="match_parent" />
-    <!-- Bottom Navigation Bar -->
 
 
     <LinearLayout
@@ -81,23 +82,27 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:background="@color/greenAccent">
+        android:padding="10dp">
 
         <!-- Home Button -->
         <Button
             android:id="@+id/btnHome"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/custom_btn"
             android:text="Home" />
 
         <!-- Profile Button -->
         <Button
             android:id="@+id/btnProfile"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Logout" />
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/custom_btn"
+            android:text="Profile" />
 
     </LinearLayout>
 </RelativeLayout>

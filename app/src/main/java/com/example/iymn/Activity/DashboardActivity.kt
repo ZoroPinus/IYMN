@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.example.iymn.Fragments.AdminDashboardFragment
@@ -47,7 +46,7 @@ class DashboardActivity : AppCompatActivity() {
             .addOnSuccessListener { documentSnapshot ->
                 val data = documentSnapshot.data
                 if (data != null) {
-                    val name = data["name"] as String
+                    val name = data["email"] as String
                     val accountType = data["accountType"] as String
                     // Assuming you have TextViews to display this data
                     val tvUsername: TextView = findViewById(R.id.tvWelcomeUser)

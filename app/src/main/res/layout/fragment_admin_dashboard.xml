@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragments.AdminDashboardFragment">
 
-    <GridLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottomNavigationLayout"
@@ -17,90 +18,95 @@
         android:rowCount="3">
 
         <!-- Button 1 -->
-        <Button
-            android:id="@+id/btnDonationHistory"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:layout_gravity="fill"
-            android:drawableTop="@drawable/baseline_image_search_24"
-            android:layout_margin="8dp"
-            android:text="Donation History" />
 
         <!-- Button 2 -->
+
         <Button
-            android:id="@+id/btnNGOPartners"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:id="@+id/btnReports"
+            android:layout_width="135dp"
+            android:layout_height="135dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:layout_margin="8dp"
-            android:text="NGO Partners" />
-
-        <Button
-            android:id="@+id/btnInbox"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:layout_gravity="fill"
-            android:layout_margin="8dp"
-            android:text="Inbox" />
-
-        <Button
-            android:id="@+id/btnAboutUs"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:layout_gravity="fill"
-            android:layout_margin="8dp"
-            android:text="About Us" />
-
-        <Button
-            android:id="@+id/btnFoodMap"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:layout_margin="8dp"
-            android:text="Food Map" />
+            android:background="@drawable/btn_dashboard"
+            android:text="REPORTS"
+            app:layout_constraintBottom_toTopOf="@+id/btnNgoPartners"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnRegisteredAccounts"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.519" />
 
         <Button
             android:id="@+id/btnRegisteredAccounts"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="135dp"
+            android:layout_height="135dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:layout_margin="8dp"
-            android:text="Top Donors" />
+            android:background="@drawable/btn_dashboard"
+            android:text="REGISTERED ACCOUNTS"
+            app:layout_constraintBottom_toTopOf="@+id/btnNgoPartners"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btnReports"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.526" />
 
         <Button
-            android:id="@+id/btnNotifications"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:id="@+id/btnNgoPartners"
+            android:layout_width="135dp"
+            android:layout_height="135dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:drawableTop="@drawable/baseline_image_search_24"
+            android:layout_margin="8dp"
+            android:background="@drawable/btn_dashboard"
+            android:text="NGO PARTNERS"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.484" />
+
+        <Button
+            android:id="@+id/btnFoodMapAdmin"
+            android:layout_width="135dp"
+            android:layout_height="135dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:layout_margin="8dp"
-            android:text="Notifications" />
+            android:layout_marginTop="60dp"
+            android:background="@drawable/btn_dashboard"
+            android:text="FOOD MAP"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnFeedbacks"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnNgoPartners"
+            app:layout_constraintVertical_bias="0.44" />
 
         <Button
             android:id="@+id/btnFeedbacks"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="135dp"
+            android:layout_height="135dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:layout_margin="8dp"
-            android:text="Feedbacks" />
+            android:background="@drawable/btn_dashboard"
+            android:text="FEEDBACKS"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btnFoodMapAdmin"
+            app:layout_constraintTop_toBottomOf="@+id/btnNgoPartners"
+            app:layout_constraintVertical_bias="0.443" />
 
-
-
-    </GridLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

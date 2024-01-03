@@ -19,7 +19,7 @@ class StartFragment : Fragment() {
 
         // Get the button
         val btnLogin = view.findViewById<Button>(R.id.btnToLogin)
-        val btnRegister = view.findViewById<Button>(R.id.btnLogin)
+        val btnRegister = view.findViewById<Button>(R.id.btnToRegister)
 
         // Set a click listener for the button
         btnLogin.setOnClickListener {

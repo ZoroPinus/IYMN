@@ -28,8 +28,8 @@ class DonationDetailsActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { documentSnapshot ->
                 val data = documentSnapshot.data
-                val vegName: TextView = findViewById(R.id.tvVegName)
-                val description: TextView = findViewById(R.id.tvDescription)
+                val vegName: TextView = findViewById(R.id.tvTitle)
+                val description: TextView = findViewById(R.id.tvItem4)
                 val quantity: TextView = findViewById(R.id.tvQuantity)
                 val fetchedQuantity = data?.get("quantity") as String
                 val fetchedQuantityType = data["quantityType"] as String

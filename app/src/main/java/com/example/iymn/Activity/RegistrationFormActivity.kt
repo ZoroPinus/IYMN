@@ -1,11 +1,13 @@
 package com.example.iymn.Activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.example.iymn.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,7 +15,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class RegistrationFormActivity : AppCompatActivity() {
-    lateinit var etName: EditText
     lateinit var etEmail: EditText
     lateinit var etContact: EditText
     lateinit var etConfPassword: EditText
@@ -21,18 +22,17 @@ class RegistrationFormActivity : AppCompatActivity() {
     private lateinit var btnRegister: Button
     private lateinit var auth: FirebaseAuth
     lateinit var db: FirebaseFirestore
-    data class User(val name: String, val email: String, val contact: Number, val accountType: String)
+//    data class User(val name: String, val email: String, val contact: Number, val accountType: String)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration_form)
 
         // View Bindings
-        etName = findViewById(R.id.etName)
         etEmail = findViewById(R.id.etEmail)
         etContact = findViewById(R.id.etContact)
         etConfPassword = findViewById(R.id.etConfPassword)
         etPassword = findViewById(R.id.etPassword)
-        btnRegister = findViewById(R.id.btnLogin)
+        btnRegister = findViewById(R.id.btnRegister)
 
         // Initialising auth object
         auth = FirebaseAuth.getInstance()
@@ -46,44 +46,43 @@ class RegistrationFormActivity : AppCompatActivity() {
     }
 
     private fun signUpUser() {
-        val name = etName.text.toString()
         val email = etEmail.text.toString()
         val contact = etContact.text.toString()
         val pass = etPassword.text.toString()
         val confirmPassword = etConfPassword.text.toString()
         val accountType = intent.getStringExtra("ACCOUNT_TYPE").toString();
         // check pass
-        if (email.isBlank() || pass.isBlank() || confirmPassword.isBlank()) {
-            Toast.makeText(this, "Email and Password can't be blank", Toast.LENGTH_SHORT).show()
+        if (email.isBlank() ) {
+            showEmptyFieldDialog("Please input an email")
             return
         }
-
+        if (contact.isBlank() ) {
+            showEmptyFieldDialog("Please input your contact info")
+            return
+        }
+        if (pass.isBlank() || confirmPassword.isBlank()) {
+            showEmptyFieldDialog("Please input a password")
+            return
+        }
         if (pass != confirmPassword) {
-            Toast.makeText(this, "Password and Confirm Password do not match", Toast.LENGTH_SHORT)
-                .show()
+            showEmptyFieldDialog("Password and Confirm Password do not match")
             return
         }
-        // If all credential are correct
-        // We call createUserWithEmailAndPassword
-        // using auth object and pass the
-        // email and pass in it.
-
 
         auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(this) {
             if (it.isSuccessful) {
                 val firebaseUser = auth.currentUser
                 val userId = firebaseUser?.uid.toString()
-                saveUserData(userId, name, email, contact, accountType)
+                saveUserData(userId, email, contact, accountType)
                 finish()
             } else {
-                Toast.makeText(this, "Singed Up Failed!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Signed Up Failed!", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun saveUserData(userId: String, name: String, email:String, contact: String, accountType:String){
+    private fun saveUserData(userId: String, email:String, contact: String, accountType:String){
         val user = hashMapOf(
-            "name" to name,
             "email" to email,
             "contact" to contact,
             "accountType" to accountType,
@@ -95,6 +94,10 @@ class RegistrationFormActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 // Data written successfully
                 Toast.makeText(this, "User data saved with custom ID to Firestore", Toast.LENGTH_SHORT).show()
+
+                // Navigate to DashboardScreen upon successful registration
+                val intent = Intent(this, DashboardActivity::class.java)
+                startActivity(intent)
             }
             .addOnFailureListener { e ->
                 // Handle errors
@@ -104,7 +107,16 @@ class RegistrationFormActivity : AppCompatActivity() {
             }
     }
 
-    private fun checkAccType(){
-
+    private fun showEmptyFieldDialog(message:String) {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Empty Fields")
+            setMessage(message)
+            setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 }

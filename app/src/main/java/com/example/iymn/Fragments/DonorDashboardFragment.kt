@@ -25,31 +25,13 @@ class DonorDashboardFragment : Fragment() {
         _binding = FragmentDonorDashboardBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        binding.btnDonate.setOnClickListener {
+        binding.btnDonateDonor.setOnClickListener {
             startActivity(
                 Intent(
                     requireContext(),
                     DonationFormActivity::class.java
                 ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             )
-        }
-        binding.btnNGOPartners.setOnClickListener {
-            Toast.makeText(requireContext(), "NGO Partners", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnInbox.setOnClickListener {
-            Toast.makeText(requireContext(), "Inbox", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnFoodMap.setOnClickListener {
-            Toast.makeText(requireContext(), "Food Map", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnAddFeedback.setOnClickListener {
-            Toast.makeText(requireContext(), "Add Feedback", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnTopDonors.setOnClickListener {
-            Toast.makeText(requireContext(), "Top Donors", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnAboutUs.setOnClickListener {
-            Toast.makeText(requireContext(), "About Us", Toast.LENGTH_SHORT).show()
         }
         binding.btnDonationHistory.setOnClickListener {
             startActivity(
@@ -59,8 +41,14 @@ class DonorDashboardFragment : Fragment() {
                 ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             )
         }
-        binding.btnNotifications.setOnClickListener {
-            Toast.makeText(requireContext(), "Notifications", Toast.LENGTH_SHORT).show()
+        binding.btnNgoPartners.setOnClickListener {
+            Toast.makeText(requireContext(), "NGO Partners", Toast.LENGTH_SHORT).show()
+        }
+        binding.btnFoodMapDonor.setOnClickListener {
+            Toast.makeText(requireContext(), "Food Map", Toast.LENGTH_SHORT).show()
+        }
+        binding.btnAddFeedbackDonor.setOnClickListener {
+            Toast.makeText(requireContext(), "Add Feedback", Toast.LENGTH_SHORT).show()
         }
 
         return view

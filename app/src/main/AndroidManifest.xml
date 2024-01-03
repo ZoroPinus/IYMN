@@ -13,6 +13,9 @@
         android:theme="@style/Theme.IYMN"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.SetUpProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.DonationDetailsActivity"
             android:exported="false" />
         <activity

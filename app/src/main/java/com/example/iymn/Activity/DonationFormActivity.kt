@@ -1,7 +1,9 @@
 package com.example.iymn.Activity
 
 import android.content.ClipDescription
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,17 +15,20 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import com.example.iymn.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
 import java.util.UUID
 
 class DonationFormActivity : AppCompatActivity() {
@@ -33,7 +38,7 @@ class DonationFormActivity : AppCompatActivity() {
     lateinit var spinnerQuantityType: Spinner
     lateinit var etAddress: EditText
     lateinit var etDescription: EditText
-    private lateinit var btnInsertImg: Button
+    private lateinit var btnInsertImg: ImageButton
     private lateinit var btnDonate: Button
     private lateinit var auth: FirebaseAuth
     private var selectedOptionNgo: String = ""
@@ -44,6 +49,7 @@ class DonationFormActivity : AppCompatActivity() {
 
     private lateinit var ivVegImage: ImageView
     private lateinit var launcher: ActivityResultLauncher<Intent>
+    private lateinit var camLauncher: ActivityResultLauncher<Intent>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_donation_form)
@@ -57,7 +63,7 @@ class DonationFormActivity : AppCompatActivity() {
         etDescription = findViewById(R.id.etDescription)
         btnInsertImg = findViewById(R.id.btnInsertImg)
         btnDonate = findViewById(R.id.btnDonate)
-        ivVegImage = findViewById(R.id.ivVegImg)
+//        ivVegImage = findViewById(R.id.ivVegImg)
 
         // Retrieve text from EditTexts when needed
 
@@ -119,8 +125,12 @@ class DonationFormActivity : AppCompatActivity() {
 
 
         btnInsertImg.setOnClickListener {
-            chooseImage();
+//            chooseImage()
+//            takePicture()
+            showImageSourceDialog()
         }
+
+
 
         launcher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -130,10 +140,32 @@ class DonationFormActivity : AppCompatActivity() {
                 if (data != null) {
                     val imageUri = data.data
                     selectedImage = imageUri
-                    ivVegImage.setImageURI(imageUri)
+                    btnInsertImg.setImageURI(imageUri)
                 }
             }
+            else{
+                Toast.makeText(this, "result not ok", Toast.LENGTH_SHORT).show()
+            }
         }
+        camLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data
+                val imageBitmap: Bitmap? = data?.extras?.getParcelable("data") as Bitmap?
+                if (data != null) {
+                    val tempUri = imageBitmap?.let { getImageUri(this@DonationFormActivity, it) }
+                    selectedImage = tempUri
+                    btnInsertImg.setImageURI(tempUri)
+                }
+            }
+            else{
+                Toast.makeText(this, "result not ok", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+
 
         btnDonate.setOnClickListener {
             val vegNameString = etVegName.text.toString()
@@ -143,7 +175,17 @@ class DonationFormActivity : AppCompatActivity() {
             submitDonation(vegNameString,selectedImage, descriptionString, addressString, weightString, selectedOptionNgo, selectedOptionQuantity)
         }
     }
-
+    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path: String = MediaStore.Images.Media.insertImage(
+            inContext.contentResolver,
+            inImage,
+            "Title",
+            null
+        )
+        return Uri.parse(path)
+    }
     private fun submitDonation(vegName: String, imageUri: Uri?, description: String, address:String, quantity: String,
                                recipient: String, quantityType: String ) {
 
@@ -229,14 +271,27 @@ class DonationFormActivity : AppCompatActivity() {
                 Log.e("Firestore", errorMessage)
             }
     }
-
+    private fun takePicture() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        camLauncher.launch(intent)
+    }
     private fun chooseImage() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         launcher.launch(intent)
     }
 
-//    fun takePicture() {
-//        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//        launcher.launch(intent)
-//    }
+    private fun showImageSourceDialog() {
+        val dialog = AlertDialog.Builder(this)
+        dialog.setTitle("Choose Image Source")
+        dialog.setMessage("Take picture or choose from gallery?")
+        dialog.setPositiveButton("Take Picture") { _, _ ->
+            takePicture()
+        }
+        dialog.setNegativeButton("Choose from Gallery") { _, _ ->
+            chooseImage()
+        }
+        dialog.show()
+    }
+
+
 }

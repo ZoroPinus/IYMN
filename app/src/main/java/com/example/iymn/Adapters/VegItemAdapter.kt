@@ -64,7 +64,7 @@ class VegItemAdapter(private var mList: List<VegItemViewModel>) : RecyclerView.A
     // Holds the views for adding it to image and text
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
         val imageView: ImageView = itemView.findViewById(R.id.imageview)
-        val textView: TextView = itemView.findViewById(R.id.textView)
+        val textView: TextView = itemView.findViewById(R.id.tvTitle)
     }
 
     fun updateData(newList: List<VegItemViewModel>) {
