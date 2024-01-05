@@ -48,7 +48,7 @@
             android:layout_gravity="fill"
             android:layout_margin="8dp"
             android:background="@drawable/btn_dashboard"
-            android:text="ACCEPTED DONATIONS"
+            android:text="ACCEPT DONATIONS"
             app:layout_constraintBottom_toTopOf="@+id/btnAddFeedbackDonor"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

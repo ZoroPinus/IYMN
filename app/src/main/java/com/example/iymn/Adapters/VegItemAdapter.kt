@@ -42,11 +42,15 @@ class VegItemAdapter(private var mList: List<VegItemViewModel>) : RecyclerView.A
         val ItemsViewModel = mList[position]
 
         // sets the text to the textview from our itemHolder class
-        holder.textView.text = ItemsViewModel.title
+        holder.title.text = ItemsViewModel.title
+        holder.item1.text = ItemsViewModel.item1
+        holder.item2.text = ItemsViewModel.item2
+        holder.item3.text = ItemsViewModel.item3
+        holder.item4.text = ItemsViewModel.item4
 
-        val storageReference = FirebaseStorage.getInstance().reference.child("images/${ItemsViewModel.image}")
+        val storageReference = FirebaseStorage.getInstance().reference.child(ItemsViewModel.image)
         Glide.with(holder.itemView.context)
-            .load(storageReference)
+            .load(ItemsViewModel.image)
             .placeholder(R.drawable.ic_folder) // Placeholder image while loading
             .error(R.drawable.ic_insert_img) // Image to show if loading fails
             .into(holder.imageView)
@@ -64,7 +68,11 @@ class VegItemAdapter(private var mList: List<VegItemViewModel>) : RecyclerView.A
     // Holds the views for adding it to image and text
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
         val imageView: ImageView = itemView.findViewById(R.id.imageview)
-        val textView: TextView = itemView.findViewById(R.id.tvTitle)
+        val title: TextView = itemView.findViewById(R.id.tvTitle)
+        val item1: TextView = itemView.findViewById(R.id.tvItem1)
+        val item2: TextView = itemView.findViewById(R.id.tvItem2)
+        val item3: TextView = itemView.findViewById(R.id.tvItem3)
+        val item4: TextView = itemView.findViewById(R.id.tvItem4)
     }
 
     fun updateData(newList: List<VegItemViewModel>) {

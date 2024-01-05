@@ -61,7 +61,7 @@
             android:layout_marginBottom="8dp"
             android:background="@drawable/edittext_custom_bg"
             android:hint="ENTER EMAIL OR NUMBER"
-            android:inputType="textPassword"
+            android:inputType="textEmailAddress"
             android:padding="10dp"
             android:typeface="monospace" />
 

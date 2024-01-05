@@ -9,12 +9,12 @@
 
     <ImageButton
         android:id="@+id/imageButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:backgroundTint="@android:color/transparent"
+        android:contentDescription="Back Btn"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_back"
-        android:contentDescription="Back Btn"
         app:layout_constraintBottom_toTopOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -28,8 +28,8 @@
         android:fontFamily="@font/montserrat_extrabold"
         android:letterSpacing="0.2"
         android:text="DONATION"
-        android:textSize="20sp"
         android:textColor="@color/white"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.408"
@@ -59,10 +59,19 @@
                 android:id="@+id/ivVegImg"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:contentDescription="Veg image"
                 android:layout_gravity="center"
+                android:contentDescription="Veg image"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_insert_img" />
+
+            <TextView
+                android:id="@+id/tvVegname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Vegetable name"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -79,7 +88,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tvVegname"
+                    android:id="@+id/tvDonor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -120,7 +129,7 @@
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Time Donated:"
+                    android:text="Date and Time Donated:"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -128,29 +137,7 @@
                     android:id="@+id/tvTimeDonated"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingVertical="10dp">
-
-                <TextView
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Date Donated:"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvDateDonated"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginTop="8dp"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -229,5 +216,29 @@
             <!-- Other details you want to display -->
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <Button
+        android:id="@+id/btnAccept"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Accept"
+        android:layout_marginHorizontal="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnReject"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+
+    <Button
+        android:id="@+id/btnReject"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Reject"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginHorizontal="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnAccept"
+        app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

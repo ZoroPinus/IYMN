@@ -77,16 +77,6 @@
             android:typeface="monospace"
             android:inputType="number" />
 
-        <EditText
-            android:id="@+id/etConfPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edittext_custom_bg"
-            android:padding="16dp"
-            android:hint="CONFIRM PASSWORD"
-            android:typeface="monospace"
-            android:layout_marginBottom="8dp"
-            android:inputType="textPassword" />
 
         <EditText
             android:id="@+id/etPassword"
@@ -95,8 +85,20 @@
             android:background="@drawable/edittext_custom_bg"
             android:padding="16dp"
             android:typeface="monospace"
+            android:layout_marginBottom="8dp"
             android:hint="PASSWORD"
             android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/etConfPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_custom_bg"
+            android:padding="16dp"
+            android:hint="CONFIRM PASSWORD"
+            android:typeface="monospace"
+            android:inputType="textPassword" />
+
 
     </LinearLayout>
 

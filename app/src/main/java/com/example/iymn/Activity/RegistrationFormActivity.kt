@@ -119,4 +119,16 @@ class RegistrationFormActivity : AppCompatActivity() {
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }
+    private fun showSuccessFieldDialog(message:String) {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Registration complete")
+            setMessage("Press OK to Login")
+            setPositiveButton("OK") { dialog, which ->
+                startActivity(Intent(this@RegistrationFormActivity, DashboardActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
 }

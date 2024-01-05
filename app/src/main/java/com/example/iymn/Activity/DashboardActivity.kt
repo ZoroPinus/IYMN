@@ -20,7 +20,6 @@ class DashboardActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dashboard)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -31,11 +30,11 @@ class DashboardActivity : AppCompatActivity() {
             val userId = currentUser.uid // Get current user's UID
             fetchUserData(userId) // Fetch user data using the UID
         } else {
-            Toast.makeText(this, "You are logged Out", Toast.LENGTH_SHORT).show()
+            finish()
         }
 
         binding.btnProfile.setOnClickListener {
-            logout()
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
     }
 
@@ -62,12 +61,6 @@ class DashboardActivity : AppCompatActivity() {
                 Log.w("DashboardActivity", "Error fetching user data", e)
                 Toast.makeText(this, "Error fetching user data", Toast.LENGTH_SHORT).show()
             }
-    }
-    private fun logout() {
-        auth.signOut() // Sign out the current user
-        // Redirect to the login or sign-in activity
-        startActivity(Intent(this, LoginActivity::class.java))
-        finish() // Close the DashboardActivity
     }
 
     private fun displayFragmentForAccountType(accountType: String) {

@@ -22,6 +22,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import com.example.iymn.Fragments.CropFragment
 import com.example.iymn.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -29,6 +30,10 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 class DonationFormActivity : AppCompatActivity() {
@@ -40,6 +45,7 @@ class DonationFormActivity : AppCompatActivity() {
     lateinit var etDescription: EditText
     private lateinit var btnInsertImg: ImageButton
     private lateinit var btnDonate: Button
+    private lateinit var btnCropList: Button
     private lateinit var auth: FirebaseAuth
     private var selectedOptionNgo: String = ""
     private var selectedOptionQuantity: String = ""
@@ -56,6 +62,7 @@ class DonationFormActivity : AppCompatActivity() {
 
         // View Bindings
         etRecipient = findViewById(R.id.etRecipient)
+        btnCropList = findViewById(R.id.btnCropList)
         spinnerQuantityType = findViewById(R.id.spinnerQuantityType)
         etQuantity = findViewById(R.id.etQuantity)
         etVegName = findViewById(R.id.etVegName)
@@ -123,14 +130,23 @@ class DonationFormActivity : AppCompatActivity() {
             }
         }
 
-
         btnInsertImg.setOnClickListener {
-//            chooseImage()
-//            takePicture()
             showImageSourceDialog()
         }
-
-
+//        btnCropList.setOnClickListener {
+//            val fragmentManager = supportFragmentManager
+//            val fragmentTransaction = fragmentManager.beginTransaction()
+//            val cropFragment = CropFragment()
+//
+//            cropFragment.setCropSelectedListener { selectedCrop ->
+//                // Do something with the selected crop
+//                etVegName.setText(selectedCrop)
+//            }
+//
+//            fragmentTransaction.replace(R.id.fragmentContainer, cropFragment)
+//            fragmentTransaction.addToBackStack(null)
+//            fragmentTransaction.commit()
+//        }
 
         launcher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -164,15 +180,15 @@ class DonationFormActivity : AppCompatActivity() {
             }
         }
 
-
-
-
         btnDonate.setOnClickListener {
             val vegNameString = etVegName.text.toString()
             val weightString = etQuantity.text.toString()
             val addressString = etAddress.text.toString()
             val descriptionString = etDescription.text.toString()
-            submitDonation(vegNameString,selectedImage, descriptionString, addressString, weightString, selectedOptionNgo, selectedOptionQuantity)
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val currentDateTime = dateFormat.format(Date())
+            val status = "PENDING"
+            submitDonation(vegNameString, selectedImage, descriptionString, addressString, weightString, selectedOptionNgo, selectedOptionQuantity, currentDateTime, status)
         }
     }
     private fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
@@ -187,16 +203,16 @@ class DonationFormActivity : AppCompatActivity() {
         return Uri.parse(path)
     }
     private fun submitDonation(vegName: String, imageUri: Uri?, description: String, address:String, quantity: String,
-                               recipient: String, quantityType: String ) {
+                               recipient: String, quantityType: String, donateDate: String, status: String
+    ) {
 
         if (vegName.isBlank() || description.isBlank() || quantity.isBlank() || address.isBlank() || recipient.isBlank()  ) {
-            Toast.makeText(this, "Kindly Complete the form", Toast.LENGTH_SHORT).show()
+            showEmptyFieldDialog("Kindly Complete the form")
             return
         }
 
         if (imageUri == null) {
-            Toast.makeText(this, "Kindly include an image", Toast.LENGTH_SHORT)
-                .show()
+            showEmptyFieldDialog("Kindly include an image")
             return
         }
 
@@ -213,7 +229,9 @@ class DonationFormActivity : AppCompatActivity() {
             "address" to address,
             "image" to "",
             "recipient" to recipient,
-            "donorUID" to currentUser // Store the donor's UID
+            "donorUID" to currentUser,
+            "donateDate" to donateDate,
+            "status" to status
             // Add more fields as needed
         )
 
@@ -232,8 +250,6 @@ class DonationFormActivity : AppCompatActivity() {
                 // Handle failure
                 Log.e("Firestore", "Error adding document", e)
             }
-
-
     }
 
     private fun uploadImageToFirebaseStorage(imageUri: Uri, donationId: String) {
@@ -264,6 +280,21 @@ class DonationFormActivity : AppCompatActivity() {
         docRef.update("image", imageUrl)
             .addOnSuccessListener {
                 Toast.makeText(this, "Upload stored successfully", Toast.LENGTH_SHORT).show()
+                val successDialog = AlertDialog.Builder(this)
+                    .setTitle("Success")
+                    .setMessage("Donation submitted successfully")
+                    .setPositiveButton("OK") { dialog, _ ->
+                        // Clear form fields here
+                        etVegName.setText("")
+                        etAddress.setText("")
+                        etDescription.setText("")
+                        etQuantity.setText("")
+                        btnInsertImg.setImageResource(R.drawable.ic_insert_img)
+                        // Clear other fields similarly
+                        dialog.dismiss() // Dismiss dialog
+                    }
+                    .create()
+                successDialog.show()
             }
             .addOnFailureListener { e ->
                 val errorMessage = "Error saving user data: ${e.message}"
@@ -292,6 +323,17 @@ class DonationFormActivity : AppCompatActivity() {
         }
         dialog.show()
     }
-
+    private fun showEmptyFieldDialog(message:String) {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Empty Fields")
+            setMessage(message)
+            setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
 
 }

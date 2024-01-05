@@ -7,6 +7,8 @@
     android:background="@color/greenPrimary"
     tools:context=".Activity.DashboardActivity">
 
+
+
     <!-- Header Section -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headerLayout"
@@ -27,8 +29,9 @@
 
         <ImageView
             android:id="@+id/profileIconImageView"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="5dp"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="16dp"
             android:src="@drawable/ic_profile"
@@ -69,7 +72,9 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+
     <!-- Body Section: Grid of 3x3 buttons -->
+
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -79,7 +84,11 @@
         android:paddingHorizontal="20dp"
         android:paddingVertical="10dp"
         android:layout_below="@id/headerLayout">
-
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:visibility="gone"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,18 +99,18 @@
             <EditText
                 android:id="@+id/etVegName"
                 android:layout_width="250dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/edittext_custom_bg"
                 android:hint="Crop Name"
-                android:inputType="textPassword"
+                android:inputType="textAutoComplete"
                 android:padding="10dp"
                 android:typeface="monospace" />
 
             <Button
                 android:id="@+id/btnCropList"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="48dp"
                 android:text="Crop List"
                 android:background="@drawable/custom_btn"
                 />
@@ -119,7 +128,7 @@
             android:id="@+id/etQuantity"
             android:layout_width="280dp"
             android:hint="Quantity"
-            android:layout_height="match_parent"
+            android:layout_height="48dp"
             android:inputType="number"/>
 
             <Spinner
@@ -148,6 +157,7 @@
             android:layout_marginBottom="5dp"
             android:background="@drawable/custom_btn"
             android:paddingVertical="15dp"
+            android:inputType="text"
             android:hint="Address"/>
 
         <EditText
@@ -157,6 +167,7 @@
             android:background="@drawable/custom_btn"
             android:paddingVertical="15dp"
             android:layout_marginBottom="5dp"
+            android:inputType="textAutoComplete"
             android:hint="Description"/>
 
         <ImageButton

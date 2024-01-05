@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.iymn.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -58,15 +59,10 @@ class LoginActivity : AppCompatActivity() {
         // Initialize firebase user
         val firebaseUser: FirebaseUser? = auth.currentUser
         // Check condition
-        if (firebaseUser != null) {
-            // When user already sign in redirect to profile activity
-            startActivity(
-                Intent(
-                    this,
-                    DashboardActivity::class.java
-                ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
-        }
+//        if (firebaseUser != null) {
+//            finish()
+//            return
+//        }
 
         //Login Button
         btnLogin.setOnClickListener {
@@ -133,21 +129,38 @@ class LoginActivity : AppCompatActivity() {
         // calling signInWithEmailAndPassword(email, pass)
         // function using Firebase auth object
         // On successful response Display a Toast
+
+        if(email.isBlank() || pass.isBlank()){
+            showEmptyFieldDialog("Kindly finish the form", "Empty Fields")
+        }
         auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(this) {
             if (it.isSuccessful) {
-                startActivity(
-                    Intent(
-                        this,
-                        DashboardActivity::class.java
-                    ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                )
-                Toast.makeText(this, "Successfully LoggedIn", Toast.LENGTH_SHORT).show()
+//                startActivity(
+//                    Intent(
+//                        this,
+//                        DashboardActivity::class.java
+//                    ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                )
+                showEmptyFieldDialog("Successfully Logged In", "Welcome back!")
             } else
                 Toast.makeText(this, "Log In failed ", Toast.LENGTH_SHORT).show()
         }
     }
     private fun displayToast(s: String) {
         Toast.makeText(applicationContext, s, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showEmptyFieldDialog(message:String, status: String) {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle(status)
+            setMessage(message)
+            setPositiveButton("OK") { dialog, which ->
+                startActivity(Intent(this@LoginActivity, DashboardActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 
 

@@ -13,6 +13,8 @@ import com.example.iymn.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class DonationHistoryActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
@@ -27,6 +29,7 @@ class DonationHistoryActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
         currentUser = auth.currentUser
+
 
         // getting the recyclerview by its id
         val recyclerview = findViewById<RecyclerView>(R.id.recyclerview)
@@ -53,7 +56,7 @@ class DonationHistoryActivity : AppCompatActivity() {
 
     private fun fetchDataBasedOnUserType() {
         if (currentUser == null) {
-            handleUserNotLoggedIn()
+            Toast.makeText(this, "Eror", Toast.LENGTH_SHORT).show()
         } else {
             val uid = currentUser!!.uid
             db.collection("users").document(uid).get()
@@ -80,8 +83,23 @@ class DonationHistoryActivity : AppCompatActivity() {
                 for (document in documents) {
                     val docId = document.id
                     val imagePath = document.getString("image") ?: ""
-                    val itemName = document.getString("vegName") ?: "Default Item Name"
-                    dataList.add(VegItemViewModel(docId, imagePath, itemName))
+                    val date = document.getString("donateDate")?.let { formatDate(it) }
+                    val vegName = document.getString("vegName") ?: "Default Item Name"
+                    val status = document.getString("status") ?: "Default Item Name"
+                    val recipient = document.getString("recipient") ?: "Default Item Name"
+                    val fetchedQuantity = document.getString("quantity")
+                    val fetchedQuantityType = document.getString("quantityType")
+                    val formattedQuantity = getString(
+                        R.string.formatted_quantity,
+                        fetchedQuantity,
+                        fetchedQuantityType
+                    )
+                    val itemName = vegName.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                    dataList.add(VegItemViewModel(docId, imagePath, itemName,formattedQuantity,date, recipient, status))
                 }
                 adapter.updateData(dataList)
             }
@@ -99,8 +117,23 @@ class DonationHistoryActivity : AppCompatActivity() {
                 for (document in documents) {
                     val docId = document.id
                     val imagePath = document.getString("image") ?: ""
-                    val itemName = document.getString("vegName") ?: "Default Item Name"
-                    dataList.add(VegItemViewModel(docId, imagePath, itemName))
+                    val date = document.getString("donateDate")?.let { formatDate(it) }
+                    val vegName = document.getString("vegName") ?: "Default Item Name"
+                    val status = document.getString("status") ?: "Default Item Name"
+                    val recipient = document.getString("recipient") ?: "Default Item Name"
+                    val fetchedQuantity = document.getString("quantity")
+                    val fetchedQuantityType = document.getString("quantityType")
+                    val formattedQuantity = getString(
+                        R.string.formatted_quantity,
+                        fetchedQuantity,
+                        fetchedQuantityType
+                    )
+                    val itemName = vegName.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                    dataList.add(VegItemViewModel(docId, imagePath, itemName,formattedQuantity,date, recipient, status))
                 }
                 adapter.updateData(dataList)
             }
@@ -109,6 +142,9 @@ class DonationHistoryActivity : AppCompatActivity() {
             }
     }
 
+    private fun testFun(accountType:String){
+        Toast.makeText(this, accountType, Toast.LENGTH_SHORT).show()
+    }
     private fun handleFetchDataFailure(e: Exception) {
         Log.w("DonationHistoryActivity", "Error fetching data", e)
         Toast.makeText(this, "Error fetching data", Toast.LENGTH_SHORT).show()
@@ -120,6 +156,12 @@ class DonationHistoryActivity : AppCompatActivity() {
         finish()
     }
 
+    private fun formatDate(dateString: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("MMMM d, yyyy, h:mm a", Locale.getDefault())
 
+        val date = inputFormat.parse(dateString)
+        return outputFormat.format(date)
+    }
 
 }
