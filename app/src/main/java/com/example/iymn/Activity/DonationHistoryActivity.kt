@@ -26,10 +26,8 @@ class DonationHistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_donation_history)
 
-
         auth = FirebaseAuth.getInstance()
         currentUser = auth.currentUser
-
 
         // getting the recyclerview by its id
         val recyclerview = findViewById<RecyclerView>(R.id.recyclerview)

@@ -15,6 +15,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
@@ -70,6 +71,7 @@ class DonationFormActivity : AppCompatActivity() {
         etDescription = findViewById(R.id.etDescription)
         btnInsertImg = findViewById(R.id.btnInsertImg)
         btnDonate = findViewById(R.id.btnDonate)
+        val fragmentContainer: FrameLayout = findViewById(R.id.fragmentContainer)
 //        ivVegImage = findViewById(R.id.ivVegImg)
 
         // Retrieve text from EditTexts when needed
@@ -133,20 +135,20 @@ class DonationFormActivity : AppCompatActivity() {
         btnInsertImg.setOnClickListener {
             showImageSourceDialog()
         }
-//        btnCropList.setOnClickListener {
-//            val fragmentManager = supportFragmentManager
-//            val fragmentTransaction = fragmentManager.beginTransaction()
-//            val cropFragment = CropFragment()
-//
-//            cropFragment.setCropSelectedListener { selectedCrop ->
-//                // Do something with the selected crop
-//                etVegName.setText(selectedCrop)
-//            }
-//
-//            fragmentTransaction.replace(R.id.fragmentContainer, cropFragment)
-//            fragmentTransaction.addToBackStack(null)
-//            fragmentTransaction.commit()
-//        }
+        btnCropList.setOnClickListener {
+            fragmentContainer.visibility = View.VISIBLE
+            val fragment = CropFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+        supportFragmentManager.addOnBackStackChangedListener {
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                // If back stack is empty, hide the FrameLayout
+                fragmentContainer.visibility = View.GONE
+            }
+        }
 
         launcher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
