@@ -150,6 +150,11 @@ class DonationFormActivity : AppCompatActivity() {
             }
         }
 
+        supportFragmentManager.setFragmentResultListener("cropSelection", this) { _, result ->
+            val selectedCropName = result.getString("selectedCropName", "")
+            etVegName.setText(selectedCropName)
+        }
+
         launcher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->

@@ -13,40 +13,84 @@ import com.example.iymn.Adapters.VegItemAdapter
 import com.example.iymn.Models.CropItemViewModel
 import com.example.iymn.Models.VegItemViewModel
 import com.example.iymn.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.FirebaseFirestore
+
 class CropFragment : Fragment() {
+    private val db = FirebaseFirestore.getInstance()
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var cropsAdapter: CropItemAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_crop, container, false)
-        val cropsAdapter = CropItemAdapter { crop -> adapterOnClick(crop) }
-        // Fetch crop items from Firestore and populate the RecyclerView
-        val cropList = listOf(
-            CropItemViewModel("1", "Wheat"),
-            CropItemViewModel("2", "Corn"),
-            CropItemViewModel("3", "Rice"),
-            CropItemViewModel("4", "Barley"),
-            CropItemViewModel("5", "Soybeans")
-        )
+        recyclerView = view.findViewById(R.id.cropRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val btnAddCrop: FloatingActionButton = view.findViewById(R.id.btnAddCrop)
 
-        val recyclerView: RecyclerView = view.findViewById(R.id.cropRecyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        // Initialize the adapter
+        cropsAdapter = CropItemAdapter()
 
-        // Set the adapter to the RecyclerView
+        // Set item click listener
+        cropsAdapter.setOnItemClickListener { clickedCrop ->
+            adapterOnClick(clickedCrop)
+        }
+
         recyclerView.adapter = cropsAdapter
 
-        // Pass your cropList to the adapter to display the data
-        cropsAdapter.submitList(cropList)
+        fetchCropsFromFirestore()
+
+        btnAddCrop.setOnClickListener {
+            // Replace 'YourNewFragment()' with the fragment you want to open
+            val newFragment = AddCropFragment()
+
+            // Begin fragment transaction
+            val fragmentManager = requireActivity().supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+
+            // Replace the current fragment with the new fragment
+            fragmentTransaction.replace(R.id.fragmentContainer, newFragment)
+
+            // Optional: Add to back stack for handling back navigation
+            fragmentTransaction.addToBackStack(null)
+
+            // Commit the transaction
+            fragmentTransaction.commit()
+        }
 
         return view
 
     }
 
-    /* Opens FlowerDetailActivity when RecyclerView item is clicked. */
+    private fun fetchCropsFromFirestore() {
+        // Reference to the "crops" collection
+        db.collection("crops")
+            .get()
+            .addOnSuccessListener { result ->
+                val cropList = mutableListOf<CropItemViewModel>()
+
+                for (document in result) {
+                    // Extract the data and create CropItemViewModel objects
+                    val id = document.id
+                    val name = document.getString("name") ?: ""
+                    val crop = CropItemViewModel(id, name)
+                    cropList.add(crop)
+                }
+
+                // Pass the retrieved cropList to the adapter
+                cropsAdapter.submitList(cropList)
+            }
+            .addOnFailureListener { exception ->
+                // Handle any errors
+            }
+    }
+
     private fun adapterOnClick(crop: CropItemViewModel) {
-        val intent = Intent(context, CropFragment()::class.java)
-        intent.putExtra("cropId", crop.id)
-        startActivity(intent)
+        val result = Bundle()
+        result.putString("selectedCropName", crop.cropName)
+        parentFragmentManager.setFragmentResult("cropSelection", result)
+        parentFragmentManager.popBackStack()
     }
 
 }

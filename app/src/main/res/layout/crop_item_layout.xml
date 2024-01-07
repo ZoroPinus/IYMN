@@ -5,19 +5,19 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     >
-    <TextView
-        android:id="@+id/tvCropName"
+    <Button
+        android:id="@+id/btnCropName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Crop Name"
         android:padding="16dp"
         android:textSize="18sp"
-        android:paddingVertical="5dp"
         android:clickable="true"
         android:focusable="true"
+        android:paddingVertical="5dp"
     />
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#CCCCCC" />
+        android:layout_height="2dp"
+        android:background="@color/black" />
 </LinearLayout>
