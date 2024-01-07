@@ -52,9 +52,6 @@ class DonationFormActivity : AppCompatActivity() {
     private var selectedOptionQuantity: String = ""
     private var selectedImage: Uri? = null
     lateinit var db: FirebaseFirestore
-    lateinit var storage: FirebaseStorage
-
-    private lateinit var ivVegImage: ImageView
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private lateinit var camLauncher: ActivityResultLauncher<Intent>
     override fun onCreate(savedInstanceState: Bundle?) {

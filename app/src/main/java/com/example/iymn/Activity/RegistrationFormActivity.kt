@@ -4,8 +4,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.iymn.R
@@ -15,9 +18,11 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class RegistrationFormActivity : AppCompatActivity() {
-    lateinit var etEmail: EditText
-    lateinit var etContact: EditText
-    lateinit var etConfPassword: EditText
+    private lateinit var etEmail: EditText
+    private lateinit var etContact: EditText
+    private lateinit var tvNGOOrg: TextView
+    private lateinit var spinnerNGOOrg: Spinner
+    private lateinit var etConfPassword: EditText
     private lateinit var etPassword: EditText
     private lateinit var btnRegister: Button
     private lateinit var auth: FirebaseAuth
@@ -30,6 +35,8 @@ class RegistrationFormActivity : AppCompatActivity() {
         // View Bindings
         etEmail = findViewById(R.id.etEmail)
         etContact = findViewById(R.id.etContact)
+        tvNGOOrg = findViewById(R.id.tvNGOOrg)
+        spinnerNGOOrg = findViewById(R.id.spinnerNGOOrg)
         etConfPassword = findViewById(R.id.etConfPassword)
         etPassword = findViewById(R.id.etPassword)
         btnRegister = findViewById(R.id.btnRegister)
@@ -39,10 +46,11 @@ class RegistrationFormActivity : AppCompatActivity() {
 
         db = Firebase.firestore
 
-
         btnRegister.setOnClickListener {
             signUpUser()
         }
+
+        fetchNGOPartnersFromFirestore()
     }
 
     private fun signUpUser() {
@@ -130,5 +138,32 @@ class RegistrationFormActivity : AppCompatActivity() {
         }
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
+    }
+
+    private fun fetchNGOPartnersFromFirestore() {
+        val db = Firebase.firestore
+        val partnersRef = db.collection("ngoPartners") // Assuming "ngoPartners" is the collection name
+
+        partnersRef.get()
+            .addOnSuccessListener { querySnapshot ->
+                val partnerNames = ArrayList<String>()
+                for (document in querySnapshot) {
+                    val partnerName = document.getString("partnerName") // Replace with your field name
+                    partnerName?.let {
+                        partnerNames.add(it)
+                    }
+                }
+                displayNGOPartnersInSpinner(partnerNames)
+            }
+            .addOnFailureListener { e ->
+                // Handle failure
+            }
+    }
+
+    private fun displayNGOPartnersInSpinner(partnerNames: ArrayList<String>) {
+        val spinnerNGOOrg: Spinner = findViewById(R.id.spinnerNGOOrg) // Replace with your Spinner ID
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, partnerNames)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerNGOOrg.adapter = adapter
     }
 }

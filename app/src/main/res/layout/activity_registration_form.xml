@@ -52,9 +52,6 @@
             android:text="REGISTRATION"
             android:textSize="16sp" />
 
-
-
-
         <EditText
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
@@ -77,6 +74,32 @@
             android:typeface="monospace"
             android:inputType="number" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/edittext_custom_bg">
+
+            <TextView
+                android:id="@+id/tvNGOOrg"
+                android:layout_width="280dp"
+                android:hint="SELECT AN ORGANIZATION"
+                android:paddingStart="5dp"
+                android:textSize="20sp"
+                android:typeface="monospace"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:inputType="number"/>
+
+            <Spinner
+                android:id="@+id/spinnerNGOOrg"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:spinnerMode="dropdown"
+                />
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/etPassword"
@@ -99,14 +122,12 @@
             android:typeface="monospace"
             android:inputType="textPassword" />
 
-
     </LinearLayout>
 
     <Button
         android:id="@+id/btnRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
         android:background="@drawable/custom_btn"
         android:backgroundTint="@color/white"
         android:text="CONFIRM"
@@ -115,7 +136,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.448" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

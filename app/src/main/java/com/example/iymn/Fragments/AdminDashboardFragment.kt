@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.iymn.Activity.DonationHistoryActivity
+import com.example.iymn.Activity.NGOPartnersActivity
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentAdminDashboardBinding
 import com.example.iymn.databinding.FragmentNGODashboardBinding
@@ -28,14 +29,19 @@ class AdminDashboardFragment : Fragment() {
                 Intent(
                     requireContext(),
                     DonationHistoryActivity::class.java
-                ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
             )
         }
         binding.btnRegisteredAccounts.setOnClickListener {
-            Toast.makeText(requireContext(), "NGO Partners", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Registered", Toast.LENGTH_SHORT).show()
         }
         binding.btnNgoPartners.setOnClickListener {
-            Toast.makeText(requireContext(), "Inbox", Toast.LENGTH_SHORT).show()
+            startActivity(
+                Intent(
+                    requireContext(),
+                    NGOPartnersActivity::class.java
+                )
+            )
         }
         binding.btnFoodMapAdmin.setOnClickListener {
             Toast.makeText(requireContext(), "Food Map", Toast.LENGTH_SHORT).show()

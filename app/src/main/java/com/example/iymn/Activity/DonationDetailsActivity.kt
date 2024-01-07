@@ -118,7 +118,10 @@ class DonationDetailsActivity : AppCompatActivity() {
                     val accountType = documentSnapshot.getString("accountType")
                     when (accountType) {
                         "NGO", "Admin" -> binding.btnAccept.visibility = View.VISIBLE
-                        else -> binding.btnAccept.visibility = View.GONE
+                        else -> {
+                            binding.btnAccept.visibility = View.GONE
+                            binding.btnReject.visibility = View.GONE
+                        }
                     }
                 }
                 .addOnFailureListener { e ->

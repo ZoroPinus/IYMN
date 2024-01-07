@@ -54,7 +54,7 @@ class DonationHistoryActivity : AppCompatActivity() {
 
     private fun fetchDataBasedOnUserType() {
         if (currentUser == null) {
-            Toast.makeText(this, "Eror", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
         } else {
             val uid = currentUser!!.uid
             db.collection("users").document(uid).get()
@@ -139,21 +139,10 @@ class DonationHistoryActivity : AppCompatActivity() {
                 handleFetchDataFailure(e)
             }
     }
-
-    private fun testFun(accountType:String){
-        Toast.makeText(this, accountType, Toast.LENGTH_SHORT).show()
-    }
     private fun handleFetchDataFailure(e: Exception) {
         Log.w("DonationHistoryActivity", "Error fetching data", e)
         Toast.makeText(this, "Error fetching data", Toast.LENGTH_SHORT).show()
     }
-
-    private fun handleUserNotLoggedIn() {
-        auth.signOut()
-        startActivity(Intent(this, LoginActivity::class.java))
-        finish()
-    }
-
     private fun formatDate(dateString: String): String {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val outputFormat = SimpleDateFormat("MMMM d, yyyy, h:mm a", Locale.getDefault())

@@ -48,7 +48,6 @@ class VegItemAdapter(private var mList: List<VegItemViewModel>) : RecyclerView.A
         holder.item3.text = ItemsViewModel.item3
         holder.item4.text = ItemsViewModel.item4
 
-        val storageReference = FirebaseStorage.getInstance().reference.child(ItemsViewModel.image)
         Glide.with(holder.itemView.context)
             .load(ItemsViewModel.image)
             .placeholder(R.drawable.ic_folder) // Placeholder image while loading

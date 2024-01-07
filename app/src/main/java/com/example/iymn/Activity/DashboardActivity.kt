@@ -36,6 +36,8 @@ class DashboardActivity : AppCompatActivity() {
         binding.btnProfile.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
+
+
     }
 
     private fun fetchUserData(userId: String) {
