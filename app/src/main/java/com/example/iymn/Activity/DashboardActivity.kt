@@ -36,8 +36,6 @@ class DashboardActivity : AppCompatActivity() {
         binding.btnProfile.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
-
-
     }
 
     private fun fetchUserData(userId: String) {
@@ -81,7 +79,6 @@ class DashboardActivity : AppCompatActivity() {
                 fragmentTransaction.replace(R.id.fragmentContainer, ngoFragment)
             }
             else -> {
-                // Handle default case or show a default fragment
             }
         }
         fragmentTransaction.commit()

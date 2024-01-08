@@ -80,7 +80,7 @@ class DonationFormActivity : AppCompatActivity() {
 
         // Define your list of options
         val ngoOptions = arrayOf("Cordillera Youth Center", "Zero Waste Baguio")
-        val quantityOptions = arrayOf("Kg", "Sack/s", "Piece/s")
+        val quantityOptions = arrayOf("Kg", "Sack/s", "Piece/s", "Ton/s")
 
 
         // Create an ArrayAdapter using the string array and a default spinner layout

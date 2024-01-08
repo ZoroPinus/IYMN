@@ -41,11 +41,21 @@ class NGOPartnersActivity : AppCompatActivity() {
 
         binding.btnAddNgoPartner.setOnClickListener {
             binding.NGOfragmentContainer.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE // Hide RecyclerView
+
             val fragment = AddNGOPartnerFragment()
             supportFragmentManager.beginTransaction()
                 .replace(R.id.NGOfragmentContainer, fragment)
                 .addToBackStack(null)
                 .commit()
+        }
+    }
+    override fun onBackPressed() {
+        if (binding.NGOfragmentContainer.visibility == View.VISIBLE) {
+            binding.NGOfragmentContainer.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE // Show RecyclerView
+        } else {
+            super.onBackPressed()
         }
     }
 
@@ -101,7 +111,7 @@ class NGOPartnersActivity : AppCompatActivity() {
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
                         val accountType = documentSnapshot.getString("accountType")
-                        if (accountType != null && accountType == "admin") {
+                        if (accountType != null && accountType == "Admin") {
                             // User is an admin, show the button
                             binding.btnAddNgoPartner.visibility = View.VISIBLE
                         } else {

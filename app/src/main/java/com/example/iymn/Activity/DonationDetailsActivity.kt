@@ -168,7 +168,9 @@ class DonationDetailsActivity : AppCompatActivity() {
             setTitle(status)
             setMessage(message)
             setPositiveButton("OK") { dialog, _ ->
+                fetchDataBasedOnUserType()
                 dialog.dismiss()
+                onBackPressed()
             }
         }
         val alertDialog = alertDialogBuilder.create()

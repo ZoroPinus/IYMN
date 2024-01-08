@@ -37,13 +37,7 @@
                 android:padding="10dp"
                 android:typeface="monospace" />
 
-            <Button
-                android:id="@+id/btnNGOList"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="NGO List"
-                android:background="@drawable/custom_btn"
-                />
+
         </LinearLayout>
 
 
@@ -65,7 +59,7 @@
             android:paddingVertical="15dp"
             android:layout_marginBottom="5dp"
             android:inputType="number"
-            android:hint="Description"/>
+            android:hint="Contact"/>
 
         <ImageButton
             android:id="@+id/btnInsertImg"
