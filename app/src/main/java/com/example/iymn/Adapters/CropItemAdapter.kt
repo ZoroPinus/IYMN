@@ -15,20 +15,31 @@ import com.example.iymn.Models.VegItemViewModel
 import com.example.iymn.R
 
 class CropItemAdapter : ListAdapter<CropItemViewModel, CropItemAdapter.ViewHolder>(FlowerDiffCallback) {
-    private var onItemClickListener: ((CropItemViewModel) -> Unit)? = null
+    private var onEditButtonClickListener : ((CropItemViewModel) -> Unit)? = null
+    private var onDeleteButtonClickListener  : ((CropItemViewModel) -> Unit)? = null
 
-    fun setOnItemClickListener(listener: (CropItemViewModel) -> Unit) {
-        onItemClickListener = listener
+    fun setOnEditButtonClickListener(listener: (CropItemViewModel) -> Unit) {
+        onEditButtonClickListener  = listener
     }
+    fun setOnDeleteButtonClickListener(listener: (CropItemViewModel) -> Unit) {
+        onDeleteButtonClickListener  = listener
+    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val cropName: Button = itemView.findViewById(R.id.btnCropName)
+        private val cropName: TextView = itemView.findViewById(R.id.btnCropName)
+        private val btnDeleteCrop: ImageView = itemView.findViewById(R.id.btnDeleteCrop)
         private var currentCrop: CropItemViewModel? = null
 
         init {
             cropName.setOnClickListener {
                 currentCrop?.let {
                     Log.v("CropItemAdapter", "Button clicked: ${it.cropName}")
-                    onItemClickListener?.invoke(it)
+                    onEditButtonClickListener?.invoke(it)
+                }
+            }
+            btnDeleteCrop.setOnClickListener {
+                currentCrop?.let {
+                    onDeleteButtonClickListener?.invoke(it)
                 }
             }
         }

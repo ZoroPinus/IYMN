@@ -1,7 +1,9 @@
 package com.example.iymn.Fragments
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -33,8 +35,12 @@ class CropFragment : Fragment() {
         cropsAdapter = CropItemAdapter()
 
         // Set item click listener
-        cropsAdapter.setOnItemClickListener { clickedCrop ->
+        cropsAdapter.setOnEditButtonClickListener { clickedCrop ->
             adapterOnClick(clickedCrop)
+        }
+
+        cropsAdapter.setOnDeleteButtonClickListener { clickedCrop ->
+            deleteCropFromFirestore(clickedCrop)
         }
 
         recyclerView.adapter = cropsAdapter
@@ -81,8 +87,8 @@ class CropFragment : Fragment() {
                 // Pass the retrieved cropList to the adapter
                 cropsAdapter.submitList(cropList)
             }
-            .addOnFailureListener { exception ->
-                // Handle any errors
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error fetching document", e)
             }
     }
 
@@ -91,6 +97,20 @@ class CropFragment : Fragment() {
         result.putString("selectedCropName", crop.cropName)
         parentFragmentManager.setFragmentResult("cropSelection", result)
         parentFragmentManager.popBackStack()
+    }
+
+    private fun deleteCropFromFirestore(crop: CropItemViewModel) {
+        // Implement the code to delete the item from Firestore
+        // For example, assuming you have a Firestore collection called "crops":
+        val collectionReference = FirebaseFirestore.getInstance().collection("crops")
+        collectionReference.document(crop.id).delete()
+            .addOnSuccessListener {
+                fetchCropsFromFirestore()
+            }
+            .addOnFailureListener { e ->
+                // Handle failure
+                Log.e(TAG, "Error deleting document", e)
+            }
     }
 
 }
