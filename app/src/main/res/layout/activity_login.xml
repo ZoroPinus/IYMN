@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_login"
+    android:background="@color/white"
     tools:context=".Activity.LoginActivity">
-
 
     <ImageView
         android:id="@+id/myImage"
@@ -65,7 +64,6 @@
             android:padding="10dp"
             android:typeface="monospace" />
 
-
         <EditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
@@ -84,7 +82,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="52dp"
         android:text="LOGIN"
-        android:backgroundTint="@color/white"
         android:background="@drawable/custom_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

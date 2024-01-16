@@ -83,7 +83,6 @@ class CropFragment : Fragment() {
                     val crop = CropItemViewModel(id, name)
                     cropList.add(crop)
                 }
-
                 // Pass the retrieved cropList to the adapter
                 cropsAdapter.submitList(cropList)
             }

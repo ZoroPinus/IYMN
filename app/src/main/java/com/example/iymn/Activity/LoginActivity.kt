@@ -8,64 +8,26 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.iymn.R
+import com.example.iymn.databinding.ActivityLoginBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 
-
 class LoginActivity : AppCompatActivity() {
-    // [START declare_auth]
+    private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
-//    private lateinit var googleSignInClient: GoogleSignInClient
-//    lateinit var btnGoogleLogin: SignInButton
-    lateinit var btnLogin: Button
-    lateinit var etUsername: EditText
-    lateinit var etPassword: EditText
-    // [END declare_auth]
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // Assign variable
-//        btnGoogleLogin = findViewById(R.id.btnGoogleSignin)
-        btnLogin = findViewById(R.id.btnLogin)
-        etUsername = findViewById(R.id.etEmail)
-        etPassword = findViewById(R.id.etPassword)
-
-        // Initialize sign in options the client-id is copied form google-services.json file
-//        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//            .requestIdToken(getString(R.string.default_web_client_id))
-//            .requestEmail()
-//            .build()
-//
-//        // Initialize sign in client
-//        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
-//        btnGoogleLogin.setOnClickListener { // Initialize sign in intent
-//            val intent: Intent = googleSignInClient.signInIntent
-//            // Start activity for result
-//            startActivityForResult(intent, 100)
-//        }
-
-        // Initialize firebase auth
         auth = FirebaseAuth.getInstance()
-        // Initialize firebase user
-        val firebaseUser: FirebaseUser? = auth.currentUser
-        // Check condition
-//        if (firebaseUser != null) {
-//            finish()
-//            return
-//        }
 
-        //Login Button
-        btnLogin.setOnClickListener {
+        binding.btnLogin.setOnClickListener {
             login()
         }
     }
@@ -124,23 +86,14 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun login() {
-        val email = etUsername.text.toString()
-        val pass = etPassword.text.toString()
-        // calling signInWithEmailAndPassword(email, pass)
-        // function using Firebase auth object
-        // On successful response Display a Toast
+        val email = binding.etEmail.text.toString()
+        val pass = binding.etPassword.text.toString()
 
         if(email.isBlank() || pass.isBlank()){
             showEmptyFieldDialog("Kindly finish the form", "Empty Fields")
         }
         auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(this) {
             if (it.isSuccessful) {
-//                startActivity(
-//                    Intent(
-//                        this,
-//                        DashboardActivity::class.java
-//                    ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                )
                 showEmptyFieldDialog("Successfully Logged In", "Welcome back!")
             } else
                 Toast.makeText(this, "Log In failed ", Toast.LENGTH_SHORT).show()

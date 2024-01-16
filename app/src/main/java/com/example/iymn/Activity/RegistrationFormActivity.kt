@@ -12,41 +12,27 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.iymn.R
+import com.example.iymn.databinding.ActivityRegistrationFormBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class RegistrationFormActivity : AppCompatActivity() {
-    private lateinit var etEmail: EditText
-    private lateinit var etContact: EditText
-    private lateinit var tvNGOOrg: TextView
-    private lateinit var spinnerNGOOrg: Spinner
-    private lateinit var etConfPassword: EditText
-    private lateinit var etPassword: EditText
-    private lateinit var btnRegister: Button
+    private lateinit var binding: ActivityRegistrationFormBinding
     private lateinit var auth: FirebaseAuth
     lateinit var db: FirebaseFirestore
-//    data class User(val name: String, val email: String, val contact: Number, val accountType: String)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_registration_form)
-
-        // View Bindings
-        etEmail = findViewById(R.id.etEmail)
-        etContact = findViewById(R.id.etContact)
-        tvNGOOrg = findViewById(R.id.tvNGOOrg)
-        spinnerNGOOrg = findViewById(R.id.spinnerNGOOrg)
-        etConfPassword = findViewById(R.id.etConfPassword)
-        etPassword = findViewById(R.id.etPassword)
-        btnRegister = findViewById(R.id.btnRegister)
+        binding = ActivityRegistrationFormBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Initialising auth object
         auth = FirebaseAuth.getInstance()
 
         db = Firebase.firestore
 
-        btnRegister.setOnClickListener {
+        binding.btnRegister.setOnClickListener {
             signUpUser()
         }
 
@@ -54,10 +40,10 @@ class RegistrationFormActivity : AppCompatActivity() {
     }
 
     private fun signUpUser() {
-        val email = etEmail.text.toString()
-        val contact = etContact.text.toString()
-        val pass = etPassword.text.toString()
-        val confirmPassword = etConfPassword.text.toString()
+        val email = binding.etEmail.text.toString()
+        val contact = binding.etContact.text.toString()
+        val pass = binding.etPassword.text.toString()
+        val confirmPassword = binding.etConfPassword.text.toString()
         val accountType = intent.getStringExtra("ACCOUNT_TYPE").toString();
         // check pass
         if (email.isBlank() ) {

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder.DeathRecipient
@@ -19,12 +20,16 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import com.example.iymn.Fragments.CropFragment
 import com.example.iymn.R
+import com.example.iymn.databinding.ActivityDonationFormBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -38,15 +43,8 @@ import java.util.Locale
 import java.util.UUID
 
 class DonationFormActivity : AppCompatActivity() {
-    lateinit var etVegName: EditText
-    lateinit var etQuantity: EditText
-    lateinit var etRecipient: Spinner
-    lateinit var spinnerQuantityType: Spinner
-    lateinit var etAddress: EditText
-    lateinit var etDescription: EditText
-    private lateinit var btnInsertImg: ImageButton
-    private lateinit var btnDonate: Button
-    private lateinit var btnCropList: Button
+    private lateinit var binding: ActivityDonationFormBinding
+
     private lateinit var auth: FirebaseAuth
     private var selectedOptionNgo: String = ""
     private var selectedOptionQuantity: String = ""
@@ -54,26 +52,14 @@ class DonationFormActivity : AppCompatActivity() {
     lateinit var db: FirebaseFirestore
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private lateinit var camLauncher: ActivityResultLauncher<Intent>
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_donation_form)
+        binding = ActivityDonationFormBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // View Bindings
-        etRecipient = findViewById(R.id.etRecipient)
-        btnCropList = findViewById(R.id.btnCropList)
-        spinnerQuantityType = findViewById(R.id.spinnerQuantityType)
-        etQuantity = findViewById(R.id.etQuantity)
-        etVegName = findViewById(R.id.etVegName)
-        etAddress = findViewById(R.id.etAddress)
-        etDescription = findViewById(R.id.etDescription)
-        btnInsertImg = findViewById(R.id.btnInsertImg)
-        btnDonate = findViewById(R.id.btnDonate)
         val fragmentContainer: FrameLayout = findViewById(R.id.fragmentContainer)
-//        ivVegImage = findViewById(R.id.ivVegImg)
 
-        // Retrieve text from EditTexts when needed
-
-        // Initialising auth object
         auth = FirebaseAuth.getInstance()
 
         db = Firebase.firestore
@@ -81,7 +67,6 @@ class DonationFormActivity : AppCompatActivity() {
         // Define your list of options
         val ngoOptions = arrayOf("Cordillera Youth Center", "Zero Waste Baguio")
         val quantityOptions = arrayOf("Kg", "Sack/s", "Piece/s", "Ton/s")
-
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         val ngoAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, ngoOptions)
@@ -92,11 +77,41 @@ class DonationFormActivity : AppCompatActivity() {
         quantityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         // Apply the adapter to the spinner
-        etRecipient.adapter = ngoAdapter
-        spinnerQuantityType.adapter = quantityAdapter
+        binding.etRecipient.adapter = ngoAdapter
+        binding.spinnerQuantityType.adapter = quantityAdapter
+
+        val headerIcon: ImageView = findViewById(R.id.customHeaderIcon)
+        val headerText: TextView = findViewById(R.id.customHeaderText)
+
+        headerIcon.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        headerText.setText("Donation Form")
+
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNav)
+        bottomNavigationView.setOnItemSelectedListener  { menuItem  ->
+            when (menuItem.itemId) {
+                R.id.navigation_home -> {
+                    startNewActivity(DashboardActivity::class.java)
+                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,R.anim.slide_in_right,R.anim.slide_out_left)
+                    true
+                }
+                R.id.navigation_donate -> {
+                    startNewActivity(DonationFormActivity::class.java)
+                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,R.anim.slide_in_right,R.anim.slide_out_left)
+                    true
+                }
+                R.id.navigation_profile -> {
+                    startNewActivity(ProfileActivity::class.java)
+                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,R.anim.slide_in_right,R.anim.slide_out_left)
+                    true
+                }
+                else -> false
+            }
+        }
 
         // Set a listener to handle item selections
-        etRecipient.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.etRecipient.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,
                 view: View?,
@@ -111,8 +126,9 @@ class DonationFormActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 // Handle no selection if needed
             }
-        }// Set a listener to handle item selections
-        spinnerQuantityType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        }
+
+        binding.spinnerQuantityType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,
                 view: View?,
@@ -129,10 +145,10 @@ class DonationFormActivity : AppCompatActivity() {
             }
         }
 
-        btnInsertImg.setOnClickListener {
+        binding.btnInsertImg.setOnClickListener {
             showImageSourceDialog()
         }
-        btnCropList.setOnClickListener {
+        binding.btnCropList.setOnClickListener {
             fragmentContainer.visibility = View.VISIBLE
             val fragment = CropFragment()
             supportFragmentManager.beginTransaction()
@@ -149,7 +165,7 @@ class DonationFormActivity : AppCompatActivity() {
 
         supportFragmentManager.setFragmentResultListener("cropSelection", this) { _, result ->
             val selectedCropName = result.getString("selectedCropName", "")
-            etVegName.setText(selectedCropName)
+            binding.etVegName.setText(selectedCropName)
         }
 
         launcher = registerForActivityResult(
@@ -160,7 +176,7 @@ class DonationFormActivity : AppCompatActivity() {
                 if (data != null) {
                     val imageUri = data.data
                     selectedImage = imageUri
-                    btnInsertImg.setImageURI(imageUri)
+                    binding.btnInsertImg.setImageURI(imageUri)
                 }
             }
             else{
@@ -176,7 +192,7 @@ class DonationFormActivity : AppCompatActivity() {
                 if (data != null) {
                     val tempUri = imageBitmap?.let { getImageUri(this@DonationFormActivity, it) }
                     selectedImage = tempUri
-                    btnInsertImg.setImageURI(tempUri)
+                    binding.btnInsertImg.setImageURI(tempUri)
                 }
             }
             else{
@@ -184,11 +200,11 @@ class DonationFormActivity : AppCompatActivity() {
             }
         }
 
-        btnDonate.setOnClickListener {
-            val vegNameString = etVegName.text.toString()
-            val weightString = etQuantity.text.toString()
-            val addressString = etAddress.text.toString()
-            val descriptionString = etDescription.text.toString()
+        binding.btnDonate.setOnClickListener {
+            val vegNameString = binding.etVegName.text.toString()
+            val weightString = binding.etQuantity.text.toString()
+            val addressString = binding.etAddress.text.toString()
+            val descriptionString = binding.etDescription.text.toString()
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
             val currentDateTime = dateFormat.format(Date())
             val status = "PENDING"
@@ -289,11 +305,11 @@ class DonationFormActivity : AppCompatActivity() {
                     .setMessage("Donation submitted successfully")
                     .setPositiveButton("OK") { dialog, _ ->
                         // Clear form fields here
-                        etVegName.setText("")
-                        etAddress.setText("")
-                        etDescription.setText("")
-                        etQuantity.setText("")
-                        btnInsertImg.setImageResource(R.drawable.ic_insert_img)
+                        binding.etVegName.setText("")
+                        binding.etAddress.setText("")
+                        binding.etDescription.setText("")
+                        binding.etQuantity.setText("")
+                        binding.btnInsertImg.setImageResource(R.drawable.ic_insert_img)
                         // Clear other fields similarly
                         dialog.dismiss() // Dismiss dialog
                     }
@@ -338,6 +354,11 @@ class DonationFormActivity : AppCompatActivity() {
         }
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
+    }
+
+    private fun startNewActivity(activityClass: Class<*>) {
+        val intent = Intent(this, activityClass)
+        startActivity(intent)
     }
 
 }

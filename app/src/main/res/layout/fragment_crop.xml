@@ -9,7 +9,6 @@
         android:id="@+id/cropRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="600dp"
-        android:padding="8dp"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/btnAddCrop"
         app:layout_constraintEnd_toEndOf="parent"
