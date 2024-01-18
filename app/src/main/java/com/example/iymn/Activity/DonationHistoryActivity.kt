@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.iymn.Adapters.VegItemAdapter
 import com.example.iymn.Models.VegItemViewModel
 import com.example.iymn.R
+import com.example.iymn.databinding.ActivityDonationHistoryBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,6 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class DonationHistoryActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityDonationHistoryBinding
     private val db = FirebaseFirestore.getInstance()
     private lateinit var adapter: VegItemAdapter
     val dataList: MutableList<VegItemViewModel> = ArrayList()
@@ -24,7 +26,8 @@ class DonationHistoryActivity : AppCompatActivity() {
     private var currentUser: FirebaseUser? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_donation_history)
+        binding = ActivityDonationHistoryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
         currentUser = auth.currentUser

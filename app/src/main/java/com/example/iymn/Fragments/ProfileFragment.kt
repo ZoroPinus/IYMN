@@ -9,15 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.example.iymn.Activity.DashboardActivity
-import com.example.iymn.Activity.DonationFormActivity
 import com.example.iymn.Activity.MainActivity
-import com.example.iymn.Activity.ProfileActivity
 import com.example.iymn.Activity.SetUpProfileActivity
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentProfileBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso

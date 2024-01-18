@@ -1,20 +1,14 @@
 package com.example.iymn.Adapters
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.iymn.Activity.DonationDetailsActivity
-import com.example.iymn.Activity.DonationHistoryActivity
 import com.example.iymn.Models.VegItemViewModel
 import com.example.iymn.R
-import com.google.firebase.storage.FirebaseStorage
 
 class VegItemAdapter(private var mList: List<VegItemViewModel>) : RecyclerView.Adapter<VegItemAdapter.ViewHolder>() {
     // Click listener interface

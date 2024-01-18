@@ -76,5 +76,7 @@ dependencies {
     implementation ("com.squareup.picasso:picasso:2.8")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+
 
 }
