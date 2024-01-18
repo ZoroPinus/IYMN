@@ -1,5 +1,6 @@
 package com.example.iymn.Activity
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -8,10 +9,15 @@ import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import com.example.iymn.Fragments.AdminDashboardFragment
+import com.example.iymn.Fragments.DonationFormFragment
 import com.example.iymn.Fragments.DonorDashboardFragment
 import com.example.iymn.Fragments.NGODashboardFragment
+import com.example.iymn.Fragments.ProfileFragment
+import com.example.iymn.Models.UserType
 import com.example.iymn.R
+import com.example.iymn.Utils.UserRepository
 import com.example.iymn.databinding.ActivityDashboardBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -21,6 +27,8 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDashboardBinding
     private lateinit var auth: FirebaseAuth
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var userRepository: UserRepository
+    private lateinit var userId: String
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,85 +36,75 @@ class DashboardActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
+        userRepository = UserRepository()
 
         val currentUser = auth.currentUser
-        if (currentUser != null) {
-            val userId = currentUser.uid // Get current user's UID
-            fetchUserData(userId) // Fetch user data using the UID
-        } else {
-            finish()
-        }
+
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNav)
         bottomNavigationView.setOnItemSelectedListener  { menuItem  ->
             when (menuItem.itemId) {
                 R.id.navigation_home -> {
-                    startNewActivity(DashboardActivity::class.java)
-                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,R.anim.slide_in_right,R.anim.slide_out_left)
+                    userRepository.getUserData(userId,
+                        onUserLoaded = { user ->
+                            when (user.userType) {
+                                is UserType.Admin -> {
+                                    replaceFragment(AdminDashboardFragment())
+                                }
+                                is UserType.Donor -> {
+                                    replaceFragment(DonorDashboardFragment())
+                                }
+                                is UserType.Ngo -> {
+                                    replaceFragment(NGODashboardFragment())
+                                }
+                            }
+                        },
+                        onError = { exception ->
+                            // Handle error loading user data
+                            Log.e(TAG, "Error loading user data: $exception")
+                        }
+                    )
                     true
                 }
                 R.id.navigation_donate -> {
-                    startNewActivity(DonationFormActivity::class.java)
-                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,R.anim.slide_in_right,R.anim.slide_out_left)
+                    replaceFragment(DonationFormFragment())
                     true
                 }
                 R.id.navigation_profile -> {
-                    startNewActivity(ProfileActivity::class.java)
-                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,R.anim.slide_in_right,R.anim.slide_out_left)
+                    replaceFragment(ProfileFragment())
                     true
                 }
                 else -> false
             }
         }
-    }
 
-    private fun fetchUserData(userId: String) {
-        db.collection("users")
-            .document(userId)
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                val data = documentSnapshot.data
-                if (data != null) {
-                    val name = data["email"] as String
-                    val accountType = data["accountType"] as String
-                    // Assuming you have TextViews to display this data
-                    val tvUsername: TextView = findViewById(R.id.tvWelcomeUser)
-                    val tvAccountType: TextView = findViewById(R.id.tvAccType)
-                    tvUsername.text = getString(R.string.welcome_user, name)
-                    tvAccountType.text = getString(R.string.account_type, accountType)
-                    displayFragmentForAccountType(accountType)
-                } else {
-                    Log.d("DashboardActivity", "No such document")
+        if (currentUser != null) {
+            userId = currentUser.uid // Get current user's UID
+            userRepository.getUserData(userId,
+                onUserLoaded = { user ->
+                    when (user.userType) {
+                        is UserType.Admin -> {
+                            replaceFragment(AdminDashboardFragment())
+                        }
+                        is UserType.Donor -> {
+                            replaceFragment(DonorDashboardFragment())
+                        }
+                        is UserType.Ngo -> {
+                            replaceFragment(NGODashboardFragment())
+                        }
+                    }
+                },
+                onError = { exception ->
+                    // Handle error loading user data
+                    Log.e(TAG, "Error loading user data: $exception")
                 }
-            }
-            .addOnFailureListener { e ->
-                Log.w("DashboardActivity", "Error fetching user data", e)
-                Toast.makeText(this, "Error fetching user data", Toast.LENGTH_SHORT).show()
-            }
+            ) // Fetch user data using the UID
+        } else {
+            finish()
+        }
     }
 
-    private fun displayFragmentForAccountType(accountType: String) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        when (accountType) {
-            "Admin" -> {
-                val adminFragment = AdminDashboardFragment()
-                fragmentTransaction.replace(R.id.fragmentContainer, adminFragment)
-            }
-            "Donor" -> {
-                val donorFragment = DonorDashboardFragment()
-                fragmentTransaction.replace(R.id.fragmentContainer, donorFragment)
-            }
-            "NGO" -> {
-                val ngoFragment = NGODashboardFragment()
-                fragmentTransaction.replace(R.id.fragmentContainer, ngoFragment)
-            }
-            else -> {
-            }
-        }
-        fragmentTransaction.commit()
-    }
-    private fun startNewActivity(activityClass: Class<*>) {
-        val intent = Intent(this, activityClass)
-        startActivity(intent)
+    private fun replaceFragment(fragment: Fragment){
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer,fragment).commit()
     }
 }

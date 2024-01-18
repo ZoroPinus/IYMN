@@ -56,7 +56,7 @@ class CropFragment : Fragment() {
             val fragmentTransaction = fragmentManager.beginTransaction()
 
             // Replace the current fragment with the new fragment
-            fragmentTransaction.replace(R.id.fragmentContainer, newFragment)
+            fragmentTransaction.replace(R.id.cropListFragmentContainer, newFragment)
 
             // Optional: Add to back stack for handling back navigation
             fragmentTransaction.addToBackStack(null)

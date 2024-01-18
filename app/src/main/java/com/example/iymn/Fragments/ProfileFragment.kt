@@ -1,31 +1,46 @@
-package com.example.iymn.Activity
+package com.example.iymn.Fragments
 
 import android.content.Intent
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import com.example.iymn.Activity.DashboardActivity
+import com.example.iymn.Activity.DonationFormActivity
+import com.example.iymn.Activity.MainActivity
+import com.example.iymn.Activity.ProfileActivity
+import com.example.iymn.Activity.SetUpProfileActivity
 import com.example.iymn.R
-import com.example.iymn.databinding.ActivityProfileBinding
+import com.example.iymn.databinding.FragmentProfileBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 
-class ProfileActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityProfileBinding
+
+class ProfileFragment : Fragment() {
+    private lateinit var binding: FragmentProfileBinding
     private lateinit var auth: FirebaseAuth
     private val db = FirebaseFirestore.getInstance()
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityProfileBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        // Inflate the layout for this fragment
+        binding = FragmentProfileBinding.inflate(inflater, container, false)
 
+
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
 
         val currentUser = auth.currentUser
@@ -34,42 +49,22 @@ class ProfileActivity : AppCompatActivity() {
             val userId = currentUser.uid // Get current user's UID
             fetchUserData(userId) // Fetch user data using the UID
         } else {
-            Toast.makeText(this, "You are logged Out", Toast.LENGTH_SHORT).show()
-        }
-        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNav)
-        bottomNavigationView.setOnItemSelectedListener  { menuItem  ->
-            when (menuItem.itemId) {
-                R.id.navigation_home -> {
-                    startNewActivity(DashboardActivity::class.java)
-                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,R.anim.slide_in_right,R.anim.slide_out_left)
-                    true
-                }
-                R.id.navigation_donate -> {
-                    startNewActivity(DonationFormActivity::class.java)
-                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,R.anim.slide_in_right,R.anim.slide_out_left)
-                    true
-                }
-                R.id.navigation_profile -> {
-                    startNewActivity(ProfileActivity::class.java)
-                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,R.anim.slide_in_right,R.anim.slide_out_left)
-                    true
-                }
-                else -> false
-            }
+            Toast.makeText(requireContext(), "You are logged Out", Toast.LENGTH_SHORT).show()
         }
 
+
         binding.btnToEditProfile.setOnClickListener {
-            startActivity(Intent(this,SetUpProfileActivity::class.java))
+            startActivity(Intent(requireContext(), SetUpProfileActivity::class.java))
         }
         binding.btnToAboutUs.setOnClickListener {
-            Toast.makeText(this, "Coming Soon", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Coming Soon", Toast.LENGTH_SHORT).show()
         }
         binding.btnLogout.setOnClickListener {
             logout()
         }
     }
     private fun fetchUserData(userId: String) {
-        val ivProfileImg: ImageView = findViewById(R.id.ivProfileImg)
+        val ivProfileImg: ImageView = requireView().findViewById(R.id.ivProfileImg)
 
         db.collection("users")
             .document(userId)
@@ -99,7 +94,7 @@ class ProfileActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 Log.w("ProfileActivity", "Error fetching user data", e)
-                Toast.makeText(this, "Error fetching user data", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error fetching user data", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -121,13 +116,11 @@ class ProfileActivity : AppCompatActivity() {
     }
     private fun logout() {
         auth.signOut() // Sign out the current user
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(requireContext(), MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
-        finishAffinity()
+        requireActivity().finishAffinity()
     }
-    private fun startNewActivity(activityClass: Class<*>) {
-        val intent = Intent(this, activityClass)
-        startActivity(intent)
-    }
+
+
 }

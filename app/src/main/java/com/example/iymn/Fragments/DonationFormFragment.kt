@@ -1,35 +1,27 @@
-package com.example.iymn.Activity
+package com.example.iymn.Fragments
 
-import android.content.ClipDescription
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.IBinder.DeathRecipient
 import android.provider.MediaStore
 import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import com.example.iymn.Fragments.CropFragment
+import androidx.appcompat.app.AppCompatActivity
 import com.example.iymn.R
-import com.example.iymn.databinding.ActivityDonationFormBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.iymn.databinding.FragmentDonationFormBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -37,14 +29,12 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
-class DonationFormActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityDonationFormBinding
-
+class DonationFormFragment : Fragment() {
+    private lateinit var binding: FragmentDonationFormBinding
     private lateinit var auth: FirebaseAuth
     private var selectedOptionNgo: String = ""
     private var selectedOptionQuantity: String = ""
@@ -52,14 +42,18 @@ class DonationFormActivity : AppCompatActivity() {
     lateinit var db: FirebaseFirestore
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private lateinit var camLauncher: ActivityResultLauncher<Intent>
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityDonationFormBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        val fragmentContainer: FrameLayout = findViewById(R.id.fragmentContainer)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        // Inflate the layout for this fragment
+        binding = FragmentDonationFormBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
 
         db = Firebase.firestore
@@ -69,8 +63,8 @@ class DonationFormActivity : AppCompatActivity() {
         val quantityOptions = arrayOf("Kg", "Sack/s", "Piece/s", "Ton/s")
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        val ngoAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, ngoOptions)
-        val quantityAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, quantityOptions)
+        val ngoAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, ngoOptions)
+        val quantityAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, quantityOptions)
 
         // Specify the layout to use when the list of choices appears
         ngoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -80,35 +74,14 @@ class DonationFormActivity : AppCompatActivity() {
         binding.etRecipient.adapter = ngoAdapter
         binding.spinnerQuantityType.adapter = quantityAdapter
 
-        val headerIcon: ImageView = findViewById(R.id.customHeaderIcon)
-        val headerText: TextView = findViewById(R.id.customHeaderText)
+        val headerIcon: ImageView = requireView().findViewById(R.id.customHeaderIcon)
+        val headerText: TextView = requireView().findViewById(R.id.customHeaderText)
 
         headerIcon.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
         headerText.setText("Donation Form")
 
-        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNav)
-        bottomNavigationView.setOnItemSelectedListener  { menuItem  ->
-            when (menuItem.itemId) {
-                R.id.navigation_home -> {
-                    startNewActivity(DashboardActivity::class.java)
-                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,R.anim.slide_in_right,R.anim.slide_out_left)
-                    true
-                }
-                R.id.navigation_donate -> {
-                    startNewActivity(DonationFormActivity::class.java)
-                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,R.anim.slide_in_right,R.anim.slide_out_left)
-                    true
-                }
-                R.id.navigation_profile -> {
-                    startNewActivity(ProfileActivity::class.java)
-                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,R.anim.slide_in_right,R.anim.slide_out_left)
-                    true
-                }
-                else -> false
-            }
-        }
 
         // Set a listener to handle item selections
         binding.etRecipient.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -149,21 +122,21 @@ class DonationFormActivity : AppCompatActivity() {
             showImageSourceDialog()
         }
         binding.btnCropList.setOnClickListener {
-            fragmentContainer.visibility = View.VISIBLE
+            binding.cropListFragmentContainer.visibility = View.VISIBLE
             val fragment = CropFragment()
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
+            childFragmentManager.beginTransaction()
+                .replace(R.id.cropListFragmentContainer, fragment)
                 .addToBackStack(null)
                 .commit()
         }
-        supportFragmentManager.addOnBackStackChangedListener {
-            if (supportFragmentManager.backStackEntryCount == 0) {
+        childFragmentManager.addOnBackStackChangedListener {
+            if (childFragmentManager.backStackEntryCount == 0) {
                 // If back stack is empty, hide the FrameLayout
-                fragmentContainer.visibility = View.GONE
+                binding.cropListFragmentContainer.visibility = View.GONE
             }
         }
 
-        supportFragmentManager.setFragmentResultListener("cropSelection", this) { _, result ->
+        childFragmentManager.setFragmentResultListener("cropSelection", this) { _, result ->
             val selectedCropName = result.getString("selectedCropName", "")
             binding.etVegName.setText(selectedCropName)
         }
@@ -171,7 +144,7 @@ class DonationFormActivity : AppCompatActivity() {
         launcher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            if (result.resultCode == RESULT_OK) {
+            if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 val data = result.data
                 if (data != null) {
                     val imageUri = data.data
@@ -180,23 +153,23 @@ class DonationFormActivity : AppCompatActivity() {
                 }
             }
             else{
-                Toast.makeText(this, "result not ok", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "result not ok", Toast.LENGTH_SHORT).show()
             }
         }
         camLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            if (result.resultCode == RESULT_OK) {
+            if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 val data = result.data
                 val imageBitmap: Bitmap? = data?.extras?.getParcelable("data") as Bitmap?
                 if (data != null) {
-                    val tempUri = imageBitmap?.let { getImageUri(this@DonationFormActivity, it) }
+                    val tempUri = imageBitmap?.let { getImageUri(requireContext(), it) }
                     selectedImage = tempUri
                     binding.btnInsertImg.setImageURI(tempUri)
                 }
             }
             else{
-                Toast.makeText(this, "result not ok", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "result not ok", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -210,7 +183,9 @@ class DonationFormActivity : AppCompatActivity() {
             val status = "PENDING"
             submitDonation(vegNameString, selectedImage, descriptionString, addressString, weightString, selectedOptionNgo, selectedOptionQuantity, currentDateTime, status)
         }
+
     }
+
     private fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
         val bytes = ByteArrayOutputStream()
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
@@ -287,7 +262,7 @@ class DonationFormActivity : AppCompatActivity() {
             }
         }.addOnFailureListener { e ->
             val errorMessage = "Error saving user data: ${e.message}"
-            Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Upload Failed", Toast.LENGTH_SHORT).show()
             Log.e("Firestore", errorMessage)
         }
     }
@@ -299,8 +274,8 @@ class DonationFormActivity : AppCompatActivity() {
         // Store the image URL in Firestore
         docRef.update("image", imageUrl)
             .addOnSuccessListener {
-                Toast.makeText(this, "Upload stored successfully", Toast.LENGTH_SHORT).show()
-                val successDialog = AlertDialog.Builder(this)
+                Toast.makeText(requireContext(), "Upload stored successfully", Toast.LENGTH_SHORT).show()
+                val successDialog = AlertDialog.Builder(requireContext())
                     .setTitle("Success")
                     .setMessage("Donation submitted successfully")
                     .setPositiveButton("OK") { dialog, _ ->
@@ -318,7 +293,7 @@ class DonationFormActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 val errorMessage = "Error saving user data: ${e.message}"
-                Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Upload Failed", Toast.LENGTH_SHORT).show()
                 Log.e("Firestore", errorMessage)
             }
     }
@@ -332,7 +307,7 @@ class DonationFormActivity : AppCompatActivity() {
     }
 
     private fun showImageSourceDialog() {
-        val dialog = AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(requireContext())
         dialog.setTitle("Choose Image Source")
         dialog.setMessage("Take picture or choose from gallery?")
         dialog.setPositiveButton("Take Picture") { _, _ ->
@@ -344,7 +319,7 @@ class DonationFormActivity : AppCompatActivity() {
         dialog.show()
     }
     private fun showEmptyFieldDialog(message:String) {
-        val alertDialogBuilder = AlertDialog.Builder(this)
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.apply {
             setTitle("Empty Fields")
             setMessage(message)
@@ -354,11 +329,6 @@ class DonationFormActivity : AppCompatActivity() {
         }
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
-    }
-
-    private fun startNewActivity(activityClass: Class<*>) {
-        val intent = Intent(this, activityClass)
-        startActivity(intent)
     }
 
 }
