@@ -1,6 +1,5 @@
 package com.example.iymn.Adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.iymn.Models.NGOItemViewModel
 import com.example.iymn.R
-import com.google.firebase.storage.FirebaseStorage
 
 class NGOItemAdapter : ListAdapter<NGOItemViewModel, NGOItemAdapter.ViewHolder>(NGOItemDiffCallback) {
     private var onItemClickListener: ((String) -> Unit)? = null
