@@ -39,17 +39,21 @@ class DonationDetailsActivity : AppCompatActivity() {
 
         fetchDataBasedOnUserType()
 
+        val headerIcon: ImageView = findViewById(R.id.customHeaderIcon)
+        val headerText: TextView = findViewById(R.id.customHeaderText)
+
+        headerIcon.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        headerText.setText("Donation Details")
+
         binding.btnAccept.setOnClickListener{
             documentUid?.let { it1 -> updateFieldInFirestore(it1, "ACCEPTED") }
         }
         binding.btnReject.setOnClickListener{
             documentUid?.let { it1 -> updateFieldInFirestore(it1, "REJECTED") }
         }
-
     }
-
-
-
     private fun fetchDataFromFirestore(donationId: String, imageView: ImageView) {
         db.collection("donations")
             .document(donationId)

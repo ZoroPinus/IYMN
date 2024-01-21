@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.iymn.Activity.MainActivity
 import com.example.iymn.Activity.SetUpProfileActivity
 import com.example.iymn.R
@@ -67,18 +68,17 @@ class ProfileFragment : Fragment() {
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
                     val data = documentSnapshot.data
-                    val name = data?.get("email") as String
+                    val name = data?.get("name") as String
                     val accountType = data?.get("accountType") as? String
-                    val imagePath = data?.get("image") as? String
-                    Log.d("ProfileActivity", "$name")
+                    val imagePath = data?.get("profileImageUrl") as? String
                     if (name != null && accountType != null ) {
                         binding.tvProfileName.text = name
                         binding.tvSubName.text = accountType
-                        Picasso.get()
+                        Glide.with(requireContext())
                             .load(imagePath)
-                            .placeholder(R.drawable.ic_insert_img) // Placeholder image
-                            .error(R.drawable.ic_folder) // Error image
-                            .into(ivProfileImg) // Load into the specified ImageView
+                            .placeholder(R.drawable.ic_profile) // Placeholder image while loading
+                            .error(R.drawable.ic_insert_img) // Image to show if loading fails
+                            .into(binding.ivProfileImg)
                         displayNameForAccountType(accountType)
                     } else {
                         Log.d("ProfileActivity", "Data fields are null")

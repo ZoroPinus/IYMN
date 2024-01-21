@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.iymn.Activity.DonationDetailsActivity
 import com.example.iymn.Activity.DonationHistoryActivity
 import com.example.iymn.Activity.FeedbackActivity
@@ -124,11 +125,17 @@ class DonorDashboardFragment : Fragment() {
                 if (data != null) {
                     val name = data["name"] as String
                     val email = data["email"] as String
+                    val profileImg = data["profileImageUrl"] as String
                     if(name == null){
                         displayName = email
                     }else{
                         displayName = name
                     }
+                    Glide.with(requireContext())
+                        .load(profileImg)
+                        .placeholder(R.drawable.ic_profile) // Placeholder image while loading
+                        .error(R.drawable.ic_insert_img) // Image to show if loading fails
+                        .into(binding.profileIconImageView)
                     // Assuming you have TextViews to display this data
                     binding.tvWelcomeUser.text = displayName
                     fetchForDonor()
@@ -179,8 +186,4 @@ class DonorDashboardFragment : Fragment() {
         val date = inputFormat.parse(dateString)
         return outputFormat.format(date)
     }
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        binding = null
-//    }
 }
