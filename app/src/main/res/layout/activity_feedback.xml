@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.FeedbackActivity"
+    android:orientation="vertical">
+    <include layout="@layout/custom_header"
+        android:id="@id/headerLayout"/>
+    <androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:layout_margin="8dp"
+        android:layout_gravity="center_vertical"
+        android:elevation="2dp"
+        app:cardCornerRadius="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RATE YOUR EXPERIENCE"
+                android:fontFamily="@font/montserrat_bold"
+                android:textSize="23sp"
+                android:textColor="@color/black"
+                />
+            <RatingBar
+                android:id="@+id/rBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:stepSize="0.5"
+                android:layout_gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tell us what can be improved on"
+                android:fontFamily="@font/montserrat_bold"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:paddingTop="10dp"
+                />
+            <EditText
+                android:id="@+id/etFeedbackDetails"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/edittext_custom_bg"
+                android:hint="Write Here"
+                android:inputType="textMultiLine"
+                android:padding="10dp"
+                android:typeface="monospace" />
+
+            <Button
+                android:id="@+id/btnSubmitFeedback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Submit"
+                android:fontFamily="@font/montserrat"
+                android:textSize="20sp"
+                android:background="@drawable/custom_btn"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

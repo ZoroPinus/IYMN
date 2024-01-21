@@ -83,6 +83,8 @@
         android:layout_marginTop="52dp"
         android:text="LOGIN"
         android:background="@drawable/custom_btn"
+        android:fontFamily="@font/montserrat"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

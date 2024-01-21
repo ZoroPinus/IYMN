@@ -26,7 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 class DashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDashboardBinding
     private lateinit var auth: FirebaseAuth
-    private val db = FirebaseFirestore.getInstance()
     private lateinit var userRepository: UserRepository
     private lateinit var userId: String
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -39,7 +38,6 @@ class DashboardActivity : AppCompatActivity() {
         userRepository = UserRepository()
 
         val currentUser = auth.currentUser
-
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNav)
         bottomNavigationView.setOnItemSelectedListener  { menuItem  ->

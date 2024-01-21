@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.iymn.Activity.DonationDetailsActivity
 import com.example.iymn.Activity.DonationHistoryActivity
+import com.example.iymn.Activity.FeedbackActivity
+import com.example.iymn.Activity.FoodMapActivity
 import com.example.iymn.Activity.NGOPartnersActivity
 import com.example.iymn.Adapters.DonatedItemAdapter
 import com.example.iymn.Adapters.VegItemAdapter
@@ -20,6 +22,7 @@ import com.example.iymn.Models.DonatedItem
 import com.example.iymn.Models.VegItemViewModel
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentDonorDashboardBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,6 +37,7 @@ class DonorDashboardFragment : Fragment() {
     private lateinit var adapter: DonatedItemAdapter
     val dataList: MutableList<DonatedItem> = ArrayList()
     private var currentUser: FirebaseUser? = null
+    private lateinit var displayName: String
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -95,10 +99,20 @@ class DonorDashboardFragment : Fragment() {
             )
         }
         binding.btnFoodMapDonor.setOnClickListener {
-            Toast.makeText(requireContext(), "Food Map", Toast.LENGTH_SHORT).show()
+            startActivity(
+                Intent(
+                    requireContext(),
+                    FoodMapActivity::class.java
+                )
+            )
         }
         binding.btnAddFeedbackDonor.setOnClickListener {
-            Toast.makeText(requireContext(), "Add Feedback", Toast.LENGTH_SHORT).show()
+            startActivity(
+                Intent(
+                    requireContext(),
+                    FeedbackActivity::class.java
+                )
+            )
         }
     }
     private fun fetchUserData(userId: String) {
@@ -108,9 +122,15 @@ class DonorDashboardFragment : Fragment() {
             .addOnSuccessListener { documentSnapshot ->
                 val data = documentSnapshot.data
                 if (data != null) {
-                    val name = data["email"] as String
+                    val name = data["name"] as String
+                    val email = data["email"] as String
+                    if(name == null){
+                        displayName = email
+                    }else{
+                        displayName = name
+                    }
                     // Assuming you have TextViews to display this data
-                    binding.tvWelcomeUser.text = name
+                    binding.tvWelcomeUser.text = displayName
                     fetchForDonor()
                 } else {
                     Log.d("DonorDashboardActivity", "No such document")
