@@ -17,10 +17,6 @@
         android:padding="8dp"
         android:rowCount="3">
 
-        <!-- Button 1 -->
-
-        <!-- Button 2 -->
-
         <Button
             android:id="@+id/btnReportsNGO"
             android:layout_width="135dp"
