@@ -6,11 +6,76 @@
     android:layout_height="match_parent"
     tools:context=".Activity.ReportsActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tableRecyclerView"
+    <include layout="@layout/custom_header"
+        android:id="@id/headerLayout"/>
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/report_table_item_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerLayout">
+
+        <TextView
+            android:id="@+id/btnToPending"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_btn_outlined"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/montserrat_bold"
+            android:padding="10dp"
+            android:text="PENDING"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/btnToAccepted"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_btn_outlined"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/montserrat_bold"
+            android:padding="10dp"
+            android:text="ACCEPTED"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/btnToRejected"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/custom_btn_outlined"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/montserrat_bold"
+            android:padding="10dp"
+            android:text="REJECTED"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tableRecyclerViewPending"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
+        app:layout_constraintVertical_bias="0.0"
+        tools:listitem="@layout/report_table_item_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
