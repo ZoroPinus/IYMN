@@ -1,9 +1,12 @@
 package com.example.iymn.Activity
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -11,6 +14,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.example.iymn.Models.NGOOption
 import com.example.iymn.R
 import com.example.iymn.databinding.ActivityRegistrationFormBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -21,22 +25,46 @@ import com.google.firebase.ktx.Firebase
 class RegistrationFormActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegistrationFormBinding
     private lateinit var auth: FirebaseAuth
+    private var selectedNgo: String = ""
+    private lateinit var ngoOptionsList: List<NGOOption>
     lateinit var db: FirebaseFirestore
+    lateinit var regType : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegistrationFormBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        regType = intent.getStringExtra("ACCOUNT_TYPE").toString()
+
+        if (regType == "Donor") {
+            binding.orgSelectContainer.visibility = View.GONE
+        } else {
+            // Show etSelectOrganzation for other account types
+            binding.orgSelectContainer.visibility = View.VISIBLE
+        }
+
+
         // Initialising auth object
         auth = FirebaseAuth.getInstance()
 
-        db = Firebase.firestore
-
+        db = FirebaseFirestore.getInstance()
+        fetchNGOOptionsFromFirestore()
         binding.btnRegister.setOnClickListener {
             signUpUser()
         }
 
-        fetchNGOPartnersFromFirestore()
+        binding.spinnerNGOOrg.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                // Handle the selected item here
+                selectedNgo = ngoOptionsList[position].id
+                binding.tvNGOOrg.text = ngoOptionsList[position].name
+                // Do something with the selected item
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Handle no selection if needed
+            }
+        }
     }
 
     private fun signUpUser() {
@@ -67,7 +95,11 @@ class RegistrationFormActivity : AppCompatActivity() {
             if (it.isSuccessful) {
                 val firebaseUser = auth.currentUser
                 val userId = firebaseUser?.uid.toString()
-                saveUserData(userId, email, contact, accountType)
+                if(regType == "Donor"){
+                    saveUserDataDonor(userId, email, contact, accountType)
+                }else{
+                    saveUserDataNgo(userId, email, contact, accountType, selectedNgo)
+                }
                 finish()
             } else {
                 Toast.makeText(this, "Signed Up Failed!", Toast.LENGTH_SHORT).show()
@@ -75,7 +107,7 @@ class RegistrationFormActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveUserData(userId: String, email:String, contact: String, accountType:String){
+    private fun saveUserDataDonor(userId: String, email:String, contact: String, accountType:String){
         val user = hashMapOf(
             "email" to email,
             "contact" to contact,
@@ -90,7 +122,34 @@ class RegistrationFormActivity : AppCompatActivity() {
                 Toast.makeText(this, "User data saved with custom ID to Firestore", Toast.LENGTH_SHORT).show()
 
                 // Navigate to DashboardScreen upon successful registration
-                val intent = Intent(this, DashboardActivity::class.java)
+                val intent = Intent(this, SetUpProfileActivity::class.java)
+                startActivity(intent)
+            }
+            .addOnFailureListener { e ->
+                // Handle errors
+                val errorMessage = "Error saving user data: ${e.message}"
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+                Log.e("Firestore", errorMessage)
+            }
+    }
+
+    private fun saveUserDataNgo(userId: String, email:String, contact: String, accountType:String, ngoOrg:String){
+        val user = hashMapOf(
+            "email" to email,
+            "contact" to contact,
+            "accountType" to accountType,
+            "NgoOrg" to ngoOrg,
+        )
+
+        val usersCollection = db.collection("users")
+        usersCollection.document(userId)
+            .set(user)
+            .addOnSuccessListener {
+                // Data written successfully
+                Toast.makeText(this, "User data saved with custom ID to Firestore", Toast.LENGTH_SHORT).show()
+
+                // Navigate to DashboardScreen upon successful registration
+                val intent = Intent(this, SetUpProfileActivity::class.java)
                 startActivity(intent)
             }
             .addOnFailureListener { e ->
@@ -126,30 +185,29 @@ class RegistrationFormActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    private fun fetchNGOPartnersFromFirestore() {
-        val db = Firebase.firestore
-        val partnersRef = db.collection("ngoPartners") // Assuming "ngoPartners" is the collection name
-
-        partnersRef.get()
-            .addOnSuccessListener { querySnapshot ->
-                val partnerNames = ArrayList<String>()
-                for (document in querySnapshot) {
-                    val partnerName = document.getString("partnerName") // Replace with your field name
-                    partnerName?.let {
-                        partnerNames.add(it)
-                    }
+    private fun fetchNGOOptionsFromFirestore() {
+        db.collection("ngoPartners")
+            .get()
+            .addOnSuccessListener { result ->
+                ngoOptionsList = result.documents.map { document ->
+                    val id = document.id
+                    val name = document.getString("ngoName") ?: ""
+                    NGOOption(id, name)
                 }
-                displayNGOPartnersInSpinner(partnerNames)
+
+                // Populate spinner with NGO options
+                populateSpinnerWithNGOOptions()
             }
-            .addOnFailureListener { e ->
-                // Handle failure
+            .addOnFailureListener { exception ->
+                // Handle errors
+                Log.w(TAG, "Error getting NGO options", exception)
             }
     }
 
-    private fun displayNGOPartnersInSpinner(partnerNames: ArrayList<String>) {
-        val spinnerNGOOrg: Spinner = findViewById(R.id.spinnerNGOOrg) // Replace with your Spinner ID
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, partnerNames)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerNGOOrg.adapter = adapter
+    private fun populateSpinnerWithNGOOptions() {
+        val ngoOptions = ngoOptionsList.map { it.name }.toTypedArray()
+        val ngoListAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, ngoOptions)
+        ngoListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerNGOOrg.adapter = ngoListAdapter
     }
 }

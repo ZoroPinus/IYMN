@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/greenPrimary"
+    android:background="@color/white"
     tools:context=".Fragments.AddNGOPartnerFragment">
     <!-- Body Section: Grid of 3x3 buttons -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -28,36 +28,33 @@
             >
             <EditText
                 android:id="@+id/etNGOName"
-                android:layout_width="250dp"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="5dp"
                 android:background="@drawable/edittext_custom_bg"
-                android:hint="NGO Name"
-                android:inputType="textAutoComplete"
                 android:padding="10dp"
-                android:typeface="monospace" />
-
-
+                android:inputType="text"
+                android:hint="NGO Name"
+                />
         </LinearLayout>
-
 
         <EditText
             android:id="@+id/etAddress"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginBottom="5dp"
-            android:background="@drawable/custom_btn"
-            android:paddingVertical="15dp"
+            android:background="@drawable/edittext_custom_bg"
+            android:padding="10dp"
             android:inputType="text"
-            android:hint="Address"/>
+            android:hint="Address(Building, Barangay, City, Province)"/>
 
         <EditText
             android:id="@+id/etContact"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/custom_btn"
-            android:paddingVertical="15dp"
+            android:layout_height="48dp"
             android:layout_marginBottom="5dp"
+            android:background="@drawable/edittext_custom_bg"
+            android:padding="10dp"
             android:inputType="number"
             android:hint="Contact"/>
 
@@ -67,12 +64,9 @@
             android:layout_height="170dp"
             android:layout_gravity="center"
             android:layout_alignParentEnd="true"
+            android:layout_marginVertical="10dp"
+            android:background="@drawable/custom_insert_img"
             android:src="@drawable/ic_insert_img" />
-        <!--        <Button-->
-        <!--            android:id="@+id/btnInsertImg"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:text="Insert Image"/>-->
 
         <Button
             android:id="@+id/btnProceed"

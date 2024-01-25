@@ -66,11 +66,11 @@ class ProfileFragment : Fragment() {
             .document(userId)
             .get()
             .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
                     val data = documentSnapshot.data
-                    val name = data?.get("name") as String
-                    val accountType = data?.get("accountType") as? String
-                    val imagePath = data?.get("profileImageUrl") as? String
+                if (data != null) {
+                    val name = data["name"] as String
+                    val accountType = data["accountType"] as String
+                    val imagePath = data["profileImageUrl"] as String
                     if (name != null && accountType != null ) {
                         binding.tvProfileName.text = name
                         binding.tvSubName.text = accountType

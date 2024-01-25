@@ -58,6 +58,9 @@ class DonationFormFragment : Fragment() {
 
         db = Firebase.firestore
 
+        val headerIcon: ImageView = requireView().findViewById(R.id.customHeaderIcon)
+        val headerText: TextView = requireView().findViewById(R.id.customHeaderText)
+
         // Define your list of options
         val ngoOptions = arrayOf("Cordillera Youth Center", "Zero Waste Baguio")
         val quantityOptions = arrayOf("Kg", "Sack/s", "Piece/s", "Ton/s")
@@ -74,8 +77,6 @@ class DonationFormFragment : Fragment() {
         binding.etRecipient.adapter = ngoAdapter
         binding.spinnerQuantityType.adapter = quantityAdapter
 
-        val headerIcon: ImageView = requireView().findViewById(R.id.customHeaderIcon)
-        val headerText: TextView = requireView().findViewById(R.id.customHeaderText)
 
         headerIcon.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()

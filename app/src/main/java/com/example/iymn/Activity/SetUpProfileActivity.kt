@@ -150,14 +150,7 @@ class SetUpProfileActivity : AppCompatActivity() {
                     // Update the user document in Firestore
                     userDoc.update(updates as Map<String, Any>)
                         .addOnSuccessListener {
-                            val successDialog = AlertDialog.Builder(this)
-                                .setTitle("Success")
-                                .setMessage("Profile changed successfully")
-                                .setPositiveButton("OK") { dialog, _ ->
-                                    dialog.dismiss() // Dismiss dialog
-                                }
-                                .create()
-                            successDialog.show()
+                            showSuccessFieldDialog()
                         }
                         .addOnFailureListener {
                             // Handle the failure
@@ -225,6 +218,25 @@ class SetUpProfileActivity : AppCompatActivity() {
             setMessage(message)
             setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun navigateToDashboardActivity() {
+        val intent = Intent(this, DashboardActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun showSuccessFieldDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Registration complete")
+            setMessage("Press OK to Login")
+            setPositiveButton("OK") { dialog, which ->
+                startActivity(Intent(this@SetUpProfileActivity, DashboardActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             }
         }
         val alertDialog = alertDialogBuilder.create()
