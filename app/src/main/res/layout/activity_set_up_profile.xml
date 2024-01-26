@@ -23,7 +23,16 @@
             android:src="@drawable/ic_profile"
             android:scaleType="centerCrop"
             />
+
     </androidx.cardview.widget.CardView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose an image"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:fontFamily="@font/montserrat"
+        />
 
     <!-- EditText inputs with labels -->
     <TextView
