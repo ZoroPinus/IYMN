@@ -3,13 +3,18 @@
     <style name="Base.Theme.IYMN" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/greenPrimary</item>
-        <item name="colorPrimaryVariant">@color/greenPrimary</item>
+        <item name="colorPrimaryVariant">@color/greenLight</item>
         <item name="colorOnPrimary">@color/white</item>
     </style>
 
     <style name="SlideActivityAnimation" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
         <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+    </style>
+
+
+    <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/black</item>
     </style>
 
     <style name="Theme.IYMN" parent="Base.Theme.IYMN" />

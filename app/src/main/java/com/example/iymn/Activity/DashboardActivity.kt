@@ -28,7 +28,6 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var userRepository: UserRepository
     private lateinit var userId: String
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
@@ -40,6 +39,8 @@ class DashboardActivity : AppCompatActivity() {
         val currentUser = auth.currentUser
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNav)
+        bottomNavigationView.itemActiveIndicatorHeight = 150; // Set the height of the active indicator
+        bottomNavigationView.itemActiveIndicatorWidth = 150; // Set the width of the active indicator
         bottomNavigationView.setOnItemSelectedListener  { menuItem  ->
             when (menuItem.itemId) {
                 R.id.navigation_home -> {

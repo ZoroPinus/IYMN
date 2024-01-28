@@ -81,8 +81,17 @@ class DonorDashboardFragment : Fragment() {
             Log.d("DonorDashboardActivity", "no current user error")
         }
         binding.btnDonateDonor.setOnClickListener {
-            Toast.makeText(requireContext(), "Food Map", Toast.LENGTH_SHORT).show()
+            val fragmentManager = parentFragmentManager
+            val transaction = fragmentManager.beginTransaction()
+            val fragment = DonationFormFragment()
+            transaction.replace(R.id.fragmentContainer, fragment)
+            transaction.addToBackStack(null) // Optional: Adds the transaction to the back stack
+            transaction.commit()
         }
+        binding.profileIconImageView.setOnClickListener {
+            replaceFragment(ProfileFragment())
+        }
+
         binding.btnDonationHistory.setOnClickListener {
             startActivity(
                 Intent(
@@ -185,5 +194,14 @@ class DonorDashboardFragment : Fragment() {
 
         val date = inputFormat.parse(dateString)
         return outputFormat.format(date)
+    }
+
+    private fun replaceFragment(fragment: Fragment) {
+        val fragmentManager = parentFragmentManager
+        val transaction = fragmentManager.beginTransaction()
+
+        transaction.replace(R.id.fragmentContainer, fragment)
+        transaction.addToBackStack(null) // Optional: Adds the transaction to the back stack
+        transaction.commit()
     }
 }

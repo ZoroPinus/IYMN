@@ -8,8 +8,7 @@
     android:padding="10dp"
     app:cardCornerRadius="5dp"
     app:cardUseCompatPadding="true"
-    android:layout_margin="5dp"
-    android:background="@color/white"
+    android:backgroundTint="@color/white"
     app:cardElevation="6dp">
 
 <LinearLayout
@@ -49,7 +48,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_semibold"
+            android:fontFamily="@font/montserrat_bold"
             android:gravity="center"
             android:text="Title"
             android:textSize="20sp" />
@@ -58,7 +57,7 @@
             android:id="@+id/tvItem1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
+            android:fontFamily="@font/montserrat"
             android:text="Item 1"
             android:textSize="16sp" />
 
@@ -66,7 +65,7 @@
             android:id="@+id/tvItem2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
+            android:fontFamily="@font/montserrat"
             android:text="Item 2"
             android:textSize="16sp" />
 
@@ -74,7 +73,7 @@
             android:id="@+id/tvItem3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
+            android:fontFamily="@font/montserrat"
             android:text="Item 3"
             android:textSize="16sp" />
 
@@ -82,7 +81,7 @@
             android:id="@+id/tvItem4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
+            android:fontFamily="@font/montserrat"
             android:text="Item 4"
             android:textSize="16sp" />
 

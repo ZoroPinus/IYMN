@@ -45,19 +45,12 @@
                 android:padding="10dp"
                 android:typeface="monospace" />
 
-            <TextView
-                android:id="@+id/btnCropList"
-                android:layout_width="wrap_content"
+
+            <Spinner
+                android:id="@+id/spinnerCropList"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="Crop List"
-                android:textColor="@color/greenPrimary"
-                android:padding="10dp"
-                android:textSize="16sp"
-                android:fontFamily="@font/montserrat_bold"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:focusable="true"
+                android:spinnerMode="dropdown"
                 />
         </LinearLayout>
 

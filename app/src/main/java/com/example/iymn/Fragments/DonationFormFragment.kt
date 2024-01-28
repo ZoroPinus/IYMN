@@ -1,5 +1,6 @@
 package com.example.iymn.Fragments
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -20,6 +21,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.iymn.Models.CropListOption
+import com.example.iymn.Models.NGOOption
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentDonationFormBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -36,8 +39,11 @@ import java.util.UUID
 class DonationFormFragment : Fragment() {
     private lateinit var binding: FragmentDonationFormBinding
     private lateinit var auth: FirebaseAuth
+    private var selectedOptionCropList: String = ""
     private var selectedOptionNgo: String = ""
     private var selectedOptionQuantity: String = ""
+    private lateinit var ngoOptionsList: List<NGOOption>
+    private lateinit var cropOptionsList: List<CropListOption>
     private var selectedImage: Uri? = null
     lateinit var db: FirebaseFirestore
     private lateinit var launcher: ActivityResultLauncher<Intent>
@@ -61,28 +67,20 @@ class DonationFormFragment : Fragment() {
         val headerIcon: ImageView = requireView().findViewById(R.id.customHeaderIcon)
         val headerText: TextView = requireView().findViewById(R.id.customHeaderText)
 
-        // Define your list of options
-        val ngoOptions = arrayOf("Cordillera Youth Center", "Zero Waste Baguio")
+        fetchCropListFromFirestore()
+        fetchNGOOptionsFromFirestore()
         val quantityOptions = arrayOf("Kg", "Sack/s", "Piece/s", "Ton/s")
 
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        val ngoAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, ngoOptions)
         val quantityAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, quantityOptions)
 
-        // Specify the layout to use when the list of choices appears
-        ngoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         quantityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        // Apply the adapter to the spinner
-        binding.etRecipient.adapter = ngoAdapter
         binding.spinnerQuantityType.adapter = quantityAdapter
-
 
         headerIcon.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
         headerText.setText("Donation Form")
-
 
         // Set a listener to handle item selections
         binding.etRecipient.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -93,7 +91,20 @@ class DonationFormFragment : Fragment() {
                 id: Long
             ) {
                 // Handle the selected item here
-                selectedOptionNgo = ngoOptions[position]
+                selectedOptionNgo = ngoOptionsList[position].id
+                // Do something with the selected item
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Handle no selection if needed
+            }
+        }
+
+        binding.spinnerCropList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                // Handle the selected item here
+                selectedOptionCropList = cropOptionsList[position].id
+                binding.etVegName.setText(cropOptionsList[position].name)
                 // Do something with the selected item
             }
 
@@ -122,14 +133,7 @@ class DonationFormFragment : Fragment() {
         binding.btnInsertImg.setOnClickListener {
             showImageSourceDialog()
         }
-        binding.btnCropList.setOnClickListener {
-            binding.cropListFragmentContainer.visibility = View.VISIBLE
-            val fragment = CropFragment()
-            childFragmentManager.beginTransaction()
-                .replace(R.id.cropListFragmentContainer, fragment)
-                .addToBackStack(null)
-                .commit()
-        }
+
         childFragmentManager.addOnBackStackChangedListener {
             if (childFragmentManager.backStackEntryCount == 0) {
                 // If back stack is empty, hide the FrameLayout
@@ -185,6 +189,55 @@ class DonationFormFragment : Fragment() {
             submitDonation(vegNameString, selectedImage, descriptionString, addressString, weightString, selectedOptionNgo, selectedOptionQuantity, currentDateTime, status)
         }
 
+    }
+    private fun fetchCropListFromFirestore() {
+        db.collection("crops")
+            .get()
+            .addOnSuccessListener { result ->
+                cropOptionsList = result.documents.map { document ->
+                    val id = document.id
+                    val name = document.getString("name") ?: ""
+                    CropListOption(id, name)
+                }
+
+                // Populate spinner with NGO options
+                populateSpinnerWithCropList()
+            }
+            .addOnFailureListener { exception ->
+                // Handle errors
+                Log.w(ContentValues.TAG, "Error getting NGO options", exception)
+            }
+    }
+
+    private fun populateSpinnerWithCropList() {
+        val cropOptions = cropOptionsList.map { it.name }.toTypedArray()
+        val cropOptionAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, cropOptions)
+        cropOptionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerCropList.adapter = cropOptionAdapter
+    }
+    private fun fetchNGOOptionsFromFirestore() {
+        db.collection("ngoPartners")
+            .get()
+            .addOnSuccessListener { result ->
+                ngoOptionsList = result.documents.map { document ->
+                    val id = document.id
+                    val name = document.getString("ngoName") ?: ""
+                    NGOOption(id, name)
+                }
+
+                // Populate spinner with NGO options
+                populateSpinnerWithNGOOptions()
+            }
+            .addOnFailureListener { exception ->
+                // Handle errors
+                Log.w(ContentValues.TAG, "Error getting NGO options", exception)
+            }
+    }
+    private fun populateSpinnerWithNGOOptions() {
+        val ngoOptions = ngoOptionsList.map { it.name }.toTypedArray()
+        val ngoListAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, ngoOptions)
+        ngoListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.etRecipient.adapter = ngoListAdapter
     }
 
     private fun getImageUri(inContext: Context, inImage: Bitmap): Uri {

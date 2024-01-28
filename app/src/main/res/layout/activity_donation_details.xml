@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/greenLight"
     tools:context=".Activity.DonationDetailsActivity">
 
     <include
@@ -21,6 +21,7 @@
         android:layout_margin="10dp"
         android:elevation="10dp"
         app:cardCornerRadius="20dp"
+        android:backgroundTint="@color/greenDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -44,11 +45,13 @@
                 android:src="@drawable/ic_insert_img" />
 
             <TextView
+android:fontFamily="@font/montserrat"
                 android:id="@+id/tvVegname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Vegetable name"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -59,18 +62,22 @@
                 android:paddingVertical="10dp">
 
                 <TextView
+android:fontFamily="@font/montserrat"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Donor:"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
+android:fontFamily="@font/montserrat"
                     android:id="@+id/tvDonor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -82,19 +89,23 @@
                 android:paddingVertical="10dp">
 
                 <TextView
+android:fontFamily="@font/montserrat"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Quantity:"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
+android:fontFamily="@font/montserrat"
                     android:id="@+id/tvQuantity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:textSize="16sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -105,20 +116,24 @@
                 android:paddingVertical="10dp">
 
                 <TextView
+android:fontFamily="@font/montserrat"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Date and Time Donated:"
                     android:textSize="16sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
 
                 <TextView
+android:fontFamily="@font/montserrat"
                     android:id="@+id/tvTimeDonated"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginTop="8dp"
                     android:textSize="16sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -129,19 +144,23 @@
                 android:paddingVertical="10dp">
 
                 <TextView
+android:fontFamily="@font/montserrat"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Contact Number:"
                     android:textSize="16sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
 
                 <TextView
+android:fontFamily="@font/montserrat"
                     android:id="@+id/tvContact"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:textSize="16sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -152,18 +171,22 @@
                 android:paddingVertical="10dp">
 
                 <TextView
+android:fontFamily="@font/montserrat"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Nearest NGO:"
                     android:textSize="16sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
 
                 <TextView
+android:fontFamily="@font/montserrat"
                     android:id="@+id/tvNGO"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -175,19 +198,23 @@
                 android:paddingVertical="10dp">
 
                 <TextView
+android:fontFamily="@font/montserrat"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Status:"
                     android:textSize="16sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
 
                 <TextView
+android:fontFamily="@font/montserrat"
                     android:id="@+id/tvStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:textSize="16sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
             </LinearLayout>
 

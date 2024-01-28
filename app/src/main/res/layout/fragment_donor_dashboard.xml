@@ -5,6 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragments.DonorDashboardFragment">
+    <FrameLayout
+        android:id="@+id/donateFragmentContainer"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -25,13 +30,14 @@
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_alignParentEnd="true"
+                android:focusable="true"
+                android:clickable="true"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/img_placeholder"
                 android:src="@drawable/ic_profile"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
 
             <LinearLayout
                 android:layout_width="200dp"
@@ -48,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat"
                     android:text="Hello,"
-                    android:textColor="@color/grayDark"
+                    android:textColor="@color/black"
                     android:textSize="18sp" />
 
                 <TextView
@@ -84,7 +90,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintHorizontal_weight="1"
                 android:layout_marginEnd="4dp"
-                android:alpha="0.5"
+                android:alpha="0.8"
                 android:scaleType="centerCrop"
                 android:src="@drawable/bg_card"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -106,45 +112,22 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="170dp"
+                        android:layout_width="200dp"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_extrabold"
                         android:text="Donate garden goodness"
-                        android:textColor="@color/gray"
-                        android:textSize="20sp" />
+                        android:textColor="@color/white"
+                        android:textSize="23sp" />
 
                     <TextView
-                        android:layout_width="200dp"
+                        android:layout_width="210dp"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_light"
-                        android:textColor="@color/gray"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="@color/white"
                         android:text="Excess vegetables can make a difference."
-                        android:textSize="16sp" />
+                        android:textSize="19sp" />
                 </LinearLayout>
 
-                <!-- Button -->
-                <TextView
-                    android:id="@+id/btnDonateDonor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Donate Now!"
-                    android:textColor="@color/gray"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:textSize="19sp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_gravity="center_vertical"
-                    />
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center_vertical"
-                    app:layout_constraintStart_toEndOf="@+id/yourFirstTextView"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:padding="5dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_arrow"
-                    app:tint="@color/white" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -167,6 +150,37 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/btnDonateDonor"
+                    android:layout_width="68dp"
+                    android:layout_height="68dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/custom_circle_btn"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="16dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_donate"
+                    app:tint="@color/black" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat"
+                    android:text="Donate"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
                     android:id="@+id/btnNgoPartners"
                     android:layout_width="68dp"
                     android:layout_height="68dp"
@@ -177,7 +191,7 @@
                     android:padding="16dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_partner"
-                    app:tint="@color/greenDark" />
+                    app:tint="@color/black" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -185,7 +199,7 @@
                     android:fontFamily="@font/montserrat"
                     android:text="NGO Partners"
                     android:textAlignment="center"
-                    android:textColor="@color/grayDark"
+                    android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -208,7 +222,7 @@
                     android:padding="16dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_map"
-                    app:tint="@color/greenDark" />
+                    app:tint="@color/black" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -216,7 +230,7 @@
                     android:fontFamily="@font/montserrat"
                     android:text="Food Map"
                     android:textAlignment="center"
-                    android:textColor="@color/grayDark"
+                    android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -238,7 +252,7 @@
                     android:padding="18dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_feedback"
-                    app:tint="@color/greenDark" />
+                    app:tint="@color/black" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -246,7 +260,7 @@
                     android:fontFamily="@font/montserrat"
                     android:text="Feedback"
                     android:textAlignment="center"
-                    android:textColor="@color/grayDark"
+                    android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>
 

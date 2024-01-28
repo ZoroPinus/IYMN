@@ -4,6 +4,8 @@
         android:color="@color/greenPrimary"
         />
     <corners
-        android:radius="40dp"
-        />
+        android:topLeftRadius="20dp"
+        android:topRightRadius="20dp"
+        android:bottomLeftRadius="0dp"
+        android:bottomRightRadius="0dp" />
 </shape>

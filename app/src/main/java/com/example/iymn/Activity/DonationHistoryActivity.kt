@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +30,15 @@ class DonationHistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDonationHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val headerIcon: ImageView = findViewById(R.id.customHeaderIcon)
+        val headerText: TextView = findViewById(R.id.customHeaderText)
+
+        headerIcon.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        headerText.setText("Donation History")
+
 
         auth = FirebaseAuth.getInstance()
         currentUser = auth.currentUser
