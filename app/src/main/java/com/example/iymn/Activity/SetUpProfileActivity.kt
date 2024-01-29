@@ -3,6 +3,7 @@ package com.example.iymn.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -95,19 +96,86 @@ class SetUpProfileActivity : AppCompatActivity() {
             val address = binding.etAddress.text.toString()
             val contact = binding.etContact.text.toString()
 
-            if(name.isBlank() || email.isBlank() || address.isBlank() || contact.isBlank() || selectedImage == null){
+            if (name.isBlank() || email.isBlank() || address.isBlank() || contact.isBlank() || selectedImage == null) {
                 showEmptyFieldDialog("Kindly finish the form", "Empty Fields")
+                return
             }
-            val updates = mutableMapOf(
-                "name" to name,
-                "email" to email,
-                "address" to address,
-                "contact" to contact,
-                // Add other fields as needed
-            )
 
-            uploadToFirebase(selectedImage, userDocument, updates)
+            // Fetch old profile image URL from Firestore
+            userDocument.get().addOnSuccessListener { documentSnapshot ->
+                val oldImageUrl = documentSnapshot.getString("profileImageUrl")
+                val updates = mutableMapOf(
+                    "name" to name,
+                    "email" to email,
+                    "address" to address,
+                    "contact" to contact,
+                    // Add other fields as needed
+                )
 
+                // Delete old image from storage
+                if (!oldImageUrl.isNullOrBlank()) {
+                    deleteOldImageFromStorage(oldImageUrl) {
+                        // After deletion, update the user document with the new image URL
+                        uploadToFirebase(selectedImage, userDocument, updates)
+                    }
+                } else {
+                    // No old image to delete, directly update the user document
+                    uploadToFirebase(selectedImage, userDocument, updates)
+                }
+            }
+        }
+    }
+    private fun deleteOldImageFromStorage(oldImageUrl: String, onComplete: () -> Unit) {
+        val oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(oldImageUrl)
+
+        // Delete the old image from Firebase Storage
+        oldImageRef.delete()
+            .addOnSuccessListener {
+                // Deletion successful
+                onComplete.invoke()
+            }
+            .addOnFailureListener { e ->
+                // Handle the failure
+                Log.e("FirebaseStorage", "Error deleting old image: ${e.message}")
+                // You may choose to ignore the error or display an error message
+                onComplete.invoke() // Proceed with the update even if deletion fails
+            }
+    }
+    private fun uploadToFirebase(
+        imageUri: Uri?,
+        userDoc: DocumentReference,
+        updates: MutableMap<String, String>
+    ) {
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imagesRef =
+            storageRef.child("images/profileImg/${UUID.randomUUID()}.jpg") // Generate a unique filename
+
+        val resizedBitmap = resizeImage(imageUri)
+        val compressedByteArray = resizedBitmap?.let { compressImage(it) }
+        val uploadTask = compressedByteArray?.let { imagesRef.putBytes(it) }
+
+        if (uploadTask != null) {
+            uploadTask.addOnSuccessListener { taskSnapshot ->
+                // Image uploaded successfully, get the download URL
+                imagesRef.downloadUrl.addOnSuccessListener { uri ->
+                    val imageUrl = uri.toString()
+                    updates["profileImageUrl"] = imageUrl
+
+                    // Update the user document in Firestore
+                    userDoc.update(updates as Map<String, Any>)
+                        .addOnSuccessListener {
+                            showSuccessFieldDialog()
+                        }
+                        .addOnFailureListener {
+                            // Handle the failure
+                            // You can display an error message or log the error
+                        }
+                }
+            }.addOnFailureListener { e ->
+                val errorMessage = "Error saving user data: ${e.message}"
+                Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show()
+                Log.e("Firestore", errorMessage)
+            }
         }
     }
     private fun takePicture() {
@@ -130,41 +198,7 @@ class SetUpProfileActivity : AppCompatActivity() {
         }
         dialog.show()
     }
-    private fun uploadToFirebase(
-        imageUri: Uri?,
-        userDoc: DocumentReference,
-        updates: MutableMap<String, String>
-    ) {
-        val storageRef = FirebaseStorage.getInstance().reference
-        val imagesRef = storageRef.child("images/profileImg/${UUID.randomUUID()}.jpg") // Generate a unique filename
 
-        val uploadTask = imageUri?.let { imagesRef.putFile(it) }
-
-        if (uploadTask != null) {
-            uploadTask.addOnSuccessListener { taskSnapshot ->
-                // Image uploaded successfully, get the download URL
-                imagesRef.downloadUrl.addOnSuccessListener { uri ->
-                    val imageUrl = uri.toString()
-                    updates["profileImageUrl"] = imageUrl
-
-                    // Update the user document in Firestore
-                    userDoc.update(updates as Map<String, Any>)
-                        .addOnSuccessListener {
-                            showSuccessFieldDialog()
-                        }
-                        .addOnFailureListener {
-                            // Handle the failure
-                            // You can display an error message or log the error
-                        }
-
-                }
-            }.addOnFailureListener { e ->
-                val errorMessage = "Error saving user data: ${e.message}"
-                Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show()
-                Log.e("Firestore", errorMessage)
-            }
-        }
-    }
     private fun loadAndDisplayUserInfo() {
         val user = auth.currentUser
         if (user != null) {
@@ -224,12 +258,6 @@ class SetUpProfileActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    private fun navigateToDashboardActivity() {
-        val intent = Intent(this, DashboardActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
     private fun showSuccessFieldDialog() {
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.apply {
@@ -241,5 +269,17 @@ class SetUpProfileActivity : AppCompatActivity() {
         }
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
+    }
+    private fun resizeImage(uri: Uri?): Bitmap? {
+        val inputStream = contentResolver.openInputStream(uri!!)
+        val options = BitmapFactory.Options()
+        options.inSampleSize = 2 // Adjust the value as needed
+        return BitmapFactory.decodeStream(inputStream, null, options)
+    }
+
+    private fun compressImage(bitmap: Bitmap): ByteArray {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream) // Adjust quality as needed
+        return outputStream.toByteArray()
     }
 }

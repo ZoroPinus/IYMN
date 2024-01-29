@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -303,21 +304,25 @@ class DonationFormFragment : Fragment() {
 
     private fun uploadImageToFirebaseStorage(imageUri: Uri, donationId: String) {
         val storageRef = FirebaseStorage.getInstance().reference
-        val imagesRef = storageRef.child("images/${UUID.randomUUID()}.jpg") // Generate a unique filename
+        val imagesRef = storageRef.child("images/donations/${UUID.randomUUID()}.jpg") // Generate a unique filename
 
-        val uploadTask = imagesRef.putFile(imageUri)
+        val resizedBitmap = resizeImage(imageUri)
+        val compressedByteArray = resizedBitmap?.let { compressImage(it) }
+        val uploadTask = compressedByteArray?.let { imagesRef.putBytes(it) }
 
-        uploadTask.addOnSuccessListener { taskSnapshot ->
-            // Image uploaded successfully, get the download URL
-            imagesRef.downloadUrl.addOnSuccessListener { uri ->
-                val imageUrl = uri.toString()
-                // Store the imageUrl in Firestore or use it as needed
-                storeImageUrlInFirestore(imageUrl, donationId)
+        if (uploadTask != null) {
+            uploadTask.addOnSuccessListener { taskSnapshot ->
+                // Image uploaded successfully, get the download URL
+                imagesRef.downloadUrl.addOnSuccessListener { uri ->
+                    val imageUrl = uri.toString()
+                    // Store the imageUrl in Firestore or use it as needed
+                    storeImageUrlInFirestore(imageUrl, donationId)
+                }
+            }.addOnFailureListener { e ->
+                val errorMessage = "Error saving user data: ${e.message}"
+                Toast.makeText(requireContext(), "Upload Failed", Toast.LENGTH_SHORT).show()
+                Log.e("Firestore", errorMessage)
             }
-        }.addOnFailureListener { e ->
-            val errorMessage = "Error saving user data: ${e.message}"
-            Toast.makeText(requireContext(), "Upload Failed", Toast.LENGTH_SHORT).show()
-            Log.e("Firestore", errorMessage)
         }
     }
 
@@ -383,6 +388,19 @@ class DonationFormFragment : Fragment() {
         }
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
+    }
+
+    private fun resizeImage(uri: Uri?): Bitmap? {
+        val inputStream = requireActivity().contentResolver.openInputStream(uri!!)
+        val options = BitmapFactory.Options()
+        options.inSampleSize = 2 // Adjust the value as needed
+        return BitmapFactory.decodeStream(inputStream, null, options)
+    }
+
+    private fun compressImage(bitmap: Bitmap): ByteArray {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream) // Adjust quality as needed
+        return outputStream.toByteArray()
     }
 
 }
