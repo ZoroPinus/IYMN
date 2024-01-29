@@ -11,6 +11,7 @@ import com.example.iymn.Adapters.TableItemAdapterParent
 import com.example.iymn.Models.TableItem
 import com.example.iymn.R
 import com.example.iymn.databinding.ActivityReportsBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -18,11 +19,14 @@ import java.util.Locale
 class ReportsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReportsBinding
     private lateinit var db: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
     private lateinit var statusValue : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityReportsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        auth = FirebaseAuth.getInstance()
 
         val headerIcon: ImageView = findViewById(R.id.customHeaderIcon)
         val headerText: TextView = findViewById(R.id.customHeaderText)
@@ -53,49 +57,64 @@ class ReportsActivity : AppCompatActivity() {
     }
     private fun fetchDonationData(status: String) {
         // Assume "donations" is the name of your Firestore collection
-        db.collection("donations")
-            .whereEqualTo("status", status)
-            .get()
-            .addOnSuccessListener { result ->
-                if (!result.isEmpty) {
-                    val donations: MutableList<TableItem> = mutableListOf()
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            db.collection("users").document(currentUser.uid)
+                .get()
+                .addOnSuccessListener { userDocument ->
+                    val ngoOrg = userDocument.getString("NgoOrg") ?: ""
 
-                    for (document in result.documents) {
-                        val id = document.id
-                        val donorUID = document.getString("donorUID") ?: ""
-                        val cropName = document.getString("vegName") ?: ""
-                        val ngoPartner = document.getString("recipient") ?: ""
-                        val address = document.getString("address") ?: ""
-                        val quantity = document.getString("quantity") ?: ""
-                        val quantityType = document.getString("quantityType") ?: ""
-                        val date = document.getString("donateDate") ?: ""
-                        val status = document.getString("status") ?: ""
-                        val finalQuantity =getString(
-                            R.string.formatted_quantity,
-                            quantity,
-                            quantityType
-                        )
-                        val formattedDate = formatDate(date)
+                    // Fetch donations where the status matches and the organization matches the user's organization
+                    db.collection("donations")
+                        .whereEqualTo("status", status)
+                        .whereEqualTo("recipient", ngoOrg)
+                        .get()
+                        .addOnSuccessListener { result ->
+                            if (!result.isEmpty) {
+                                val donations: MutableList<TableItem> = mutableListOf()
 
-                        // Now, fetch the name of the donorUID from the "users" collection
-                        fetchDonorName(donorUID) { donorName ->
-                            val tableItem = TableItem(id, donorName, cropName, ngoPartner, address, finalQuantity, formattedDate, status)
-                            donations.add(tableItem)
+                                for (document in result.documents) {
+                                    val id = document.id
+                                    val donorUID = document.getString("donorUID") ?: ""
+                                    val cropName = document.getString("vegName") ?: ""
+                                    val ngoPartner = document.getString("recipient") ?: ""
+                                    val address = document.getString("address") ?: ""
+                                    val quantity = document.getString("quantity") ?: ""
+                                    val quantityType = document.getString("quantityType") ?: ""
+                                    val date = document.getString("donateDate") ?: ""
+                                    val status = document.getString("status") ?: ""
+                                    val finalQuantity =getString(
+                                        R.string.formatted_quantity,
+                                        quantity,
+                                        quantityType
+                                    )
+                                    val formattedDate = formatDate(date)
 
-                            // If all data is fetched, set up the RecyclerView adapter
-                            if (donations.size == result.size()) {
-                                val recyclerView = findViewById<RecyclerView>(R.id.tableRecyclerViewPending)
-                                recyclerView.layoutManager = LinearLayoutManager(this)
-                                recyclerView.adapter = TableItemAdapterParent(donations)
+                                    // Now, fetch the name of the donorUID from the "users" collection
+                                    fetchDonorName(donorUID) { donorName ->
+                                        val tableItem = TableItem(id, donorName, cropName, ngoPartner, address, finalQuantity, formattedDate, status)
+                                        donations.add(tableItem)
+
+                                        // If all data is fetched, set up the RecyclerView adapter
+                                        if (donations.size == result.size()) {
+                                            val recyclerView = findViewById<RecyclerView>(R.id.tableRecyclerViewPending)
+                                            recyclerView.layoutManager = LinearLayoutManager(this)
+                                            recyclerView.adapter = TableItemAdapterParent(donations)
+                                        }
+                                    }
+                                }
                             }
                         }
-                    }
+                        .addOnFailureListener { exception ->
+                            Log.e("Firebase", "Error getting documents: ", exception)
+                        }
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Firebase", "Error getting documents: ", exception)
-            }
+                .addOnFailureListener { exception ->
+                    Log.e("Firebase", "Error getting user document: ", exception)
+                }
+        }
     }
+
 
     private fun fetchDonorName(donorUID: String, callback: (String) -> Unit) {
         // Fetch the name of the donorUID from the "users" collection

@@ -92,7 +92,7 @@ class DonationFormFragment : Fragment() {
                 id: Long
             ) {
                 // Handle the selected item here
-                selectedOptionNgo = ngoOptionsList[position].id
+                selectedOptionNgo = ngoOptionsList[position].name
                 // Do something with the selected item
             }
 
