@@ -25,6 +25,10 @@ class NGODashboardFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
     private var currentUser: FirebaseUser? = null
     private lateinit var displayName: String
+
+    companion object {
+        var ngoOrg: String = "Initial Input"
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -93,6 +97,8 @@ class NGODashboardFragment : Fragment() {
                 if (data != null) {
                     val name = data["name"] as String
                     val email = data["email"] as String
+                    val ngoOrgs= data["NgoOrg"] as String
+                    ngoOrg = ngoOrgs
                     val profileImg = data["profileImageUrl"] as String
                     if(name == null){
                         displayName = email

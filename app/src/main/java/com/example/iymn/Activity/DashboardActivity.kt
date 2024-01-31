@@ -28,6 +28,9 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var userRepository: UserRepository
     private lateinit var userId: String
+    companion object {
+        var userType: String = "Initial Input"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
@@ -83,12 +86,15 @@ class DashboardActivity : AppCompatActivity() {
                 onUserLoaded = { user ->
                     when (user.userType) {
                         is UserType.Admin -> {
+                            userType = "Admin"
                             replaceFragment(AdminDashboardFragment())
                         }
                         is UserType.Donor -> {
+                            userType = "Donor"
                             replaceFragment(DonorDashboardFragment())
                         }
                         is UserType.Ngo -> {
+                            userType = "NGO"
                             replaceFragment(NGODashboardFragment())
                         }
                     }

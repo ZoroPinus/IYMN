@@ -39,6 +39,7 @@ class DonorDashboardFragment : Fragment() {
     val dataList: MutableList<DonatedItem> = ArrayList()
     private var currentUser: FirebaseUser? = null
     private lateinit var displayName: String
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

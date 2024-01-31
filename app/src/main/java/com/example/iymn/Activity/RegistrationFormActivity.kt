@@ -56,7 +56,7 @@ class RegistrationFormActivity : AppCompatActivity() {
         binding.spinnerNGOOrg.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 // Handle the selected item here
-                selectedNgo = ngoOptionsList[position].id
+                selectedNgo = ngoOptionsList[position].name
                 binding.tvNGOOrg.text = ngoOptionsList[position].name
                 // Do something with the selected item
             }

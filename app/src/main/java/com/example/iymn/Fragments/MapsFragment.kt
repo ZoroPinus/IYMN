@@ -25,12 +25,14 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.iymn.Activity.DashboardActivity
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentMapsBinding
 import com.google.android.gms.location.LocationServices
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -45,6 +47,7 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import java.io.IOException
 import java.util.Locale
 
@@ -56,6 +59,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
     private var popupWindow: PopupWindow? = null
     private var currentQuery: String = ""
     private var placeName: String? = ""
+    private val donationLocations = mutableListOf<GeoPoint>()
+    private lateinit var mapView: MapView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -109,6 +114,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+
         mMap = googleMap
         // Get the fused location provider client
         getUserLocation().addOnCompleteListener { task ->
@@ -121,7 +127,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation!!, 13f))
                     placeName=address
 
-                    loadDonorFoodMap()
+
+                    if(DashboardActivity.userType == "Donor"){
+                        loadDonorFoodMap()
+                    }else if (DashboardActivity.userType == "NGO"){
+                        getDonationLocations()
+                    }else{
+                        recenterMap()
+                    }
                 }
             } else {
                 // Handle the case when location retrieval fails or permission is not granted
@@ -149,6 +162,29 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
             .addOnFailureListener { exception ->
                 // Handle errors during Firestore data retrieval
                 Log.e(TAG, "Error getting NGO partner locations: ", exception)
+            }
+    }
+
+    private fun getDonationLocations() {
+        val firestore = FirebaseFirestore.getInstance()
+
+        // Example: Assuming "donations" is your collection name
+        firestore.collection("donations")
+            .whereEqualTo("recipient", NGODashboardFragment.ngoOrg)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val location = document.getGeoPoint("latlng")
+                    val donation = document.getString("vegName")
+                    if (location != null) {
+                        val latLng = LatLng(location.latitude, location.longitude)
+                        mMap.addMarker(MarkerOptions().position(latLng).title(donation))
+
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                // Handle errors
             }
     }
 

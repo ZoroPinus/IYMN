@@ -30,6 +30,7 @@ import com.example.iymn.databinding.FragmentDonationFormBinding
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -45,7 +46,7 @@ class DonationFormFragment : Fragment() {
     private var selectedOptionCropList: String = ""
     private var selectedOptionNgo: String = ""
     private var selectedOptionQuantity: String = ""
-    private var latLng: LatLng? = null
+    private var latLng: GeoPoint? = null
     private var placeId: String? = ""
     private var placeName: String = ""
     private lateinit var latlngString: String
@@ -164,7 +165,7 @@ class DonationFormFragment : Fragment() {
         parentFragmentManager.setFragmentResultListener("choosenLocation", this) { _, result ->
             val placeName = result.getString("placeName")
             val latlngString = result.getString("latlng")
-            latLng = latlngString?.let { convertStringToLatLng(it) }
+            latLng = latlngString?.let { convertStringToGeoPoint(it) }
 
             if (!placeName.isNullOrBlank()) {
                 binding.etAddress.setText(placeName)
@@ -220,9 +221,14 @@ class DonationFormFragment : Fragment() {
 
     }
 
-    private fun convertStringToLatLng(latLngString: String): LatLng? {
+    private fun convertStringToGeoPoint(latLngString: String): GeoPoint? {
         try {
-            val cleanString = latLngString.replace("lat/lng:", "").replace("(", "").replace(")", "").trim()
+            val cleanString = latLngString
+                .replace("lat/lng:", "")
+                .replace("(", "")
+                .replace(")", "")
+                .trim()
+
             val parts = cleanString.split(",")
 
             if (parts.size == 2) {
@@ -230,7 +236,7 @@ class DonationFormFragment : Fragment() {
                 val longitude = parts[1].toDoubleOrNull()
 
                 if (latitude != null && longitude != null) {
-                    return LatLng(latitude, longitude)
+                    return GeoPoint(latitude, longitude)
                 }
             }
         } catch (e: NumberFormatException) {
@@ -305,7 +311,7 @@ class DonationFormFragment : Fragment() {
         return Uri.parse(path)
     }
     private fun submitDonation(vegName: String, imageUri: Uri?, description: String, address:String, quantity: String,
-                               recipient: String, quantityType: String, donateDate: String, status: String, latLng: LatLng
+                               recipient: String, quantityType: String, donateDate: String, status: String, latLng: GeoPoint
     ) {
 
         if (vegName.isBlank() || description.isBlank() || quantity.isBlank() || address.isBlank() || recipient.isBlank()  ) {
