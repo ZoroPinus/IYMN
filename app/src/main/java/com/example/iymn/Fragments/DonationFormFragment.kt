@@ -23,9 +23,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.iymn.Models.CropListOption
+import com.example.iymn.Models.LocationData
 import com.example.iymn.Models.NGOOption
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentDonationFormBinding
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -43,6 +45,10 @@ class DonationFormFragment : Fragment() {
     private var selectedOptionCropList: String = ""
     private var selectedOptionNgo: String = ""
     private var selectedOptionQuantity: String = ""
+    private var latLng: LatLng? = null
+    private var placeId: String? = ""
+    private var placeName: String = ""
+    private lateinit var latlngString: String
     private lateinit var ngoOptionsList: List<NGOOption>
     private lateinit var cropOptionsList: List<CropListOption>
     private var selectedImage: Uri? = null
@@ -58,7 +64,6 @@ class DonationFormFragment : Fragment() {
         binding = FragmentDonationFormBinding.inflate(inflater, container, false)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
@@ -68,8 +73,9 @@ class DonationFormFragment : Fragment() {
         val headerIcon: ImageView = requireView().findViewById(R.id.customHeaderIcon)
         val headerText: TextView = requireView().findViewById(R.id.customHeaderText)
 
-        fetchCropListFromFirestore()
-        fetchNGOOptionsFromFirestore()
+            fetchCropListFromFirestore()
+            fetchNGOOptionsFromFirestore()
+
         val quantityOptions = arrayOf("Kg", "Sack/s", "Piece/s", "Ton/s")
 
         val quantityAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, quantityOptions)
@@ -84,6 +90,7 @@ class DonationFormFragment : Fragment() {
         headerText.setText("Donation Form")
 
         // Set a listener to handle item selections
+        binding.etRecipient.prompt="Select an NGO partner"
         binding.etRecipient.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,
@@ -100,6 +107,7 @@ class DonationFormFragment : Fragment() {
                 // Handle no selection if needed
             }
         }
+        binding.spinnerCropList.prompt = "Select a crop"
 
         binding.spinnerCropList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
@@ -110,7 +118,7 @@ class DonationFormFragment : Fragment() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                // Handle no selection if needed
+                binding.etVegName.text = null
             }
         }
 
@@ -135,16 +143,32 @@ class DonationFormFragment : Fragment() {
             showImageSourceDialog()
         }
 
-        childFragmentManager.addOnBackStackChangedListener {
-            if (childFragmentManager.backStackEntryCount == 0) {
-                // If back stack is empty, hide the FrameLayout
-                binding.cropListFragmentContainer.visibility = View.GONE
-            }
+
+        binding.btnChooseFromMap.setOnClickListener {
+            // Replace 'YourNewFragment()' with the fragment you want to open
+            val newFragment = ChooseLocationFragment()
+            // Begin fragment transaction
+            val fragmentManager = requireActivity().supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+
+            // Replace the current fragment with the new fragment
+            fragmentTransaction.replace(R.id.fragmentContainer, newFragment)
+
+            // Optional: Add to back stack for handling back navigation
+            fragmentTransaction.addToBackStack(null)
+
+            // Commit the transaction
+            fragmentTransaction.commit()
         }
 
-        childFragmentManager.setFragmentResultListener("cropSelection", this) { _, result ->
-            val selectedCropName = result.getString("selectedCropName", "")
-            binding.etVegName.setText(selectedCropName)
+        parentFragmentManager.setFragmentResultListener("choosenLocation", this) { _, result ->
+            val placeName = result.getString("placeName")
+            val latlngString = result.getString("latlng")
+            latLng = latlngString?.let { convertStringToLatLng(it) }
+
+            if (!placeName.isNullOrBlank()) {
+                binding.etAddress.setText(placeName)
+            }
         }
 
         launcher = registerForActivityResult(
@@ -187,10 +211,38 @@ class DonationFormFragment : Fragment() {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
             val currentDateTime = dateFormat.format(Date())
             val status = "PENDING"
-            submitDonation(vegNameString, selectedImage, descriptionString, addressString, weightString, selectedOptionNgo, selectedOptionQuantity, currentDateTime, status)
+            latLng?.let { it1 ->
+                submitDonation(vegNameString, selectedImage, descriptionString, addressString, weightString, selectedOptionNgo, selectedOptionQuantity, currentDateTime, status,
+                    it1
+                )
+            }
         }
 
     }
+
+    private fun convertStringToLatLng(latLngString: String): LatLng? {
+        try {
+            val cleanString = latLngString.replace("lat/lng:", "").replace("(", "").replace(")", "").trim()
+            val parts = cleanString.split(",")
+
+            if (parts.size == 2) {
+                val latitude = parts[0].toDoubleOrNull()
+                val longitude = parts[1].toDoubleOrNull()
+
+                if (latitude != null && longitude != null) {
+                    return LatLng(latitude, longitude)
+                }
+            }
+        } catch (e: NumberFormatException) {
+            // Handle the case when the conversion fails
+            e.printStackTrace()
+        }
+
+        // Return null if the conversion is not successful
+        return null
+    }
+
+
     private fun fetchCropListFromFirestore() {
         db.collection("crops")
             .get()
@@ -253,7 +305,7 @@ class DonationFormFragment : Fragment() {
         return Uri.parse(path)
     }
     private fun submitDonation(vegName: String, imageUri: Uri?, description: String, address:String, quantity: String,
-                               recipient: String, quantityType: String, donateDate: String, status: String
+                               recipient: String, quantityType: String, donateDate: String, status: String, latLng: LatLng
     ) {
 
         if (vegName.isBlank() || description.isBlank() || quantity.isBlank() || address.isBlank() || recipient.isBlank()  ) {
@@ -281,7 +333,8 @@ class DonationFormFragment : Fragment() {
             "recipient" to recipient,
             "donorUID" to currentUser,
             "donateDate" to donateDate,
-            "status" to status
+            "status" to status,
+            "latlng" to latLng,
             // Add more fields as needed
         )
 
@@ -295,6 +348,7 @@ class DonationFormFragment : Fragment() {
                 if (imageUri != null) {
                     uploadImageToFirebaseStorage(imageUri, donationId)
                 }
+                Log.e("Firestore", latLng.toString())
             }
             .addOnFailureListener { e ->
                 // Handle failure

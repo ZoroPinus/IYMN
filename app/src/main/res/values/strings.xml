@@ -19,4 +19,7 @@
     <string name="formatted_quantity">%1$s %2$s</string>
     <string name="welcome_user">Welcome %1$s</string>
     <string name="account_type">%1$s</string>
+    <string name="google_maps_api_key">AIzaSyAt1tNs0EkErsDNFPA1ZcIZGYL52E1sjqY</string>
+    <string name="spinnerNgo">Choose an NGO Partner</string>
+    <string name="spinnerCrop">Choose a Crop</string>
 </resources>
