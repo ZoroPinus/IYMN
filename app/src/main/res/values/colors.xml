@@ -9,4 +9,7 @@
     <color name="greenAccent">#8BC34A</color>
     <color name="gray">#C4C4C4</color>
     <color name="grayDark">#8696BB</color>
+    <color name="pending">#F29339</color>
+    <color name="accepted">#64854A</color>
+    <color name="rejected">#D9512C</color>
 </resources>

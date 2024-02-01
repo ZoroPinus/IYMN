@@ -16,7 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/greenLight"
-        tools:itemCount="3"
-        tools:listitem="@layout/veg_item_layout" />
+        tools:itemCount="10"
+        tools:listitem="@layout/veg_item_layout"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        android:padding="5dp"
+        app:spanCount="2" />
 
 </LinearLayout>

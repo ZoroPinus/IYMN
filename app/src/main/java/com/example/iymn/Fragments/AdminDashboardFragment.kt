@@ -53,41 +53,41 @@ class AdminDashboardFragment : Fragment() {
             replaceFragment(ProfileFragment())
         }
 
-        binding.btnReports.setOnClickListener {
-            startActivity(
-                Intent(
-                    requireContext(),
-                    ReportsActivity::class.java
-                )
-            )
-        }
-        binding.btnRegisteredAccounts.setOnClickListener {
-            Toast.makeText(requireContext(), "Registered", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnNgoPartners.setOnClickListener {
-            startActivity(
-                Intent(
-                    requireContext(),
-                    NGOPartnersActivity::class.java
-                )
-            )
-        }
-        binding.btnFoodMapAdmin.setOnClickListener {
-            startActivity(
-                Intent(
-                    requireContext(),
-                    FoodMapActivity::class.java
-                )
-            )
-        }
-        binding.btnFeedbacks.setOnClickListener {
-            startActivity(
-                Intent(
-                    requireContext(),
-                    FeedbackActivity::class.java
-                )
-            )
-        }
+//        binding.btnReports.setOnClickListener {
+//            startActivity(
+//                Intent(
+//                    requireContext(),
+//                    ReportsActivity::class.java
+//                )
+//            )
+//        }
+//        binding.btnRegisteredAccounts.setOnClickListener {
+//            Toast.makeText(requireContext(), "Registered", Toast.LENGTH_SHORT).show()
+//        }
+//        binding.btnNgoPartners.setOnClickListener {
+//            startActivity(
+//                Intent(
+//                    requireContext(),
+//                    NGOPartnersActivity::class.java
+//                )
+//            )
+//        }
+//        binding.btnFoodMapAdmin.setOnClickListener {
+//            startActivity(
+//                Intent(
+//                    requireContext(),
+//                    FoodMapActivity::class.java
+//                )
+//            )
+//        }
+//        binding.btnFeedbacks.setOnClickListener {
+//            startActivity(
+//                Intent(
+//                    requireContext(),
+//                    FeedbackActivity::class.java
+//                )
+//            )
+//        }
 
     }
     private fun fetchUserData(userId: String) {

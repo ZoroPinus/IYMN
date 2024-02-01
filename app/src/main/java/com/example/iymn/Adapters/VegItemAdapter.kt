@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.iymn.Models.VegItemViewModel
@@ -38,9 +39,17 @@ class VegItemAdapter(private var mList: List<VegItemViewModel>) : RecyclerView.A
         // sets the text to the textview from our itemHolder class
         holder.title.text = ItemsViewModel.title
         holder.item1.text = ItemsViewModel.item1
-        holder.item2.text = ItemsViewModel.item2
-        holder.item3.text = ItemsViewModel.item3
+        holder.item2.text = ItemsViewModel.item3
+        holder.item3.text = ItemsViewModel.item2
         holder.item4.text = ItemsViewModel.item4
+        if (ItemsViewModel.item4 == "accepted") {
+            holder.item4.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.accepted))
+        } else if (ItemsViewModel.item4 == "rejected"){
+            // Reset text color if item4 is not "accepted"
+            holder.item4.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.rejected))
+        } else {
+            holder.item4.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.pending))
+        }
 
         Glide.with(holder.itemView.context)
             .load(ItemsViewModel.image)

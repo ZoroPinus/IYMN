@@ -74,8 +74,8 @@ class DonationFormFragment : Fragment() {
         val headerIcon: ImageView = requireView().findViewById(R.id.customHeaderIcon)
         val headerText: TextView = requireView().findViewById(R.id.customHeaderText)
 
-            fetchCropListFromFirestore()
-            fetchNGOOptionsFromFirestore()
+        fetchCropListFromFirestore()
+        fetchNGOOptionsFromFirestore()
 
         val quantityOptions = arrayOf("Kg", "Sack/s", "Piece/s", "Ton/s")
 

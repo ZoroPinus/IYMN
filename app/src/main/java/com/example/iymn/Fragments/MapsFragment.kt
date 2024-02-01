@@ -23,11 +23,13 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.iymn.Activity.DashboardActivity
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentMapsBinding
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -61,6 +63,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
     private var placeName: String? = ""
     private val donationLocations = mutableListOf<GeoPoint>()
     private lateinit var mapView: MapView
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,6 +80,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
                 ?: SupportMapFragment.newInstance().also {
@@ -113,35 +120,58 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
         }
     }
 
+
     override fun onMapReady(googleMap: GoogleMap) {
-
         mMap = googleMap
-        // Get the fused location provider client
-        getUserLocation().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                task.result?.let { (userLocation, address) ->
-                    // Location retrieval successful, move the camera to the user's location
-                    selectedLocation = userLocation
-                    // Add a marker at the user's location
-                    addMarker(selectedLocation!!, "Your Location")
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation!!, 13f))
-                    placeName=address
 
+        // Check for location permission
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Request location updates
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    if (location != null) {
+                        // Move camera to current location
+                        val currentLatLng = LatLng(location.latitude, location.longitude)
+                        mMap.addMarker(MarkerOptions().position(currentLatLng).title("Current Location"))
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 13f))
 
-                    if(DashboardActivity.userType == "Donor"){
-                        loadDonorFoodMap()
-                    }else if (DashboardActivity.userType == "NGO"){
-                        getDonationLocations()
-                    }else{
-                        recenterMap()
+                        if(DashboardActivity.userType == "Donor"){
+                            loadDonorFoodMap()
+                        }else if (DashboardActivity.userType == "NGO"){
+                            getDonationLocations()
+                        }else {
+                            recenterMap()
+                        }
                     }
                 }
-            } else {
-                // Handle the case when location retrieval fails or permission is not granted
-                handleLocationError(task.exception)
+        } else {
+            // Request location permission
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            LOCATION_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted, request location updates again
+                    onMapReady(mMap)
+                } else {
+                    // Permission denied, handle accordingly
+                }
             }
         }
-
     }
     // Function to get NGO partner locations from Firestore and place markers on the map
     private fun loadDonorFoodMap() {
@@ -238,29 +268,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
             }
     }
 
-    // Function to get LatLng from address using Geocoder
-    private fun getLocationFromAddress(address: String): LatLng? {
-        val geocoder = Geocoder(requireContext())
-        try {
-            val results = geocoder.getFromLocationName(address, 1)
-            if (results != null) {
-                if (results.isNotEmpty()) {
-                    val location = LatLng(results[0].latitude, results[0].longitude)
-                    return location
-                }
-            }
-        } catch (e: IOException) {
-            // Handle geocoding errors
-            Log.e(TAG, "Error converting address to LatLng: ", e)
-        }
-        return null
-    }
-
     private fun handleLocationError(exception: Exception?) {
         Log.e(ContentValues.TAG, "Error getting user location: $exception")
         // Handle the error as per your application's requirements
     }
     private fun recenterMap() {
+        Log.e(TAG, "Error getting NGO partner locations: ")
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // Get the last known location and move the camera to that position
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -274,8 +287,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
                     }
                 }
         } else {
-            // Handle the case when location permission is not granted
-            // You may want to request permission again or show a message to the user
+            Log.e(TAG, "Mapsfragmet")
         }
     }
 

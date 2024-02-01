@@ -14,6 +14,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.example.iymn.Fragments.ChooseLocationFragment
 import com.example.iymn.Models.NGOOption
 import com.example.iymn.R
 import com.example.iymn.databinding.ActivityRegistrationFormBinding
@@ -29,13 +30,17 @@ class RegistrationFormActivity : AppCompatActivity() {
     private lateinit var ngoOptionsList: List<NGOOption>
     lateinit var db: FirebaseFirestore
     lateinit var regType : String
+
+    companion object {
+        var placeName = ""
+        var latlng = ""
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegistrationFormBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         regType = intent.getStringExtra("ACCOUNT_TYPE").toString()
-
         if (regType == "Donor") {
             binding.orgSelectContainer.visibility = View.GONE
         } else {
@@ -65,6 +70,26 @@ class RegistrationFormActivity : AppCompatActivity() {
                 // Handle no selection if needed
             }
         }
+
+//        binding.btnChooseFromMap.setOnClickListener {
+//            // Replace 'YourNewFragment()' with the fragment you want to open
+//            val newFragment = ChooseLocationFragment()
+//            // Begin fragment transaction
+//            val fragmentManager = this.supportFragmentManager
+//            val fragmentTransaction = fragmentManager.beginTransaction()
+//
+//            // Replace the current fragment with the new fragment
+//            fragmentTransaction.replace(R.id.chooseFromMapContainer, newFragment)
+//
+//            // Optional: Add to back stack for handling back navigation
+//            fragmentTransaction.addToBackStack(null)
+//
+//            // Commit the transaction
+//            fragmentTransaction.commit()
+//        }
+
+
+
     }
 
     private fun signUpUser() {

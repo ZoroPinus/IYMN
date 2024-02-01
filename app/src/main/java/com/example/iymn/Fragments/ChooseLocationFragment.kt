@@ -19,6 +19,7 @@ import android.widget.ListView
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.example.iymn.Activity.RegistrationFormActivity
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentChooseLocationBinding
 import com.google.android.gms.location.LocationServices
@@ -78,6 +79,8 @@ class ChooseLocationFragment : Fragment(), OnMapReadyCallback {
             result.putString("placeName", placeName)
             result.putString("latlng", selectedLocation.toString())
             result.putBoolean("CAME_FROM_CHOOSE_LOCATION", true)
+            RegistrationFormActivity.placeName = placeName.toString()
+            RegistrationFormActivity.latlng = selectedLocation.toString()
             Log.e(TAG, selectedLocation.toString())
             parentFragmentManager.setFragmentResult("choosenLocation", result)
             parentFragmentManager.popBackStack()

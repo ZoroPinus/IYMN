@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.iymn.Adapters.VegItemAdapter
@@ -47,7 +48,7 @@ class DonationHistoryActivity : AppCompatActivity() {
         val recyclerview = findViewById<RecyclerView>(R.id.recyclerview)
 
         // this creates a vertical layout Manager
-        recyclerview.layoutManager = LinearLayoutManager(this)
+        recyclerview.layoutManager = GridLayoutManager(this, 2)
 
         adapter = VegItemAdapter(dataList)
         recyclerview.adapter = adapter

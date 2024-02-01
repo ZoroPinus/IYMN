@@ -10,32 +10,27 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
+        android:paddingHorizontal="80dp"
         >
     <Button
         android:id="@+id/btnToLogin"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:backgroundTint="#F6FB00"
+        android:background="@drawable/custom_btn"
+        android:layout_margin="5dp"
+        android:textSize="20dp"
         android:fontFamily="@font/montserrat_bold"
-        android:letterSpacing="0.1"
-        android:text="Login"
-        android:textColor="@android:color/black"
-        android:textSize="16dp"
-        android:layout_marginBottom="16dp"
-        />
+        android:text="LOGIN"/>
 
     <Button
         android:id="@+id/btnToRegister"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:backgroundTint="#F6FB00"
+        android:background="@drawable/custom_btn"
+        android:layout_margin="5dp"
+        android:textSize="20dp"
         android:fontFamily="@font/montserrat_bold"
-        android:letterSpacing="0.1"
-        android:text="Register"
-        android:textColor="@android:color/black"
-        android:textSize="16dp" />
+        android:text="REGISTER"/>
 
     </LinearLayout>
 

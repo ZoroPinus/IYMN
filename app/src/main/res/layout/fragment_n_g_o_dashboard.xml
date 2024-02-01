@@ -100,7 +100,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!--                Button Container-->
                 <LinearLayout
                     android:id="@+id/btnReportsNGO"
                     android:layout_width="0dp"
@@ -156,7 +155,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:fontFamily="@font/montserrat_bold"
-                        android:text="Accepted Donations"
+                        android:text="Donations"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
 

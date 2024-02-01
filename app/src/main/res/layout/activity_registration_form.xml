@@ -1,177 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:orientation="vertical"
     tools:context=".Activity.RegistrationFormActivity">
+    <FrameLayout
+        android:id="@+id/chooseFromMapContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
 
-    <ImageView
-        android:id="@+id/myImage"
-        android:layout_width="178dp"
-        android:layout_height="196dp"
-        android:src="@drawable/app_logo"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="239dp"
-        android:layout_height="64dp"
-        android:fontFamily="@font/eagle_lake"
-        android:letterSpacing="0.1"
-        android:text="IYAMAN"
-        android:textSize="45sp"
-        app:layout_constraintEnd_toEndOf="@+id/linearLayout"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout"
-        app:layout_constraintTop_toBottomOf="@+id/myImage" />
-
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/regFormContainer"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="25dp"
-        android:layout_marginTop="12dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="@+id/btnRegister"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="@+id/btnRegister"
-        app:layout_constraintTop_toBottomOf="@+id/textView2">
+        >
+
+
+        <ImageView
+            android:id="@+id/myImage"
+            android:layout_width="178dp"
+            android:layout_height="196dp"
+            android:src="@drawable/app_logo"
+            app:layout_constraintBottom_toTopOf="@+id/textView2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/montserrat_bold"
-            android:text="REGISTRATION"
-            android:textSize="16sp" />
+            android:id="@+id/textView2"
+            android:layout_width="239dp"
+            android:layout_height="64dp"
+            android:fontFamily="@font/eagle_lake"
+            android:letterSpacing="0.1"
+            android:text="IYAMAN"
+            android:textSize="45sp"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout"
+            app:layout_constraintTop_toBottomOf="@+id/myImage" />
 
-        <EditText
-            android:id="@+id/etEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/edittext_custom_bg"
-            android:hint="EMAIL"
-            android:inputType="text"
-            android:padding="16dp"
-            android:typeface="monospace" />
-
-        <EditText
-            android:id="@+id/etContact"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/edittext_custom_bg"
-            android:hint="CONTACT NUMBER"
-            android:inputType="number"
-            android:padding="16dp"
-            android:typeface="monospace" />
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="5dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="@+id/btnRegister"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="@+id/btnRegister"
+            app:layout_constraintTop_toBottomOf="@+id/textView2">
 
-            android:background="@drawable/edittext_custom_bg"
-            android:orientation="horizontal"
-
-            >
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="REGISTRATION"
+                android:textSize="16sp" />
 
             <EditText
-                android:id="@+id/etAddress"
+                android:id="@+id/etEmail"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@null"
-                android:paddingStart="16dp"
-                android:hint="ADDRESS"
-                android:inputType="textMultiLine"
-                android:typeface="monospace" />
-
-            <TextView
-                android:id="@+id/btnChooseFromMap"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="@font/montserrat_bold"
-                android:gravity="center"
-                android:text="Choose from Map"
-                android:textColor="@color/greenPrimary"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/orgSelectContainer"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/edittext_custom_bg"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvNGOOrg"
-                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:hint="SELECT AN ORGANIZATION"
-                android:inputType="number"
-                android:paddingStart="5dp"
-                android:textSize="20sp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/edittext_custom_bg"
+                android:hint="EMAIL"
+                android:inputType="text"
+                android:padding="16dp"
                 android:typeface="monospace" />
 
-            <Spinner
-                android:id="@+id/spinnerNGOOrg"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:spinnerMode="dropdown" />
+            <EditText
+                android:id="@+id/etContact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/edittext_custom_bg"
+                android:hint="CONTACT NUMBER"
+                android:inputType="number"
+                android:padding="16dp"
+                android:typeface="monospace" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="5dp"
+
+                android:background="@drawable/edittext_custom_bg"
+                android:orientation="horizontal"
+
+                >
+
+                <EditText
+                    android:id="@+id/etAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:paddingStart="16dp"
+                    android:hint="ADDRESS"
+                    android:inputType="textMultiLine"
+                    android:typeface="monospace" />
+
+<!--                <TextView-->
+<!--                    android:id="@+id/btnChooseFromMap"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="Choose from Map"-->
+<!--                    android:textColor="@color/greenPrimary"-->
+<!--                    android:padding="5dp"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:fontFamily="@font/montserrat_bold"-->
+<!--                    android:layout_gravity="center_vertical"-->
+<!--                    android:clickable="true"-->
+<!--                    android:focusable="true"-->
+<!--                    />-->
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/orgSelectContainer"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/edittext_custom_bg"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvNGOOrg"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:hint="SELECT AN ORGANIZATION"
+                    android:inputType="number"
+                    android:paddingStart="5dp"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+
+                <Spinner
+                    android:id="@+id/spinnerNGOOrg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:spinnerMode="dropdown" />
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/edittext_custom_bg"
+                android:hint="PASSWORD"
+                android:inputType="textPassword"
+                android:padding="16dp"
+                android:typeface="monospace" />
+
+            <EditText
+                android:id="@+id/etConfPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_custom_bg"
+                android:hint="CONFIRM PASSWORD"
+                android:inputType="textPassword"
+                android:padding="16dp"
+                android:typeface="monospace" />
 
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/etPassword"
+        <Button
+            android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/edittext_custom_bg"
-            android:hint="PASSWORD"
-            android:inputType="textPassword"
-            android:padding="16dp"
-            android:typeface="monospace" />
+            android:background="@drawable/custom_btn"
+            android:textSize="20sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="70dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="CONFIRM"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:layout_constraintVertical_bias="0.448" />
 
-        <EditText
-            android:id="@+id/etConfPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edittext_custom_bg"
-            android:hint="CONFIRM PASSWORD"
-            android:inputType="textPassword"
-            android:padding="16dp"
-            android:typeface="monospace" />
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btnRegister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/greenPrimary"
-        android:text="CONFIRM"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.448" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
