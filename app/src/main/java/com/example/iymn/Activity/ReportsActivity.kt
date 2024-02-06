@@ -1,30 +1,52 @@
 package com.example.iymn.Activity
 
-import androidx.appcompat.app.AppCompatActivity
+import android.Manifest
+import android.content.ContentValues.TAG
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Typeface
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.util.Log
+import android.util.TypedValue
 import android.widget.ImageView
+import android.widget.TableLayout
+import android.widget.TableRow
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.iymn.Adapters.TableItemAdapterParent
-import com.example.iymn.Models.TableItem
+import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.iymn.R
 import com.example.iymn.databinding.ActivityReportsBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import java.text.SimpleDateFormat
-import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
+
 
 class ReportsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReportsBinding
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
-    private lateinit var statusValue : String
+    private val requestCode = 42 // Your unique request code
+    private val writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+    companion object {
+        private const val WRITE_EXTERNAL_STORAGE_PERMISSION_CODE = 1001
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityReportsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         auth = FirebaseAuth.getInstance()
 
@@ -38,110 +60,224 @@ class ReportsActivity : AppCompatActivity() {
 
         // Initialize Firebase
         db = FirebaseFirestore.getInstance()
+        displayTable()
 
 
-        fetchDonationData("PENDING")
-
-        binding.btnToPending.setOnClickListener {
-            fetchDonationData("PENDING")
+        binding.btnDownloadCsv.setOnClickListener {
+            exportTableToCSV(binding.tableLayout)
         }
-
-        binding.btnToAccepted.setOnClickListener {
-            fetchDonationData("ACCEPTED")
-        }
-
-        binding.btnToRejected.setOnClickListener {
-            fetchDonationData("REJECTED")
-        }
-
     }
-    private fun fetchDonationData(status: String) {
-        // Assume "donations" is the name of your Firestore collection
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            db.collection("users").document(currentUser.uid)
-                .get()
-                .addOnSuccessListener { userDocument ->
-                    val ngoOrg = userDocument.getString("NgoOrg") ?: ""
 
-                    // Fetch donations where the status matches and the organization matches the user's organization
-                    db.collection("donations")
-                        .whereEqualTo("status", status)
-                        .whereEqualTo("recipient", ngoOrg)
-                        .get()
-                        .addOnSuccessListener { result ->
-                            if (!result.isEmpty) {
-                                val donations: MutableList<TableItem> = mutableListOf()
 
-                                for (document in result.documents) {
-                                    val id = document.id
-                                    val donorUID = document.getString("donorUID") ?: ""
-                                    val cropName = document.getString("vegName") ?: ""
-                                    val ngoPartner = document.getString("recipient") ?: ""
-                                    val address = document.getString("address") ?: ""
-                                    val quantity = document.getString("quantity") ?: ""
-                                    val quantityType = document.getString("quantityType") ?: ""
-                                    val date = document.getString("donateDate") ?: ""
-                                    val status = document.getString("status") ?: ""
-                                    val finalQuantity =getString(
-                                        R.string.formatted_quantity,
-                                        quantity,
-                                        quantityType
-                                    )
-                                    val formattedDate = formatDate(date)
 
-                                    // Now, fetch the name of the donorUID from the "users" collection
-                                    fetchDonorName(donorUID) { donorName ->
-                                        val tableItem = TableItem(id, donorName, cropName, ngoPartner, address, finalQuantity, formattedDate, status)
-                                        donations.add(tableItem)
+    private fun displayTable(){
+        db.collection("donations").get()
+            .addOnSuccessListener { donationsSnapshot ->
+                // Sample data for the table
+                val headers = arrayOf("Donor", "Recipient", "Donation", "Date", "Status")
 
-                                        // If all data is fetched, set up the RecyclerView adapter
-                                        if (donations.size == result.size()) {
-                                            val recyclerView = findViewById<RecyclerView>(R.id.tableRecyclerViewPending)
-                                            recyclerView.layoutManager = LinearLayoutManager(this)
-                                            recyclerView.adapter = TableItemAdapterParent(donations)
-                                        }
-                                    }
+                // Create table header row
+                val headerRow = TableRow(this)
+                for (header in headers) {
+                    val textView = TextView(this)
+                    textView.text = header
+                    textView.setPadding(5, 5, 5, 5)
+                    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.toFloat()) // Set text size
+                    textView.setTextColor(
+                        ContextCompat.getColor(
+                            this,
+                            R.color.black
+                        )
+                    ) // Set text color
+                    textView.typeface =
+                        Typeface.create("montserrat_bold", Typeface.BOLD) // Set font family
+                    headerRow.addView(textView)
+                }
+                binding.tableLayout.addView(headerRow)
+
+                // Process each donation document
+                for (donationDocument in donationsSnapshot.documents) {
+                    val donorId = donationDocument.getString("donorUID")
+                    val recipient = donationDocument.getString("recipient")
+                    val vegName = donationDocument.getString("vegName")
+                    val date = donationDocument.getString("donateDate")
+                    val status = donationDocument.getString("status")
+
+                    // Fetch donor's name from the "users" collection
+                    if (donorId != null) {
+                        val usersCollection = db.collection("users")
+                        usersCollection.document(donorId).get()
+                            .addOnSuccessListener { userDocument ->
+                                val donorName = userDocument.getString("name")
+                                // Create table data row
+                                val dataRow = TableRow(this)
+                                val rowData = arrayOf(
+                                    donorName ?: "", // Donor's name
+                                    recipient ?: "",
+                                    vegName ?: "",
+                                    date ?: "",
+                                    status ?: ""
+                                )
+                                for (cellData in rowData) {
+                                    val textView = TextView(this)
+                                    textView.text = cellData
+                                    textView.setTextSize(
+                                        TypedValue.COMPLEX_UNIT_SP,
+                                        16.toFloat()
+                                    ) // Set text size
+                                    textView.setTextColor(
+                                        ContextCompat.getColor(
+                                            this,
+                                            R.color.black
+                                        )
+                                    ) // Set text color
+                                    textView.typeface = Typeface.create(
+                                        "montserrat",
+                                        Typeface.NORMAL
+                                    ) // Set font family
+                                    textView.setPadding(5, 5, 5, 5)
+                                    dataRow.addView(textView)
                                 }
+                                binding.tableLayout.addView(dataRow)
                             }
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.e("Firebase", "Error getting documents: ", exception)
-                        }
-                }
-                .addOnFailureListener { exception ->
-                    Log.e("Firebase", "Error getting user document: ", exception)
-                }
-        }
-    }
-
-
-    private fun fetchDonorName(donorUID: String, callback: (String) -> Unit) {
-        // Fetch the name of the donorUID from the "users" collection
-        db.collection("users")
-            .document(donorUID)
-            .get()
-            .addOnSuccessListener { userDocument ->
-                val donorName = userDocument.getString("name") ?: ""
-                val email = userDocument.getString("email") ?: ""
-
-                if(donorName.isBlank()){
-                    callback.invoke(email)
-                }else{
-                    callback.invoke(donorName)
+                            .addOnFailureListener { exception ->
+                                Log.e(TAG, "Error getting user document: ", exception)
+                            }
+                    }
                 }
             }
             .addOnFailureListener { exception ->
-                Log.e("Firebase", "Error getting user document: ", exception)
-                callback.invoke("") // Provide a default value or handle the failure accordingly
+                // Handle errors
+                Log.e(TAG, "Error getting donations: ", exception)
             }
     }
 
-    private fun formatDate(dateString: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("MMMM d, yyyy, h:mm a", Locale.getDefault())
-        val date = inputFormat.parse(dateString)
-        return outputFormat.format(date)
+    private fun exportTableToCSV(tableLayout: TableLayout) {
+        val fileName = "iymn_donation_reports.csv"
+        val path = Environment.getExternalStorageDirectory().toString() + "/" + fileName
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted, request the permission
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                WRITE_EXTERNAL_STORAGE_PERMISSION_CODE)
+        } else {
+            // Permission has already been granted
+            writeCSVToFile(tableLayout, path)
+        }
     }
+
+    private fun writeCSVToFile(tableLayout: TableLayout, path: String) {
+        try {
+            val file = File(path)
+            file.createNewFile()
+
+            val fileWriter = FileWriter(file)
+            val sb = StringBuilder()
+
+            // Write table headers
+            for (i in 0 until tableLayout.childCount) {
+                val row = tableLayout.getChildAt(i)
+                if (row is TableRow) {
+                    for (j in 0 until row.childCount) {
+                        val textView = row.getChildAt(j) as TextView
+                        sb.append(textView.text.toString())
+                        if (j < row.childCount - 1) {
+                            sb.append(",")
+                        }
+                    }
+                    sb.appendLine()
+                }
+            }
+
+            // Write table data
+            for (i in 0 until tableLayout.childCount) {
+                val row = tableLayout.getChildAt(i)
+                if (row is TableRow) {
+                    for (j in 0 until row.childCount) {
+                        val textView = row.getChildAt(j) as TextView
+                        sb.append(textView.text.toString())
+                        if (j < row.childCount - 1) {
+                            sb.append(",")
+                        }
+                    }
+                    sb.appendLine()
+                }
+            }
+
+            fileWriter.write(sb.toString())
+            fileWriter.flush()
+            fileWriter.close()
+
+            Log.d("Export", "CSV file saved to $path")
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.e("Export", "Error exporting table to CSV: ${e.message}")
+        }
+    }
+//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        when (requestCode) {
+//            WRITE_EXTERNAL_STORAGE_PERMISSION_CODE -> {
+//                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+//                    // Permission granted, proceed with exporting
+//                    exportTableToCSV(binding.tableLayout)
+//                } else {
+//                    Log.e("Permission", "Write external storage permission denied")
+//                    // You may show a message to the user indicating why the permission is needed
+//                    // For example, you can display a Snackbar or a Toast
+//                    Toast.makeText(this, "Permission denied, cannot export table to CSV.", Toast.LENGTH_SHORT).show()
+//                }
+//                return
+//            }
+//            else -> {
+//                // Handle other permission requests if any
+//            }
+//        }
+//    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            WRITE_EXTERNAL_STORAGE_PERMISSION_CODE -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // Permission granted, proceed with exporting
+                    exportTableToCSV(binding.tableLayout)
+                } else {
+                    // Permission denied, handle accordingly
+                    Log.e("Permission", "Write external storage permission denied")
+                    // Check if user has selected "Don't ask again"
+                    if (!shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        // User selected "Don't ask again", explain why permission is needed and redirect to app settings
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("Permission Required")
+                            .setMessage("This permission is required to export table data to CSV. Please enable it in app settings.")
+                            .setPositiveButton("Settings") { _, _ ->
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                val uri: Uri = Uri.fromParts("package", packageName, null)
+                                intent.data = uri
+                                startActivity(intent)
+                            }
+                            .setNegativeButton("Cancel") { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                    } else {
+                        // User denied permission, inform them and handle accordingly
+                        Toast.makeText(this, "Permission denied, cannot export table to CSV.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                return
+            }
+            else -> {
+                // Handle other permission requests if any
+            }
+        }
+    }
+
+
+
+
 
 }

@@ -13,6 +13,7 @@ import com.example.iymn.Activity.DonationHistoryActivity
 import com.example.iymn.Activity.FeedbackActivity
 import com.example.iymn.Activity.FoodMapActivity
 import com.example.iymn.Activity.ReportsActivity
+import com.example.iymn.Activity.TrackDonationsActivity
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentNGODashboardBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -59,6 +60,14 @@ class NGODashboardFragment : Fragment() {
                 Intent(
                     requireContext(),
                     ReportsActivity::class.java
+                )
+            )
+        }
+        binding.btnTrackDonations.setOnClickListener {
+            startActivity(
+                Intent(
+                    requireContext(),
+                    TrackDonationsActivity::class.java
                 )
             )
         }

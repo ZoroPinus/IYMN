@@ -14,6 +14,7 @@ import com.example.iymn.Activity.FeedbackActivity
 import com.example.iymn.Activity.FoodMapActivity
 import com.example.iymn.Activity.NGOPartnersActivity
 import com.example.iymn.Activity.ReportsActivity
+import com.example.iymn.Activity.TrackDonationsActivity
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentAdminDashboardBinding
 import com.example.iymn.databinding.FragmentNGODashboardBinding
@@ -53,14 +54,24 @@ class AdminDashboardFragment : Fragment() {
             replaceFragment(ProfileFragment())
         }
 
-//        binding.btnReports.setOnClickListener {
-//            startActivity(
-//                Intent(
-//                    requireContext(),
-//                    ReportsActivity::class.java
-//                )
-//            )
-//        }
+        binding.btnReportsAdmin.setOnClickListener {
+            startActivity(
+                Intent(
+                    requireContext(),
+                    ReportsActivity::class.java
+                )
+            )
+        }
+
+        binding.btnTrackDonations.setOnClickListener {
+            startActivity(
+                Intent(
+                    requireContext(),
+                    TrackDonationsActivity::class.java
+                )
+            )
+        }
+
 //        binding.btnRegisteredAccounts.setOnClickListener {
 //            Toast.makeText(requireContext(), "Registered", Toast.LENGTH_SHORT).show()
 //        }
@@ -72,14 +83,14 @@ class AdminDashboardFragment : Fragment() {
 //                )
 //            )
 //        }
-//        binding.btnFoodMapAdmin.setOnClickListener {
-//            startActivity(
-//                Intent(
-//                    requireContext(),
-//                    FoodMapActivity::class.java
-//                )
-//            )
-//        }
+        binding.btnFoodMapAdmin.setOnClickListener {
+            startActivity(
+                Intent(
+                    requireContext(),
+                    FoodMapActivity::class.java
+                )
+            )
+        }
 //        binding.btnFeedbacks.setOnClickListener {
 //            startActivity(
 //                Intent(
