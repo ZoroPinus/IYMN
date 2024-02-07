@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/greenLight"
     android:orientation="vertical"
     tools:context=".Activity.RegistrationFormActivity">
     <FrameLayout
@@ -74,6 +74,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/edittext_custom_bg"
                 android:hint="EMAIL"
+                android:textColor="@color/black"
                 android:inputType="text"
                 android:padding="16dp"
                 android:typeface="monospace" />
@@ -86,6 +87,7 @@
                 android:background="@drawable/edittext_custom_bg"
                 android:hint="CONTACT NUMBER"
                 android:inputType="number"
+                android:textColor="@color/black"
                 android:padding="16dp"
                 android:typeface="monospace" />
 
@@ -107,6 +109,7 @@
                     android:background="@null"
                     android:paddingStart="16dp"
                     android:hint="ADDRESS"
+                    android:textColor="@color/black"
                     android:inputType="textMultiLine"
                     android:typeface="monospace" />
 
@@ -143,6 +146,7 @@
                     android:hint="SELECT AN ORGANIZATION"
                     android:inputType="number"
                     android:paddingStart="5dp"
+                    android:textColor="@color/black"
                     android:textSize="20sp"
                     android:typeface="monospace" />
 
@@ -161,6 +165,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/edittext_custom_bg"
                 android:hint="PASSWORD"
+                android:textColor="@color/black"
                 android:inputType="textPassword"
                 android:padding="16dp"
                 android:typeface="monospace" />
@@ -171,6 +176,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/edittext_custom_bg"
                 android:hint="CONFIRM PASSWORD"
+                android:textColor="@color/black"
                 android:inputType="textPassword"
                 android:padding="16dp"
                 android:typeface="monospace" />

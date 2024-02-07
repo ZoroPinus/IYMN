@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/white"
+    android:background="@color/greenLight"
     android:padding="16dp">
 
     <!-- Circular image placeholder -->
@@ -52,6 +52,9 @@
         android:background="@drawable/edittext_custom_bg"
         android:hint="NAME"
         android:inputType="textEmailAddress"
+        android:fontFamily="@font/montserrat"
+        android:textColor="@color/black"
+        android:textSize="20dp"
         android:padding="10dp"
         android:typeface="monospace" />
 
@@ -72,6 +75,9 @@
         android:background="@drawable/edittext_custom_bg"
         android:hint="EMAIL"
         android:inputType="textEmailAddress"
+        android:fontFamily="@font/montserrat"
+        android:textColor="@color/black"
+        android:textSize="20dp"
         android:padding="10dp"
         android:typeface="monospace" />
 
@@ -91,6 +97,9 @@
         android:background="@drawable/edittext_custom_bg"
         android:hint="ADDRESS"
         android:inputType="textEmailAddress"
+        android:fontFamily="@font/montserrat"
+        android:textColor="@color/black"
+        android:textSize="20dp"
         android:padding="10dp"
         android:typeface="monospace" />
 
@@ -110,6 +119,9 @@
         android:background="@drawable/edittext_custom_bg"
         android:hint="CONTACT"
         android:inputType="number"
+        android:fontFamily="@font/montserrat"
+        android:textColor="@color/black"
+        android:textSize="20dp"
         android:padding="10dp"
         android:typeface="monospace" />
 

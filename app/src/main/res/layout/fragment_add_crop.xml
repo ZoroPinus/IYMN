@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/greenLight"
     tools:context=".Fragments.AddCropFragment">
 
     <EditText
@@ -13,6 +14,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:hint="Add Crop Name"
+        android:background="@drawable/edittext_custom_bg"
+        android:padding="10dp"
+        android:textSize="20sp"
+        android:fontFamily="@font/montserrat"
+        android:textColor="@color/black"
+        android:layout_margin="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,7 +31,11 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="20dp"
-        android:text="Add"
+        android:text="ADD"
+        android:textSize="20sp"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="@color/white"
+        android:background="@drawable/custom_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etCropName" />
 
