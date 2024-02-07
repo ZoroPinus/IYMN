@@ -11,8 +11,10 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.iymn.Activity.DonationHistoryActivity
 import com.example.iymn.Activity.FeedbackActivity
+import com.example.iymn.Activity.FeedbackListActivity
 import com.example.iymn.Activity.FoodMapActivity
 import com.example.iymn.Activity.NGOPartnersActivity
+import com.example.iymn.Activity.RegisteredAccountsActivity
 import com.example.iymn.Activity.ReportsActivity
 import com.example.iymn.Activity.TrackDonationsActivity
 import com.example.iymn.R
@@ -72,17 +74,22 @@ class AdminDashboardFragment : Fragment() {
             )
         }
 
-//        binding.btnRegisteredAccounts.setOnClickListener {
-//            Toast.makeText(requireContext(), "Registered", Toast.LENGTH_SHORT).show()
-//        }
-//        binding.btnNgoPartners.setOnClickListener {
-//            startActivity(
-//                Intent(
-//                    requireContext(),
-//                    NGOPartnersActivity::class.java
-//                )
-//            )
-//        }
+        binding.btnRegisteredAccounts.setOnClickListener {
+            startActivity(
+                Intent(
+                    requireContext(),
+                    RegisteredAccountsActivity::class.java
+                )
+            )
+        }
+        binding.btnToNGOPartners.setOnClickListener {
+            startActivity(
+                Intent(
+                    requireContext(),
+                    NGOPartnersActivity::class.java
+                )
+            )
+        }
         binding.btnFoodMapAdmin.setOnClickListener {
             startActivity(
                 Intent(
@@ -91,14 +98,14 @@ class AdminDashboardFragment : Fragment() {
                 )
             )
         }
-//        binding.btnFeedbacks.setOnClickListener {
-//            startActivity(
-//                Intent(
-//                    requireContext(),
-//                    FeedbackActivity::class.java
-//                )
-//            )
-//        }
+        binding.btnToFeedbacks.setOnClickListener {
+            startActivity(
+                Intent(
+                    requireContext(),
+                    FeedbackListActivity::class.java
+                )
+            )
+        }
 
     }
     private fun fetchUserData(userId: String) {

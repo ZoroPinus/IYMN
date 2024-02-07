@@ -60,6 +60,7 @@ class ReportsActivity : AppCompatActivity() {
 
         // Initialize Firebase
         db = FirebaseFirestore.getInstance()
+
         displayTable()
 
 
@@ -81,8 +82,8 @@ class ReportsActivity : AppCompatActivity() {
                 for (header in headers) {
                     val textView = TextView(this)
                     textView.text = header
-                    textView.setPadding(5, 5, 5, 5)
-                    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.toFloat()) // Set text size
+                    textView.setPadding(30, 30, 30, 30)
+                    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20.toFloat()) // Set text size
                     textView.setTextColor(
                         ContextCompat.getColor(
                             this,
@@ -123,7 +124,7 @@ class ReportsActivity : AppCompatActivity() {
                                     textView.text = cellData
                                     textView.setTextSize(
                                         TypedValue.COMPLEX_UNIT_SP,
-                                        16.toFloat()
+                                        18.toFloat()
                                     ) // Set text size
                                     textView.setTextColor(
                                         ContextCompat.getColor(
@@ -135,7 +136,7 @@ class ReportsActivity : AppCompatActivity() {
                                         "montserrat",
                                         Typeface.NORMAL
                                     ) // Set font family
-                                    textView.setPadding(5, 5, 5, 5)
+                                    textView.setPadding(30, 30, 30, 30)
                                     dataRow.addView(textView)
                                 }
                                 binding.tableLayout.addView(dataRow)
@@ -239,6 +240,7 @@ class ReportsActivity : AppCompatActivity() {
 //    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             WRITE_EXTERNAL_STORAGE_PERMISSION_CODE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {

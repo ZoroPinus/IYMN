@@ -7,8 +7,11 @@
     tools:context=".Activity.TrackDonationsActivity">
 
 
-    <include layout="@layout/custom_header"
-        android:id="@id/headerLayout"/>
+    <include
+        android:id="@id/headerLayout"
+        layout="@layout/custom_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout4"

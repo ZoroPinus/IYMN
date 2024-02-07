@@ -148,7 +148,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:padding="5dp"
-                        android:src="@drawable/ic_reports" />
+                        android:src="@drawable/ic_donations" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -187,7 +187,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:padding="5dp"
-                        android:src="@drawable/ic_reports" />
+                        android:src="@drawable/ic_map" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -217,7 +217,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:padding="5dp"
-                        android:src="@drawable/ic_reports" />
+                        android:src="@drawable/ic_track" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -252,7 +252,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:padding="5dp"
-                        android:src="@drawable/ic_reports" />
+                        android:src="@drawable/ic_feedback" />
 
                     <TextView
                         android:layout_width="wrap_content"

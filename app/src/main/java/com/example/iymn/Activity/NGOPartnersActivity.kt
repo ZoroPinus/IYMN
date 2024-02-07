@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.iymn.Adapters.CropItemAdapter
@@ -29,6 +31,14 @@ class NGOPartnersActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityNgopartnersBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val headerIcon: ImageView = findViewById(R.id.customHeaderIcon)
+        val headerText: TextView = findViewById(R.id.customHeaderText)
+
+        headerIcon.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        headerText.setText("NGO Partners")
 
         recyclerView = findViewById(R.id.NGOrecyclerview)
         NGOItemAdapter = NGOItemAdapter()
