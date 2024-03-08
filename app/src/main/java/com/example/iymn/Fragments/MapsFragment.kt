@@ -27,6 +27,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.iymn.Activity.DashboardActivity
+import com.example.iymn.Adapters.CustomMarkerAdapter
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentMapsBinding
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -51,6 +52,8 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class MapsFragment : Fragment(), OnMapReadyCallback  {
@@ -64,6 +67,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
     private val donationLocations = mutableListOf<GeoPoint>()
     private lateinit var mapView: MapView
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var customMarkerAdapter: CustomMarkerAdapter
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
@@ -94,6 +98,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
             recenterMap()
         }
 
+
         // Set up text change listener for AutoCompleteTextView
         binding.etSearch.addTextChangedListener(object : TextWatcher {
             private val handler = Handler(Looper.getMainLooper())
@@ -118,12 +123,21 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
             val query = binding.etSearch.text.toString()
             getPlaceDetails(query)
         }
+
+//        binding.btnTest.setOnClickListener {
+//            val latitude = 37.7749
+//            val longitude = -122.4194
+//            val customModalFragment = MapDetailsFragment.newInstance(latitude, longitude)
+//            customModalFragment.show(childFragmentManager, "CustomModalFragment")
+//        }
+        customMarkerAdapter = CustomMarkerAdapter(requireContext())
+
     }
 
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
+        mMap.setInfoWindowAdapter(customMarkerAdapter)
         // Check for location permission
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -137,6 +151,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
                         // Move camera to current location
                         val currentLatLng = LatLng(location.latitude, location.longitude)
                         mMap.addMarker(MarkerOptions().position(currentLatLng).title("Current Location"))
+
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 13f))
 
                         if(DashboardActivity.userType == "Donor"){
@@ -184,9 +199,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
                     // Access the address field, you may need to change this based on your data model
                     val address = document.getString("address") ?: "Unknown Address"
                     val name = document.getString("ngoName") ?: "Unknown Address"
+                    val image = document.getString("image") ?: "Unknown Address"
+                    val contact = document.getString("contact") ?: "Unknown Address"
 
                     // Get LatLng from address using Geocoder
-                    showPlaceDetails(address, name)
+                    showPlaceDetails(address, name, image, contact)
                 }
             }
             .addOnFailureListener { exception ->
@@ -205,10 +222,21 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     val location = document.getGeoPoint("latlng")
-                    val donation = document.getString("vegName")
+                    val donation = document.getString("vegName")?: "Unknown Address"
+                    val image = document.getString("image")?: "Unknown Address"
+                    val description = document.getString("description")?: "Unknown Address"
+                    val date = document.getString("donateDate")?: "Unknown Address"
+                    val formattedDate = formatDate(date)
+                    val fetchedQuantity = document.getString("quantity")
+                    val fetchedQuantityType = document.getString("quantityType")
+                    val quantity = getString(
+                        R.string.formatted_quantity,
+                        fetchedQuantity,
+                        fetchedQuantityType
+                    )
                     if (location != null) {
                         val latLng = LatLng(location.latitude, location.longitude)
-                        mMap.addMarker(MarkerOptions().position(latLng).title(donation))
+                        addMarkerNgo(latLng, donation, image, formattedDate, quantity, description)
 
                     }
                 }
@@ -217,8 +245,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
                 // Handle errors
             }
     }
+    private fun formatDate(dateString: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("MMMM d, yyyy, h:mm a", Locale.getDefault())
+        val date = inputFormat.parse(dateString)
+        return outputFormat.format(date)
+    }
 
-    private fun showPlaceDetails(searchQuery: String?, ngoName: String?) {
+    private fun showPlaceDetails(searchQuery: String?, ngoName: String, image: String, contact: String) {
         if (searchQuery.isNullOrBlank()) {
             // Handle the case when the search query is null or blank
             return
@@ -244,12 +278,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
                                 val place = placeResponse.place
                                 val latLng = place.latLng
                                 placeName = place.name
-                                val placeNames = place.name
 
                                 // Check if it's the user's location or NGO partner's location
-                                if (ngoName != null) {
-                                    addMarker(latLng, ngoName)
-                                }
+                                addMarkerDonor(latLng, ngoName, image, contact)
+
 
                             }
                             .addOnFailureListener { exception ->
@@ -267,11 +299,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
                 exception.printStackTrace()
             }
     }
-
-    private fun handleLocationError(exception: Exception?) {
-        Log.e(ContentValues.TAG, "Error getting user location: $exception")
-        // Handle the error as per your application's requirements
-    }
     private fun recenterMap() {
         Log.e(TAG, "Error getting NGO partner locations: ")
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -282,7 +309,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
                     mMap.clear()
                     if (location != null) {
                         val currentLocation = LatLng(location.latitude, location.longitude)
-                        mMap.addMarker(MarkerOptions().position(currentLocation).title("Current Location"))
+                        val markerOptions = MarkerOptions()
+                            .position(currentLocation)
+                            .title("Current Location")
+                        mMap.addMarker(markerOptions)
                         mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation))
                     }
                 }
@@ -290,9 +320,26 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
             Log.e(TAG, "Mapsfragmet")
         }
     }
+    private fun addMarkerDonor(location: LatLng, title: String, image:String, contact: String) {
+        val markerOptions = MarkerOptions()
+            .position(location)
+            .title(title)
+            .snippet("donor|$image|$contact")
+        mMap.addMarker(markerOptions)
+    }
 
+    private fun addMarkerNgo(location: LatLng, title: String, image:String, donorDate: String,quantity: String, description: String) {
+        val markerOptions = MarkerOptions()
+            .position(location)
+            .title(title)
+            .snippet("ngo/admin|$image|$donorDate|$quantity|$description")
+        mMap.addMarker(markerOptions)
+    }
     private fun addMarker(location: LatLng, title: String) {
-        mMap.addMarker(MarkerOptions().position(location).title(title))
+        val markerOptions = MarkerOptions()
+            .position(location)
+            .title(title)
+        mMap.addMarker(markerOptions)
     }
     private fun getPlaceDetails(searchQuery: String?) {
         if (searchQuery.isNullOrBlank()) {
