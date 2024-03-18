@@ -42,9 +42,9 @@ class VegItemAdapter(private var mList: List<VegItemViewModel>) : RecyclerView.A
         holder.item2.text = ItemsViewModel.item3
         holder.item3.text = ItemsViewModel.item2
         holder.item4.text = ItemsViewModel.item4
-        if (ItemsViewModel.item4 == "accepted") {
+        if (ItemsViewModel.item4 == "ACCEPTED") {
             holder.item4.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.accepted))
-        } else if (ItemsViewModel.item4 == "rejected"){
+        } else if (ItemsViewModel.item4 == "REJECTED"){
             // Reset text color if item4 is not "accepted"
             holder.item4.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.rejected))
         } else {

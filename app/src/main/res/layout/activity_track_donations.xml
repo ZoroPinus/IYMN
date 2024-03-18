@@ -32,6 +32,7 @@
             android:background="@drawable/custom_btn_outlined"
             android:clickable="true"
             android:focusable="true"
+            android:textColor="@color/black"
             android:fontFamily="@font/montserrat_bold"
             android:padding="10dp"
             android:text="PENDING"

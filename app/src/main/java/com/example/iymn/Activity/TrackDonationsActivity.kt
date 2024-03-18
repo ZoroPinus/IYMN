@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.iymn.Adapters.TableItemAdapterParent
 import com.example.iymn.Models.TableItem
 import com.example.iymn.R
-import com.example.iymn.databinding.ActivityReportsBinding
 import com.example.iymn.databinding.ActivityTrackDonationsBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,6 +22,7 @@ class TrackDonationsActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
     private lateinit var statusValue : String
+    private var activeButton: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackDonationsBinding.inflate(layoutInflater)
@@ -35,26 +36,41 @@ class TrackDonationsActivity : AppCompatActivity() {
         headerIcon.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-        headerText.setText("Reports")
+        headerText.setText("Track Donations")
 
         // Initialize Firebase
         db = FirebaseFirestore.getInstance()
 
-
+        setActiveButton(binding.btnToPending)
         fetchDonationData("PENDING")
 
         binding.btnToPending.setOnClickListener {
+            setActiveButton(binding.btnToPending)
             fetchDonationData("PENDING")
         }
 
         binding.btnToAccepted.setOnClickListener {
+            setActiveButton(binding.btnToAccepted)
             fetchDonationData("ACCEPTED")
         }
 
         binding.btnToRejected.setOnClickListener {
+            setActiveButton(binding.btnToRejected)
             fetchDonationData("REJECTED")
         }
 
+    }
+
+    private fun setActiveButton(button: TextView) {
+        activeButton?.let {
+            it.setTextColor(ContextCompat.getColor(this, R.color.black))
+            it.setBackgroundResource(R.drawable.custom_btn_outlined)
+            it.isSelected = false
+        }
+        activeButton = button
+        button.setTextColor(ContextCompat.getColor(this, R.color.white))
+        button.setBackgroundResource(R.drawable.custom_btn_outlined_selected)
+        button.isSelected = true
     }
     private fun fetchDonationData(status: String) {
         // Assume "donations" is the name of your Firestore collection
@@ -73,7 +89,7 @@ class TrackDonationsActivity : AppCompatActivity() {
                         .addOnSuccessListener { result ->
                             if (!result.isEmpty) {
                                 val donations: MutableList<TableItem> = mutableListOf()
-
+                                val dateFormat = SimpleDateFormat("MM-dd-yyyy ", Locale.getDefault())
                                 for (document in result.documents) {
                                     val id = document.id
                                     val donorUID = document.getString("donorUID") ?: ""
@@ -82,18 +98,18 @@ class TrackDonationsActivity : AppCompatActivity() {
                                     val address = document.getString("address") ?: ""
                                     val quantity = document.getString("quantity") ?: ""
                                     val quantityType = document.getString("quantityType") ?: ""
-                                    val date = document.getString("donateDate") ?: ""
+                                    val timestamp = document.getTimestamp("donateDate")
+                                    val date = timestamp?.toDate()?.let { dateFormat.format(it) } ?: "Invalid Date"
                                     val status = document.getString("status") ?: ""
                                     val finalQuantity =getString(
                                         R.string.formatted_quantity,
                                         quantity,
                                         quantityType
                                     )
-                                    val formattedDate = formatDate(date)
 
                                     // Now, fetch the name of the donorUID from the "users" collection
                                     fetchDonorName(donorUID) { donorName ->
-                                        val tableItem = TableItem(id, donorName, cropName, ngoPartner, address, finalQuantity, formattedDate, status)
+                                        val tableItem = TableItem(id, donorName, cropName, ngoPartner, address, finalQuantity, date, status)
                                         donations.add(tableItem)
 
                                         // If all data is fetched, set up the RecyclerView adapter

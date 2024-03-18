@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.iymn.Adapters.VegItemAdapter
 import com.example.iymn.Models.VegItemViewModel
@@ -17,6 +16,7 @@ import com.example.iymn.databinding.ActivityDonationHistoryBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -90,13 +90,16 @@ class DonationHistoryActivity : AppCompatActivity() {
     private fun fetchForDonor() {
         db.collection("donations")
             .whereEqualTo("donorUID", currentUser?.uid)
+            .orderBy("donateDate", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documents ->
                 val dataList: MutableList<VegItemViewModel> = mutableListOf()
+                val dateFormat = SimpleDateFormat("MM-dd-yyyy ", Locale.getDefault())
                 for (document in documents) {
                     val docId = document.id
                     val imagePath = document.getString("image") ?: ""
-                    val date = document.getString("donateDate")?.let { formatDate(it) }
+                    val timestamp = document.getTimestamp("donateDate")
+                    val date = timestamp?.toDate()?.let { dateFormat.format(it) } ?: "Invalid Date"
                     val vegName = document.getString("vegName") ?: "Default Item Name"
                     val status = document.getString("status") ?: "Default Item Name"
                     val recipient = document.getString("recipient") ?: "Default Item Name"
@@ -127,10 +130,12 @@ class DonationHistoryActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { documents ->
                 val dataList: MutableList<VegItemViewModel> = mutableListOf()
+                val dateFormat = SimpleDateFormat("MM-dd-yyyy HH:mm:ss", Locale.getDefault())
                 for (document in documents) {
                     val docId = document.id
                     val imagePath = document.getString("image") ?: ""
-                    val date = document.getString("donateDate")?.let { formatDate(it) }
+                    val timestamp = document.getTimestamp("donateDate")
+                    val date = timestamp?.toDate()?.let { dateFormat.format(it) } ?: "Invalid Date"
                     val vegName = document.getString("vegName") ?: "Default Item Name"
                     val status = document.getString("status") ?: "Default Item Name"
                     val recipient = document.getString("recipient") ?: "Default Item Name"

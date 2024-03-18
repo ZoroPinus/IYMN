@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import com.example.iymn.R
 import com.example.iymn.databinding.ActivityDashboardBinding
 import com.example.iymn.databinding.ActivityDonationDetailsBinding
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -77,7 +78,7 @@ class DonationDetailsActivity : AppCompatActivity() {
                     .document(donorUID)
                     .get()
                     .addOnSuccessListener { userSnapshot ->
-                        val userEmail = userSnapshot.getString("email")
+                        val name = userSnapshot.getString("name")
                         val userContact = userSnapshot.getString("contact")
                         Picasso.get()
                             .load(imagePath)
@@ -90,13 +91,17 @@ class DonationDetailsActivity : AppCompatActivity() {
                                 Locale.getDefault()
                             ) else it.toString()
                         }
-                        donor.text = userEmail
+                        donor.text = name
                         quantity.text = getString(
                             R.string.formatted_quantity,
                             fetchedQuantity,
                             fetchedQuantityType
                         )
-                        timeDonated.text =formatDate(data["donateDate"] as String)
+                        // Format donateDate timestamp
+                        val timestamp = data["donateDate"] as? Timestamp
+                        val dateFormat = SimpleDateFormat("MM-dd-yyyy", Locale.getDefault())
+                        val formattedDate = timestamp?.toDate()?.let { dateFormat.format(it) } ?: "Invalid Date"
+                        timeDonated.text = formattedDate
                         contact.text = userContact
                         nearestNgo.text = data["recipient"] as String
                         status.text = data["status"] as String

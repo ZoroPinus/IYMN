@@ -1,6 +1,6 @@
 package com.example.iymn.Models
 
-class TableItem (
+class TableItem(
     val id: String,
     val name: String,
     val cropName: String,

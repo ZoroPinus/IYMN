@@ -44,6 +44,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_bold"
             android:text="Title"
+            android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="20sp" />
 

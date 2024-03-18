@@ -1,6 +1,7 @@
 package com.example.iymn.Fragments
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
+import java.security.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -47,7 +49,7 @@ class DonationFormFragment : Fragment() {
     private var selectedOptionNgo: String = ""
     private var selectedOptionQuantity: String = ""
     private var latLng: GeoPoint? = null
-    private var placeId: String? = ""
+    private var name: String? = ""
     private var placeName: String = ""
     private lateinit var latlngString: String
     private lateinit var ngoOptionsList: List<NGOOption>
@@ -209,8 +211,7 @@ class DonationFormFragment : Fragment() {
             val weightString = binding.etQuantity.text.toString()
             val addressString = binding.etAddress.text.toString()
             val descriptionString = binding.etDescription.text.toString()
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-            val currentDateTime = dateFormat.format(Date())
+            val currentDateTime = com.google.firebase.Timestamp.now()
             val status = "PENDING"
             latLng?.let { it1 ->
                 submitDonation(vegNameString, selectedImage, descriptionString, addressString, weightString, selectedOptionNgo, selectedOptionQuantity, currentDateTime, status,
@@ -311,7 +312,7 @@ class DonationFormFragment : Fragment() {
         return Uri.parse(path)
     }
     private fun submitDonation(vegName: String, imageUri: Uri?, description: String, address:String, quantity: String,
-                               recipient: String, quantityType: String, donateDate: String, status: String, latLng: GeoPoint
+                               recipient: String, quantityType: String, donateDate: com.google.firebase.Timestamp, status: String, latLng: GeoPoint
     ) {
 
         if (vegName.isBlank() || description.isBlank() || quantity.isBlank() || address.isBlank() || recipient.isBlank()  ) {
@@ -325,7 +326,27 @@ class DonationFormFragment : Fragment() {
         }
 
         // Get the currently logged-in user's UID
-        val currentUser = auth.currentUser?.uid
+        val currentUserUID = auth.currentUser?.uid
+        if (currentUserUID != null) {
+            // Fetch user data from Firestore using the UID
+            db.collection("users").document(currentUserUID)
+                .get()
+                .addOnSuccessListener { userDocument ->
+                    name = userDocument.getString("name").toString()
+                    if (name != null) {
+                        // Use the userName in your code
+                        Log.d(TAG, "Current user's name: $name")
+                    } else {
+                        Log.e(TAG, "User document does not contain a 'name' field.")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    // Handle errors
+                    Log.e(TAG, "Error getting current user data: ", exception)
+                }
+        } else {
+            Log.e(TAG, "Current user is null.")
+        }
 
         val donationsCollection = FirebaseFirestore.getInstance().collection("donations")
 
@@ -337,7 +358,8 @@ class DonationFormFragment : Fragment() {
             "address" to address,
             "image" to "",
             "recipient" to recipient,
-            "donorUID" to currentUser,
+            "donorUID" to currentUserUID,
+            "donorName" to name,
             "donateDate" to donateDate,
             "status" to status,
             "latlng" to latLng,

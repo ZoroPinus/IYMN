@@ -23,6 +23,7 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.PopupWindow
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -49,8 +50,10 @@ import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
+import com.squareup.picasso.Picasso
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -214,19 +217,20 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
 
     private fun getDonationLocations() {
         val firestore = FirebaseFirestore.getInstance()
-
+        val dateFormat = SimpleDateFormat("MM-dd-yyyy ", Locale.getDefault())
         // Example: Assuming "donations" is your collection name
         firestore.collection("donations")
             .whereEqualTo("recipient", NGODashboardFragment.ngoOrg)
+            .whereEqualTo("status", "PENDING")
             .get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     val location = document.getGeoPoint("latlng")
-                    val donation = document.getString("vegName")?: "Unknown Address"
-                    val image = document.getString("image")?: "Unknown Address"
-                    val description = document.getString("description")?: "Unknown Address"
-                    val date = document.getString("donateDate")?: "Unknown Address"
-                    val formattedDate = formatDate(date)
+                    val donation = document.getString("vegName") ?: "Unknown Address"
+                    val image = document.getString("image") ?: "Unknown Address"
+                    val description = document.getString("description") ?: "Unknown Address"
+                    val timestamp = document.getTimestamp("donateDate")
+                    val date = timestamp?.toDate()?.let { dateFormat.format(it) } ?: "Invalid Date"
                     val fetchedQuantity = document.getString("quantity")
                     val fetchedQuantityType = document.getString("quantityType")
                     val quantity = getString(
@@ -234,20 +238,44 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
                         fetchedQuantity,
                         fetchedQuantityType
                     )
-                    if (location != null) {
-                        val latLng = LatLng(location.latitude, location.longitude)
-                        addMarkerNgo(latLng, donation, image, formattedDate, quantity, description)
+                    val donorUID = document.getString("donorUID") ?: "Unknown Address"
 
-                    }
+                    // Fetch donor data using donorUID
+                    firestore.collection("users")
+                        .document(donorUID)
+                        .get()
+                        .addOnSuccessListener { userSnapshot ->
+                            val name = userSnapshot.getString("name")
+
+                            if (location != null && name != null) {
+                                val latLng = LatLng(location.latitude, location.longitude)
+                                if (date != null) {
+                                    addMarkerNgo(
+                                        name,
+                                        latLng,
+                                        donation,
+                                        image,
+                                        date,
+                                        quantity,
+                                        description
+                                    )
+                                }
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("Donor Name", "Error fetching user data", e)
+                        }
                 }
             }
             .addOnFailureListener { exception ->
                 // Handle errors
+                Log.e("Firestore", "Error getting documents: ", exception)
             }
     }
+
     private fun formatDate(dateString: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("MMMM d, yyyy, h:mm a", Locale.getDefault())
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd ", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
         val date = inputFormat.parse(dateString)
         return outputFormat.format(date)
     }
@@ -328,11 +356,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
         mMap.addMarker(markerOptions)
     }
 
-    private fun addMarkerNgo(location: LatLng, title: String, image:String, donorDate: String,quantity: String, description: String) {
+    private fun addMarkerNgo(name:String, location: LatLng, title: String, image:String, donorDate: String,quantity: String, description: String) {
         val markerOptions = MarkerOptions()
             .position(location)
-            .title(title)
-            .snippet("ngo/admin|$image|$donorDate|$quantity|$description")
+            .title(name)
+            .snippet("ngo/admin|$image|$donorDate|$quantity|$description|$title")
         mMap.addMarker(markerOptions)
     }
     private fun addMarker(location: LatLng, title: String) {

@@ -27,10 +27,13 @@ import com.example.iymn.R
 import com.example.iymn.databinding.ActivityReportsBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 class ReportsActivity : AppCompatActivity() {
@@ -71,8 +74,10 @@ class ReportsActivity : AppCompatActivity() {
 
 
 
-    private fun displayTable(){
-        db.collection("donations").get()
+    private fun displayTable() {
+        db.collection("donations")
+            .orderBy("donateDate", Query.Direction.DESCENDING)
+            .get()
             .addOnSuccessListener { donationsSnapshot ->
                 // Sample data for the table
                 val headers = arrayOf("Donor", "Recipient", "Donation", "Date", "Status")
@@ -84,67 +89,37 @@ class ReportsActivity : AppCompatActivity() {
                     textView.text = header
                     textView.setPadding(30, 30, 30, 30)
                     textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20.toFloat()) // Set text size
-                    textView.setTextColor(
-                        ContextCompat.getColor(
-                            this,
-                            R.color.black
-                        )
-                    ) // Set text color
-                    textView.typeface =
-                        Typeface.create("montserrat_bold", Typeface.BOLD) // Set font family
+                    textView.setTextColor(ContextCompat.getColor(this, R.color.black)) // Set text color
+                    textView.typeface = Typeface.create("montserrat_bold", Typeface.BOLD) // Set font family
                     headerRow.addView(textView)
                 }
                 binding.tableLayout.addView(headerRow)
 
                 // Process each donation document
                 for (donationDocument in donationsSnapshot.documents) {
-                    val donorId = donationDocument.getString("donorUID")
+                    val dateFormat = SimpleDateFormat("MM-dd-yyyy ", Locale.getDefault())
+                    val donorId = donationDocument.getString("donorUID") ?: "Invalid Date"// Use document ID as UID
                     val recipient = donationDocument.getString("recipient")
                     val vegName = donationDocument.getString("vegName")
-                    val date = donationDocument.getString("donateDate")
+                    val timestamp = donationDocument.getTimestamp("donateDate")
+                    val date = timestamp?.toDate()?.let { dateFormat.format(it) } ?: "Invalid Date"
                     val status = donationDocument.getString("status")
+                    val name = donationDocument.getString("donorName")
 
-                    // Fetch donor's name from the "users" collection
-                    if (donorId != null) {
-                        val usersCollection = db.collection("users")
-                        usersCollection.document(donorId).get()
-                            .addOnSuccessListener { userDocument ->
-                                val donorName = userDocument.getString("name")
-                                // Create table data row
-                                val dataRow = TableRow(this)
-                                val rowData = arrayOf(
-                                    donorName ?: "", // Donor's name
-                                    recipient ?: "",
-                                    vegName ?: "",
-                                    date ?: "",
-                                    status ?: ""
-                                )
-                                for (cellData in rowData) {
-                                    val textView = TextView(this)
-                                    textView.text = cellData
-                                    textView.setTextSize(
-                                        TypedValue.COMPLEX_UNIT_SP,
-                                        18.toFloat()
-                                    ) // Set text size
-                                    textView.setTextColor(
-                                        ContextCompat.getColor(
-                                            this,
-                                            R.color.black
-                                        )
-                                    ) // Set text color
-                                    textView.typeface = Typeface.create(
-                                        "montserrat",
-                                        Typeface.NORMAL
-                                    ) // Set font family
-                                    textView.setPadding(30, 30, 30, 30)
-                                    dataRow.addView(textView)
-                                }
-                                binding.tableLayout.addView(dataRow)
-                            }
-                            .addOnFailureListener { exception ->
-                                Log.e(TAG, "Error getting user document: ", exception)
-                            }
-                    }
+                    // Fetch user data for the donorId
+                        val dataRow = TableRow(this)
+                        val rowData = arrayOf(name, recipient ?: "", vegName ?: "", date, status ?: "")
+                        for (cellData in rowData) {
+                            val textView = TextView(this)
+                            textView.text = cellData
+                            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18.toFloat()) // Set text size
+                            textView.setTextColor(ContextCompat.getColor(this, R.color.black)) // Set text color
+                            textView.typeface = Typeface.create("montserrat", Typeface.NORMAL) // Set font family
+                            textView.setPadding(30, 30, 30, 30)
+                            dataRow.addView(textView)
+                        }
+                        binding.tableLayout.addView(dataRow)
+
                 }
             }
             .addOnFailureListener { exception ->

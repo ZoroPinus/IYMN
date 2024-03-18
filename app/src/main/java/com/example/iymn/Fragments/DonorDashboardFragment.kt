@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,12 +17,9 @@ import com.example.iymn.Activity.FeedbackActivity
 import com.example.iymn.Activity.FoodMapActivity
 import com.example.iymn.Activity.NGOPartnersActivity
 import com.example.iymn.Adapters.DonatedItemAdapter
-import com.example.iymn.Adapters.VegItemAdapter
 import com.example.iymn.Models.DonatedItem
-import com.example.iymn.Models.VegItemViewModel
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentDonorDashboardBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -162,13 +158,17 @@ class DonorDashboardFragment : Fragment() {
     private fun fetchForDonor() {
         db.collection("donations")
             .whereEqualTo("donorUID", currentUser?.uid)
-            .limit(4)
+            .orderBy("donateDate", Query.Direction.DESCENDING)
+            .limit(3)
             .get()
             .addOnSuccessListener { documents ->
                 val dataList: MutableList<DonatedItem> = mutableListOf()
+                val dateFormat = SimpleDateFormat("MM-dd-yyyy", Locale.getDefault())
+
                 for (document in documents) {
                     val docId = document.id
-                    val date = document.getString("donateDate")?.let { formatDate(it) }
+                    val timestamp = document.getTimestamp("donateDate")
+                    val date = timestamp?.toDate()?.let { dateFormat.format(it) } ?: "Invalid Date"
                     val vegName = document.getString("vegName") ?: "Default Item Name"
                     val status = document.getString("status") ?: "Default Item Name"
                     val recipient = document.getString("recipient") ?: "Default Item Name"

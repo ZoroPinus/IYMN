@@ -50,6 +50,7 @@ class CustomMarkerAdapter(private val context: Context) : GoogleMap.InfoWindowAd
             }
             "ngo/admin" -> {
                 val placeNameTextView = view.findViewById<TextView>(R.id.placeNameTextView)
+                val markerProduct = view.findViewById<TextView>(R.id.markerProduct)
                 val markerDonateDate = view.findViewById<TextView>(R.id.markerDonateDate)
                 val markerQuantity = view.findViewById<TextView>(R.id.markerQuantity)
                 val markerDescription = view.findViewById<TextView>(R.id.markerDescription)
@@ -60,6 +61,7 @@ class CustomMarkerAdapter(private val context: Context) : GoogleMap.InfoWindowAd
                 markerDonateDate.text = snippetParts[2]
                 markerQuantity.text = snippetParts[3]
                 markerDescription.text = snippetParts[4]
+                markerProduct.text = snippetParts[5]
 
                 imageUrl?.let {
                     // Load image using your preferred image loading library (e.g., Picasso, Glide)
