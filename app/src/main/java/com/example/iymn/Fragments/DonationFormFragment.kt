@@ -334,7 +334,41 @@ class DonationFormFragment : Fragment() {
                 .addOnSuccessListener { userDocument ->
                     name = userDocument.getString("name").toString()
                     if (name != null) {
-                        // Use the userName in your code
+                        // Use the userName in your code\
+                        val donationsCollection = FirebaseFirestore.getInstance().collection("donations")
+
+                        val donationData = hashMapOf(
+                            "vegName" to vegName,
+                            "description" to description,
+                            "quantity" to quantity,
+                            "quantityType" to quantityType,
+                            "address" to address,
+                            "image" to "",
+                            "recipient" to recipient,
+                            "donorUID" to currentUserUID,
+                            "donorName" to name,
+                            "donateDate" to donateDate,
+                            "status" to status,
+                            "latlng" to latLng,
+                            // Add more fields as needed
+                        )
+
+                        // Add the donation data to Firestore
+                        donationsCollection.add(donationData)
+                            .addOnSuccessListener { documentReference ->
+                                // Donation saved successfully
+                                val donationId = documentReference.id
+                                // Handle success or perform additional operations
+                                // For example, upload image to Firebase Storage and update donation document with image URL
+                                if (imageUri != null) {
+                                    uploadImageToFirebaseStorage(imageUri, donationId)
+                                }
+                                Log.e("Firestore", latLng.toString())
+                            }
+                            .addOnFailureListener { e ->
+                                // Handle failure
+                                Log.e("Firestore", "Error adding document", e)
+                            }
                         Log.d(TAG, "Current user's name: $name")
                     } else {
                         Log.e(TAG, "User document does not contain a 'name' field.")
@@ -348,40 +382,7 @@ class DonationFormFragment : Fragment() {
             Log.e(TAG, "Current user is null.")
         }
 
-        val donationsCollection = FirebaseFirestore.getInstance().collection("donations")
 
-        val donationData = hashMapOf(
-            "vegName" to vegName,
-            "description" to description,
-            "quantity" to quantity,
-            "quantityType" to quantityType,
-            "address" to address,
-            "image" to "",
-            "recipient" to recipient,
-            "donorUID" to currentUserUID,
-            "donorName" to name,
-            "donateDate" to donateDate,
-            "status" to status,
-            "latlng" to latLng,
-            // Add more fields as needed
-        )
-
-        // Add the donation data to Firestore
-        donationsCollection.add(donationData)
-            .addOnSuccessListener { documentReference ->
-                // Donation saved successfully
-                val donationId = documentReference.id
-                // Handle success or perform additional operations
-                // For example, upload image to Firebase Storage and update donation document with image URL
-                if (imageUri != null) {
-                    uploadImageToFirebaseStorage(imageUri, donationId)
-                }
-                Log.e("Firestore", latLng.toString())
-            }
-            .addOnFailureListener { e ->
-                // Handle failure
-                Log.e("Firestore", "Error adding document", e)
-            }
     }
 
     private fun uploadImageToFirebaseStorage(imageUri: Uri, donationId: String) {
