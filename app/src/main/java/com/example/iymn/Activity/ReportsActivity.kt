@@ -134,12 +134,11 @@ class ReportsActivity : AppCompatActivity() {
                             TypedValue.COMPLEX_UNIT_SP,
                             18.toFloat()
                         ) // Set text size
-                        textView.setTextColor(
-                            ContextCompat.getColor(
-                                this,
-                                R.color.black
-                            )
-                        ) // Set text color
+                        if (isDarkThemeEnabled()) {
+                            textView.setTextColor(ContextCompat.getColor(this, R.color.white))
+                        } else {
+                            textView.setTextColor(ContextCompat.getColor(this, R.color.black))
+                        }
                         textView.typeface =
                             Typeface.create("montserrat", Typeface.NORMAL) // Set font family
                         textView.setPadding(30, 30, 30, 30)
