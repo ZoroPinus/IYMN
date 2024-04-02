@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
@@ -51,6 +52,8 @@ class ReportsActivity : AppCompatActivity() {
         }
         headerText.setText("Reports")
 
+
+
         // Initialize Firebase
         db = FirebaseFirestore.getInstance()
 
@@ -78,7 +81,10 @@ class ReportsActivity : AppCompatActivity() {
             }
         }
     }
-
+    private fun isDarkThemeEnabled(): Boolean {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
+    }
 
     private fun displayTable() {
         db.collection("donations")
@@ -95,12 +101,11 @@ class ReportsActivity : AppCompatActivity() {
                     textView.text = header
                     textView.setPadding(30, 30, 30, 30)
                     textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20.toFloat()) // Set text size
-                    textView.setTextColor(
-                        ContextCompat.getColor(
-                            this,
-                            R.color.black
-                        )
-                    ) // Set text color
+                    if (isDarkThemeEnabled()) {
+                        textView.setTextColor(ContextCompat.getColor(this, R.color.white))
+                    } else {
+                        textView.setTextColor(ContextCompat.getColor(this, R.color.black))
+                    }
                     textView.typeface =
                         Typeface.create("montserrat_bold", Typeface.BOLD) // Set font family
                     headerRow.addView(textView)
