@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -27,6 +29,18 @@ class VegItemAdapter(private var mList: List<VegItemViewModel>) : RecyclerView.A
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.veg_item_layout, parent, false)
+
+        val isDarkTheme =
+            AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+        if (isDarkTheme) {
+            view.findViewById<CardView>(R.id.cardViewRoot).setBackgroundColor(
+                view.context.getColor(R.color.white)
+            )
+        } else {
+            view.findViewById<CardView>(R.id.cardViewRoot).setBackgroundColor(
+                view.context.getColor(R.color.white)
+            )
+        }
 
         return ViewHolder(view)
     }

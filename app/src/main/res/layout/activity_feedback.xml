@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity.FeedbackActivity"
+    android:backgroundTint="@color/whiteEdtText"
     android:orientation="vertical">
     <include layout="@layout/custom_header"
         android:id="@id/headerLayout"/>
@@ -16,6 +17,7 @@
         android:layout_margin="8dp"
         android:layout_gravity="center_vertical"
         android:elevation="2dp"
+        android:backgroundTint="@color/white"
         app:cardCornerRadius="12dp">
 
         <LinearLayout
@@ -58,6 +60,7 @@
                 android:background="@drawable/edittext_custom_bg"
                 android:hint="Write Here"
                 android:inputType="textMultiLine"
+                android:textColorHint="@color/grayDark"
                 android:padding="10dp"
                 android:typeface="monospace" />
 

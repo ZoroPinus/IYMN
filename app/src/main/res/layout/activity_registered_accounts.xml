@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".Activity.RegisteredAccountsActivity">
 
     <include
@@ -33,6 +34,7 @@
             android:fontFamily="@font/montserrat_bold"
             android:padding="10dp"
             android:text="DONOR"
+            android:textColor="@color/black"
             android:textAlignment="center"
             android:textSize="18sp" />
 
@@ -45,6 +47,7 @@
             android:background="@drawable/custom_btn_outlined"
             android:clickable="true"
             android:focusable="true"
+            android:textColor="@color/black"
             android:fontFamily="@font/montserrat_bold"
             android:padding="10dp"
             android:text="NGO"

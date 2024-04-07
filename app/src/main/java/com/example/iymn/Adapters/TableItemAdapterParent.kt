@@ -9,6 +9,8 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.iymn.Models.TableItem
 import com.example.iymn.R
@@ -20,6 +22,17 @@ class TableItemAdapterParent(private val donations: MutableList<TableItem>) :
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DonationViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.report_table_item_parent, parent, false)
+//        val isDarkTheme =
+//            AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+//        if (isDarkTheme) {
+//            view.findViewById<CardView>(R.id.cardViewRoot).setBackgroundColor(
+//                view.context.getColor(R.color.white)
+//            )
+//        } else {
+//            view.findViewById<CardView>(R.id.cardViewRoot).setBackgroundColor(
+//                view.context.getColor(R.color.white)
+//            )
+//        }
         return DonationViewHolder(view)
     }
 

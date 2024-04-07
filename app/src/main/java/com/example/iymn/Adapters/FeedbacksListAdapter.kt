@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.iymn.Models.FeedbackListModel
@@ -30,6 +32,19 @@ class FeedbacksListAdapter(private var mList: List<FeedbackListModel>) : Recycle
     ): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.feedback_item_layout, parent, false)
+
+        // Change background color based on theme
+        val isDarkTheme =
+            AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+        if (isDarkTheme) {
+            view.findViewById<CardView>(R.id.cardViewRoot).setBackgroundColor(
+                view.context.getColor(R.color.white)
+            )
+        } else {
+            view.findViewById<CardView>(R.id.cardViewRoot).setBackgroundColor(
+                view.context.getColor(R.color.white)
+            )
+        }
 
         return ViewHolder(view)
     }

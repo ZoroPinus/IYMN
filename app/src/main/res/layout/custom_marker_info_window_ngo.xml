@@ -6,6 +6,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:cardCornerRadius="10dp"
+    android:id="@+id/cardViewRoot"
+    android:backgroundTint="@color/white"
     app:cardElevation="5dp"
     >
     <LinearLayout
@@ -17,6 +19,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
+            android:backgroundTint="@color/white"
             >
             <ImageView
                 android:id="@+id/imageMarker"
@@ -57,7 +60,6 @@
                     android:text="Date"
                     android:textAlignment="textEnd"
                     android:textColor="@color/grayDark"
-                    android:layout_gravity="center_vertical"
                     android:textSize="16sp"/>
             </LinearLayout>
 
@@ -67,6 +69,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat"
                 android:text="Product"
+                android:textColor="@color/black"
                 android:textSize="20sp"/>
 
             <TextView
@@ -75,6 +78,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat"
                 android:text="Quantity"
+                android:textColor="@color/black"
                 android:textSize="20sp"/>
 
             <TextView
@@ -83,6 +87,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat"
                 android:text="description"
+                android:textColor="@color/black"
                 android:textSize="20sp"/>
 
         </LinearLayout>

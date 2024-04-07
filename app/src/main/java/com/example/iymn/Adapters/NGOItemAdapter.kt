@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -52,6 +54,19 @@ class NGOItemAdapter : ListAdapter<NGOItemViewModel, NGOItemAdapter.ViewHolder>(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.ngo_item_layout, parent, false)
+
+        val isDarkTheme =
+            AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+        if (isDarkTheme) {
+            view.findViewById<CardView>(R.id.cardViewRoot).setBackgroundColor(
+                view.context.getColor(R.color.white)
+            )
+        } else {
+            view.findViewById<CardView>(R.id.cardViewRoot).setBackgroundColor(
+                view.context.getColor(R.color.white)
+            )
+        }
+
         return ViewHolder(view)
     }
 
