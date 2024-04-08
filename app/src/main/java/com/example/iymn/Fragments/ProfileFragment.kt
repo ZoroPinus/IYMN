@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.example.iymn.Activity.AboutUsActivity
 import com.example.iymn.Activity.MainActivity
 import com.example.iymn.Activity.SetUpProfileActivity
 import com.example.iymn.R
@@ -53,11 +54,13 @@ class ProfileFragment : Fragment() {
             startActivity(Intent(requireContext(), SetUpProfileActivity::class.java))
         }
         binding.btnToAboutUs.setOnClickListener {
-            Toast.makeText(requireContext(), "Coming Soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(requireContext(), AboutUsActivity::class.java))
         }
         binding.btnLogout.setOnClickListener {
             logout()
         }
+
+
     }
     private fun fetchUserData(userId: String) {
         val ivProfileImg: ImageView = requireView().findViewById(R.id.ivProfileImg)
