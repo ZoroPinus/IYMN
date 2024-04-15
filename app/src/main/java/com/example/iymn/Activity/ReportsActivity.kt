@@ -5,23 +5,35 @@ import android.content.ActivityNotFoundException
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Typeface
+import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.util.TypedValue
+import android.view.View
 import android.widget.ImageView
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.iymn.R
+import com.example.iymn.databinding.ActivityDonationHistoryBinding
 import com.example.iymn.databinding.ActivityReportsBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 
@@ -34,6 +46,7 @@ class ReportsActivity : AppCompatActivity() {
 
     companion object {
         private const val WRITE_EXTERNAL_STORAGE_PERMISSION_CODE = 1001
+        const val REQUEST_CODE = 1232
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +71,9 @@ class ReportsActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
 
         displayTable()
-
+//        binding.btnDownloadCsv.setOnClickListener {
+//            convertXmlToPdf()
+//        }
         binding.btnDownloadCsv.setOnClickListener {
             // Replace "https://www.example.com" with your actual website URL
             val websiteUrl =
@@ -81,6 +96,102 @@ class ReportsActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun askPermissions() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf<String>(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            DonationHistoryActivity.Companion.REQUEST_CODE
+        )
+    }
+
+    private fun createPDF() {
+        val document = PdfDocument()
+        val pageInfo = PdfDocument.PageInfo.Builder(1080, 1920, 1).create()
+        val page = document.startPage(pageInfo)
+        val canvas = page.canvas
+        val paint = Paint()
+        paint.setColor(Color.RED)
+        paint.textSize = 42f
+        val text = "Hello, World"
+        val x = 500f
+        val y = 900f
+        canvas.drawText(text, x, y, paint)
+        document.finishPage(page)
+        val downloadsDir =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val fileName = "example.pdf"
+        val file = File(downloadsDir, fileName)
+        try {
+            val fos = FileOutputStream(file)
+            document.writeTo(fos)
+            document.close()
+            fos.close()
+            Toast.makeText(this, "Written Successfully!!!", Toast.LENGTH_SHORT).show()
+        } catch (e: FileNotFoundException) {
+            Log.d("mylog", "Error while writing $e")
+            throw RuntimeException(e)
+        } catch (e: IOException) {
+            throw RuntimeException(e)
+        }
+    }
+
+    fun convertXmlToPdf() {
+        // Inflate the layout using view binding
+        val binding = ActivityReportsBinding.inflate(layoutInflater)
+        val view = binding.root
+
+        // Measure the view to get its width and height
+        view.measure(
+            View.MeasureSpec.makeMeasureSpec(resources.displayMetrics.widthPixels, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(resources.displayMetrics.heightPixels, View.MeasureSpec.EXACTLY)
+        )
+
+        // Set the layout size based on measured dimensions
+        view.layout(0, 0, view.measuredWidth, view.measuredHeight)
+
+        // Create a new PdfDocument instance
+        val document = PdfDocument()
+
+        // Create a PageInfo object specifying the page attributes
+        val pageInfo = PdfDocument.PageInfo.Builder(view.measuredWidth, view.measuredHeight, 1).create()
+
+        // Start a new page
+        val page = document.startPage(pageInfo)
+
+        // Get the Canvas object to draw on the page
+        val canvas = page.canvas
+
+        // Create a Paint object for styling the view
+        val paint = Paint()
+        paint.color = Color.WHITE
+
+        // Draw the view on the canvas
+        view.draw(canvas)
+
+        // Finish the page
+        document.finishPage(page)
+
+        // Specify the path and filename of the output PDF file
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val fileName = "exampleXML.pdf"
+        val filePath = File(downloadsDir, fileName)
+        try {
+            // Save the document to a file
+            val fos = FileOutputStream(filePath)
+            document.writeTo(fos)
+            document.close()
+            fos.close()
+            // PDF conversion successful
+            Toast.makeText(this, "XML to PDF Conversion Successful", Toast.LENGTH_LONG).show()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            // Error occurred while converting to PDF
+        }
+    }
+
+
+
     private fun isDarkThemeEnabled(): Boolean {
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         return currentNightMode == Configuration.UI_MODE_NIGHT_YES
