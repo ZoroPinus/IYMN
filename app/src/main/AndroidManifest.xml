@@ -23,16 +23,7 @@
         android:theme="@style/Theme.IYMN"
         tools:targetApi="31">
         <activity
-            android:name=".Activity.MainActivity2"
-            android:exported="false" />
-        <activity
             android:name=".Activity.AboutUsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.ListActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.ListFeedbacksActivity"
             android:exported="false" />
         <activity
             android:name=".Activity.FeedbackListActivity"
