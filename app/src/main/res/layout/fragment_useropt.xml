@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:text="CHOOSE ACCOUNT TYPE"
             android:textColor="@color/black"
-            android:textSize="20dp"
+            android:textSize="16sp"
             android:layout_gravity="center"
             android:textAlignment="center"
             android:fontFamily="@font/montserrat_bold"
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/custom_btn"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:fontFamily="@font/montserrat_bold"
             android:layout_marginBottom="5dp"
             android:text="DONOR REGISTRATION"/>
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/custom_btn"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:fontFamily="@font/montserrat_bold"
             android:text="NGO REGISTRATION"/>
 
