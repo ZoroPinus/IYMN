@@ -53,7 +53,7 @@ class DonationHistoryActivity : AppCompatActivity() {
         headerIcon.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-        headerText.setText("Donation History")
+        headerText.setText("Donations")
 
 
         auth = FirebaseAuth.getInstance()

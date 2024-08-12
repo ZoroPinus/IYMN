@@ -224,32 +224,32 @@ android:fontFamily="@font/montserrat"
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/btnAccept"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Accept"
-        android:fontFamily="@font/montserrat_bold"
-        android:textSize="18sp"
-        android:layout_marginHorizontal="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnReject"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+<!--    <Button-->
+<!--        android:id="@+id/btnAccept"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Accept"-->
+<!--        android:fontFamily="@font/montserrat_bold"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginHorizontal="5dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/btnReject"-->
+<!--        app:layout_constraintHorizontal_bias="0.5"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/cardView" />-->
 
-    <Button
-        android:id="@+id/btnReject"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Reject"
-        android:fontFamily="@font/montserrat_bold"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginHorizontal="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnAccept"
-        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+<!--    <Button-->
+<!--        android:id="@+id/btnReject"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Reject"-->
+<!--        android:fontFamily="@font/montserrat_bold"-->
+<!--        android:textSize="18sp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        android:layout_marginHorizontal="5dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.5"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/btnAccept"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/cardView" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

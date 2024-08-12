@@ -48,12 +48,12 @@ class DonationDetailsActivity : AppCompatActivity() {
         }
         headerText.setText("Donation Details")
 
-        binding.btnAccept.setOnClickListener{
-            documentUid?.let { it1 -> updateFieldInFirestore(it1, "ACCEPTED") }
-        }
-        binding.btnReject.setOnClickListener{
-            documentUid?.let { it1 -> updateFieldInFirestore(it1, "REJECTED") }
-        }
+//        binding.btnAccept.setOnClickListener{
+//            documentUid?.let { it1 -> updateFieldInFirestore(it1, "ACCEPTED") }
+//        }
+//        binding.btnReject.setOnClickListener{
+//            documentUid?.let { it1 -> updateFieldInFirestore(it1, "REJECTED") }
+//        }
     }
     private fun fetchDataFromFirestore(donationId: String, imageView: ImageView) {
         db.collection("donations")
@@ -125,13 +125,13 @@ class DonationDetailsActivity : AppCompatActivity() {
             db.collection("users").document(uid).get()
                 .addOnSuccessListener { documentSnapshot ->
                     val accountType = documentSnapshot.getString("accountType")
-                    when (accountType) {
-                        "NGO", "Admin" -> binding.btnAccept.visibility = View.VISIBLE
-                        else -> {
-                            binding.btnAccept.visibility = View.GONE
-                            binding.btnReject.visibility = View.GONE
-                        }
-                    }
+//                    when (accountType) {
+//                        "NGO", "Admin" -> binding.btnAccept.visibility = View.VISIBLE
+//                        else -> {
+//                            binding.btnAccept.visibility = View.GONE
+//                            binding.btnReject.visibility = View.GONE
+//                        }
+//                    }
                 }
                 .addOnFailureListener { e ->
                     Log.w("DonationHistoryActivity", "Error fetching user data", e)
