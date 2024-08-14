@@ -202,34 +202,34 @@
                         android:textSize="18sp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/btnTrackDonations"
-                    android:layout_width="0dp"
-                    android:layout_height="70dp"
-                    android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:background="@color/greenLight"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="5dp">
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/btnTrackDonations"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="70dp"-->
+<!--                    android:layout_margin="5dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:background="@color/greenLight"-->
+<!--                    android:clickable="true"-->
+<!--                    android:focusable="true"-->
+<!--                    android:padding="5dp">-->
 
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_track" />
+<!--                    <ImageView-->
+<!--                        android:layout_width="40dp"-->
+<!--                        android:layout_height="40dp"-->
+<!--                        android:layout_gravity="center_vertical"-->
+<!--                        android:layout_margin="5dp"-->
+<!--                        android:padding="5dp"-->
+<!--                        android:src="@drawable/ic_track" />-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:text="Track Donations"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-                </LinearLayout>
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center_vertical"-->
+<!--                        android:fontFamily="@font/montserrat_bold"-->
+<!--                        android:text="Track Donations"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:textSize="18sp" />-->
+<!--                </LinearLayout>-->
 
             </LinearLayout>
             <LinearLayout

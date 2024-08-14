@@ -65,14 +65,14 @@ class AdminDashboardFragment : Fragment() {
             )
         }
 
-        binding.btnTrackDonations.setOnClickListener {
-            startActivity(
-                Intent(
-                    requireContext(),
-                    TrackDonationsActivity::class.java
-                )
-            )
-        }
+//        binding.btnTrackDonations.setOnClickListener {
+//            startActivity(
+//                Intent(
+//                    requireContext(),
+//                    TrackDonationsActivity::class.java
+//                )
+//            )
+//        }
 
         binding.btnRegisteredAccounts.setOnClickListener {
             startActivity(
