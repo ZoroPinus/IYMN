@@ -4,6 +4,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +13,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.example.iymn.Activity.DonationHistoryActivity
 import com.example.iymn.Activity.FeedbackActivity
@@ -34,6 +37,7 @@ class NGODashboardFragment : Fragment() {
     private lateinit var displayName: String
 
     companion object {
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
         var ngoOrg: String = "Initial Input"
     }
     override fun onCreateView(
@@ -49,7 +53,9 @@ class NGODashboardFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
         currentUser = auth.currentUser
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestNotificationPermission()
+        }
         val currentUser = auth.currentUser
         if (currentUser != null) {
             val userId = currentUser.uid // Get current user's UID
@@ -116,6 +122,41 @@ class NGODashboardFragment : Fragment() {
             transaction.commit()
         }
 
+    }
+
+    private fun requestNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission is not granted, request it
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                NOTIFICATION_PERMISSION_REQUEST_CODE
+            )
+        } else {
+            // Permission already granted, proceed with notification logic
+            listenForDonations()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                // Permission granted, proceed with notification logic
+                listenForDonations()
+            } else {
+                // Permission denied, show a message to the user
+                Toast.makeText(requireContext(), "Notification permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
     private fun listenForDonations() {
         val donationsCollection = db.collection("donations")
