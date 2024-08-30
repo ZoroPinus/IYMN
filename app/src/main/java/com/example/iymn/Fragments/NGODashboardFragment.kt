@@ -1,6 +1,10 @@
 package com.example.iymn.Fragments
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import com.bumptech.glide.Glide
 import com.example.iymn.Activity.DonationHistoryActivity
 import com.example.iymn.Activity.FeedbackActivity
@@ -18,6 +23,7 @@ import com.example.iymn.R
 import com.example.iymn.databinding.FragmentNGODashboardBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 
 class NGODashboardFragment : Fragment() {
@@ -48,6 +54,7 @@ class NGODashboardFragment : Fragment() {
         if (currentUser != null) {
             val userId = currentUser.uid // Get current user's UID
             fetchUserData(userId) // Fetch user data using the UID
+            listenForDonations()
         } else {
             Log.d("DonorDashboardActivity", "no current user error")
         }
@@ -95,8 +102,76 @@ class NGODashboardFragment : Fragment() {
                 )
             )
         }
+        binding.btnAddCrop.setOnClickListener {
+            val fragmentManager = parentFragmentManager
+            val transaction = fragmentManager.beginTransaction()
+
+            // Add the CropFragment on top of the current fragment
+            transaction.add(R.id.fragmentContainer, CropFragment())
+
+            // Optionally add to the back stack to allow back navigation
+            transaction.addToBackStack(null)
+
+            // Commit the transaction
+            transaction.commit()
+        }
+
+    }
+    private fun listenForDonations() {
+        val donationsCollection = db.collection("donations")
+        donationsCollection.addSnapshotListener { snapshots, e ->
+            if (e != null) {
+                Log.w("NGODashboardFragment", "Listen failed.", e)
+                return@addSnapshotListener
+            }
+
+            if (snapshots != null && !snapshots.isEmpty) {
+                for (documentChange in snapshots.documentChanges) {
+                    when (documentChange.type) {
+                        DocumentChange.Type.ADDED -> {
+                            // New donation detected
+                            val donationData = documentChange.document.data
+                            val vegName = donationData["vegName"] as String
+                            sendDonationNotification(vegName)
+                        }
+                        // Handle other types (MODIFIED, REMOVED) if needed
+                        DocumentChange.Type.MODIFIED -> {
+                            // Do nothing if the document is modified
+                        }
+                        DocumentChange.Type.REMOVED -> {
+                            // Do nothing if the document is removed
+                        }
+                    }
+                }
+            }
+        }
     }
 
+    private fun sendDonationNotification(vegName: String) {
+        // Create a notification channel if not already created
+        createNotificationChannel()
+
+        val notificationBuilder = NotificationCompat.Builder(requireContext(), "donation_channel_id")
+            .setSmallIcon(R.drawable.app_logo3) // Replace with your app's icon
+            .setContentTitle("New Donation Received")
+            .setContentText("A new donation of $vegName has been received.")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+
+        val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(1, notificationBuilder.build())
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "donation_channel_id"
+            val channelName = "Donation Notifications"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(channelId, channelName, importance)
+            val notificationManager = requireContext().getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
     private fun fetchUserData(userId: String) {
         db.collection("users")
             .document(userId)
@@ -109,11 +184,7 @@ class NGODashboardFragment : Fragment() {
                     val ngoOrgs= data["NgoOrg"] as String
                     ngoOrg = ngoOrgs
                     val profileImg = data["profileImageUrl"] as String
-                    if(name == null){
-                        displayName = email
-                    }else{
-                        displayName = name
-                    }
+                    displayName = name
                     Glide.with(requireContext())
                         .load(profileImg)
                         .placeholder(R.drawable.ic_profile) // Placeholder image while loading

@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import java.util.Calendar
+import java.util.Date
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -89,16 +91,53 @@ class LoginActivity : AppCompatActivity() {
         val email = binding.etEmail.text.toString()
         val pass = binding.etPassword.text.toString()
 
-        if(email.isBlank() || pass.isBlank()){
+        if (email.isBlank() || pass.isBlank()) {
             showEmptyFieldDialog("Kindly finish the form", "Empty Fields")
+            return
         }
-        auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(this) {
-            if (it.isSuccessful) {
-                showEmptyFieldDialog("Successfully Logged In", "Welcome back!")
-            } else
-                Toast.makeText(this, "Log In failed ", Toast.LENGTH_SHORT).show()
+
+        auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                val firebaseUser = auth.currentUser
+                if (firebaseUser != null) {
+                    // Check the user's creation timestamp
+                    firebaseUser.metadata?.creationTimestamp?.let { creationTime ->
+                        // Convert the creation timestamp to a Date object
+                        val creationDate = Date(creationTime)
+
+                        // Define the target date (August 30, 2024)
+                        val targetDate = Calendar.getInstance().apply {
+                            set(2024, Calendar.AUGUST, 31)
+                        }.time
+
+                        if (creationDate.before(targetDate)) {
+                            // If the email is not verified, resend the verification email
+                            if (!firebaseUser.isEmailVerified) {
+                                firebaseUser.sendEmailVerification().addOnCompleteListener { emailTask ->
+                                    if (emailTask.isSuccessful) {
+                                        Toast.makeText(this, "Old user detected. Verification email resent.", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(this, "Failed to resend verification email.", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                auth.signOut()
+                            } else {
+                                showEmptyFieldDialog("Successfully Logged In", "Welcome back!")
+                            }
+                        } else {
+                            Toast.makeText(this, "Please check your email for the verification link", Toast.LENGTH_LONG).show()
+                            auth.signOut()
+                        }
+                    } ?: run {
+                        Toast.makeText(this, "Failed to retrieve creation timestamp.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                Toast.makeText(this, "Log In failed", Toast.LENGTH_SHORT).show()
+            }
         }
     }
+
     private fun displayToast(s: String) {
         Toast.makeText(applicationContext, s, Toast.LENGTH_SHORT).show()
     }

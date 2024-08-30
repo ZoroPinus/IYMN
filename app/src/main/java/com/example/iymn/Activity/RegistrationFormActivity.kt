@@ -71,24 +71,6 @@ class RegistrationFormActivity : AppCompatActivity() {
             }
         }
 
-//        binding.btnChooseFromMap.setOnClickListener {
-//            // Replace 'YourNewFragment()' with the fragment you want to open
-//            val newFragment = ChooseLocationFragment()
-//            // Begin fragment transaction
-//            val fragmentManager = this.supportFragmentManager
-//            val fragmentTransaction = fragmentManager.beginTransaction()
-//
-//            // Replace the current fragment with the new fragment
-//            fragmentTransaction.replace(R.id.chooseFromMapContainer, newFragment)
-//
-//            // Optional: Add to back stack for handling back navigation
-//            fragmentTransaction.addToBackStack(null)
-//
-//            // Commit the transaction
-//            fragmentTransaction.commit()
-//        }
-
-
 
     }
 
@@ -121,6 +103,13 @@ class RegistrationFormActivity : AppCompatActivity() {
                 val firebaseUser = auth.currentUser
                 val userId = firebaseUser?.uid.toString()
                 if(regType == "Donor"){
+                    firebaseUser?.sendEmailVerification()?.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(this, "Verification email sent to $email", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Failed to send verification email.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                     saveUserDataDonor(userId, email, contact, accountType)
                 }else{
                     saveUserDataNgo(userId, email, contact, accountType, selectedNgo)
@@ -197,19 +186,6 @@ class RegistrationFormActivity : AppCompatActivity() {
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }
-    private fun showSuccessFieldDialog(message:String) {
-        val alertDialogBuilder = AlertDialog.Builder(this)
-        alertDialogBuilder.apply {
-            setTitle("Registration complete")
-            setMessage("Press OK to Login")
-            setPositiveButton("OK") { dialog, which ->
-                startActivity(Intent(this@RegistrationFormActivity, DashboardActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-            }
-        }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
-    }
-
     private fun fetchNGOOptionsFromFirestore() {
         db.collection("ngoPartners")
             .get()

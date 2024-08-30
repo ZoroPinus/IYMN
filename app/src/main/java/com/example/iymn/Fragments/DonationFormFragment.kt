@@ -1,5 +1,7 @@
 package com.example.iymn.Fragments
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -7,6 +9,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -23,12 +26,11 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 import com.example.iymn.Models.CropListOption
-import com.example.iymn.Models.LocationData
 import com.example.iymn.Models.NGOOption
 import com.example.iymn.R
 import com.example.iymn.databinding.FragmentDonationFormBinding
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
@@ -36,9 +38,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
-import java.security.Timestamp
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
@@ -221,7 +220,35 @@ class DonationFormFragment : Fragment() {
         }
 
     }
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "donation_channel_id"
+            val channelName = "Donation Notifications"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(channelId, channelName, importance).apply {
+                description = "Channel for donation notifications"
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+    private fun postDonationNotification(vegName: String) {
+        // Ensure the notification channel is created
+        createNotificationChannel()
 
+        // Create the notification
+        val builder = NotificationCompat.Builder(requireContext(), "donation_channel_id")
+            .setSmallIcon(R.drawable.app_logo3) // Use your app icon here
+            .setContentTitle("Donation Submitted")
+            .setContentText("Your donation of $vegName has been successfully submitted.")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+
+        val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(0, builder.build())
+    }
     private fun convertStringToGeoPoint(latLngString: String): GeoPoint? {
         try {
             val cleanString = latLngString
@@ -363,6 +390,7 @@ class DonationFormFragment : Fragment() {
                                 if (imageUri != null) {
                                     uploadImageToFirebaseStorage(imageUri, donationId)
                                 }
+                                postDonationNotification(vegName)
                                 Log.e("Firestore", latLng.toString())
                             }
                             .addOnFailureListener { e ->

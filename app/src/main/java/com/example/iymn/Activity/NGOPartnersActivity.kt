@@ -59,6 +59,7 @@ class NGOPartnersActivity : AppCompatActivity() {
                 .addToBackStack(null)
                 .commit()
         }
+
     }
     override fun onBackPressed() {
         if (binding.NGOfragmentContainer.visibility == View.VISIBLE) {
