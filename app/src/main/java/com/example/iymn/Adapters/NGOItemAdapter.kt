@@ -15,10 +15,26 @@ import com.example.iymn.Models.NGOItemViewModel
 import com.example.iymn.R
 
 class NGOItemAdapter : ListAdapter<NGOItemViewModel, NGOItemAdapter.ViewHolder>(NGOItemDiffCallback) {
+    private var originalList: List<NGOItemViewModel> = emptyList()
+    private var filteredList: List<NGOItemViewModel> = emptyList()
     private var onItemClickListener: ((String) -> Unit)? = null
-
+    init {
+        // Keep a copy of the original list
+        originalList = currentList
+        filteredList = originalList
+    }
     fun setOnItemClickListener(listener: (String) -> Unit) {
         onItemClickListener = listener
+    }
+    fun filter(query: String) {
+        filteredList = if (query.isEmpty()) {
+            originalList
+        } else {
+            originalList.filter {
+                it.ngoName.contains(query, ignoreCase = true)
+            }
+        }
+        submitList(filteredList)
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

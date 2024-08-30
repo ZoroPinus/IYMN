@@ -3,9 +3,12 @@ package com.example.iymn.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -59,6 +62,18 @@ class NGOPartnersActivity : AppCompatActivity() {
                 .addToBackStack(null)
                 .commit()
         }
+
+        val searchBar: EditText = findViewById(R.id.searchBar)
+        searchBar.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val query = s.toString()
+                NGOItemAdapter.filter(query)
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
 
     }
     override fun onBackPressed() {
