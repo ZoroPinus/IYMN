@@ -6,6 +6,7 @@ data class NGOItemViewModel(
     val ngoName: String,
     val contact: String,
     val address: String?,
+    val areaOfResponsibility: String,
 ){
 
 }

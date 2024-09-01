@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class NGODashboardFragment : Fragment() {
     private lateinit var binding: FragmentNGODashboardBinding
@@ -35,7 +36,8 @@ class NGODashboardFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
     private var currentUser: FirebaseUser? = null
     private lateinit var displayName: String
-
+    private var isListenerActive = false
+    private val notifiedDonations = mutableSetOf<String>()
     companion object {
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
         var ngoOrg: String = "Initial Input"
@@ -53,14 +55,19 @@ class NGODashboardFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
         currentUser = auth.currentUser
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestNotificationPermission()
         }
+
         val currentUser = auth.currentUser
         if (currentUser != null) {
             val userId = currentUser.uid // Get current user's UID
             fetchUserData(userId) // Fetch user data using the UID
-            listenForDonations()
+            if (!isListenerActive) {
+                listenForDonations()
+                isListenerActive = true
+            }
         } else {
             Log.d("DonorDashboardActivity", "no current user error")
         }
@@ -109,17 +116,7 @@ class NGODashboardFragment : Fragment() {
             )
         }
         binding.btnAddCrop.setOnClickListener {
-            val fragmentManager = parentFragmentManager
-            val transaction = fragmentManager.beginTransaction()
-
-            // Add the CropFragment on top of the current fragment
-            transaction.add(R.id.fragmentContainer, CropFragment())
-
-            // Optionally add to the back stack to allow back navigation
-            transaction.addToBackStack(null)
-
-            // Commit the transaction
-            transaction.commit()
+            replaceFragment(CropFragment())
         }
 
     }
@@ -158,33 +155,73 @@ class NGODashboardFragment : Fragment() {
             }
         }
     }
-    private fun listenForDonations() {
-        val donationsCollection = db.collection("donations")
-        donationsCollection.addSnapshotListener { snapshots, e ->
-            if (e != null) {
-                Log.w("NGODashboardFragment", "Listen failed.", e)
-                return@addSnapshotListener
-            }
+    override fun onPause() {
+        super.onPause()
+        isListenerActive = false
+        // You might also want to remove the listener if it's attached.
+    }
 
-            if (snapshots != null && !snapshots.isEmpty) {
-                for (documentChange in snapshots.documentChanges) {
-                    when (documentChange.type) {
-                        DocumentChange.Type.ADDED -> {
-                            // New donation detected
-                            val donationData = documentChange.document.data
-                            val vegName = donationData["vegName"] as String
-                            sendDonationNotification(vegName)
+    override fun onResume() {
+        super.onResume()
+        if (!isListenerActive) {
+            listenForDonations()
+            isListenerActive = true
+        }
+    }
+    private fun listenForDonations() {
+        val userId = auth.currentUser?.uid
+
+        if (userId != null) {
+            // Fetch the ngoOrg for the current user
+            db.collection("users").document(userId).get().addOnSuccessListener { documentSnapshot ->
+                val ngoOrg = documentSnapshot.getString("NgoOrg")
+
+                if (ngoOrg != null) {
+                    // Query the latest donation made to this ngoOrg
+                    val donationsCollection = db.collection("donations")
+                    donationsCollection
+                        .whereEqualTo("recipient", ngoOrg)  // Filter by recipient ngoOrg
+                        .orderBy("donateDate", Query.Direction.DESCENDING)  // Order by latest timestamp
+                        .limit(1)  // Get only the latest donation
+                        .addSnapshotListener { snapshots, e ->
+                            if (e != null) {
+                                Log.w("NGODashboardFragment", "Listen failed.", e)
+                                return@addSnapshotListener
+                            }
+
+                            if (snapshots != null && !snapshots.isEmpty) {
+                                for (documentChange in snapshots.documentChanges) {
+                                    when (documentChange.type) {
+                                        DocumentChange.Type.ADDED -> {
+                                            val donationId = documentChange.document.id
+
+                                            // Check if this donation has already triggered a notification
+                                            if (!notifiedDonations.contains(donationId)) {
+                                                val donationData = documentChange.document.data
+                                                val vegName = donationData["vegName"] as String
+                                                sendDonationNotification(vegName)
+                                                notifiedDonations.add(donationId)
+                                            }
+                                        }
+                                        // Handle other types (MODIFIED, REMOVED) if needed
+                                        DocumentChange.Type.MODIFIED -> {
+                                            // Do nothing if the document is modified
+                                        }
+                                        DocumentChange.Type.REMOVED -> {
+                                            // Do nothing if the document is removed
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        // Handle other types (MODIFIED, REMOVED) if needed
-                        DocumentChange.Type.MODIFIED -> {
-                            // Do nothing if the document is modified
-                        }
-                        DocumentChange.Type.REMOVED -> {
-                            // Do nothing if the document is removed
-                        }
-                    }
+                } else {
+                    Log.w("NGODashboardFragment", "No NgoOrg found for user.")
                 }
+            }.addOnFailureListener { e ->
+                Log.w("NGODashboardFragment", "Error fetching ngoOrg", e)
             }
+        } else {
+            Log.w("NGODashboardFragment", "User is not logged in.")
         }
     }
 

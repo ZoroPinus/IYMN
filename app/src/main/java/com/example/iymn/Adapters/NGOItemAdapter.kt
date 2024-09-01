@@ -19,13 +19,18 @@ class NGOItemAdapter : ListAdapter<NGOItemViewModel, NGOItemAdapter.ViewHolder>(
     private var filteredList: List<NGOItemViewModel> = emptyList()
     private var onItemClickListener: ((String) -> Unit)? = null
     init {
-        // Keep a copy of the original list
-        originalList = currentList
-        filteredList = originalList
+        // Ensure originalList is initialized correctly
+        originalList = filteredList
     }
     fun setOnItemClickListener(listener: (String) -> Unit) {
         onItemClickListener = listener
     }
+    fun setOriginalList(list: List<NGOItemViewModel>) {
+        originalList = list
+        filteredList = list
+        submitList(filteredList)
+    }
+
     fun filter(query: String) {
         filteredList = if (query.isEmpty()) {
             originalList
@@ -37,9 +42,11 @@ class NGOItemAdapter : ListAdapter<NGOItemViewModel, NGOItemAdapter.ViewHolder>(
         submitList(filteredList)
     }
 
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imageView: ImageView = itemView.findViewById(R.id.imageview)
         private val title: TextView = itemView.findViewById(R.id.tvTitle)
+        private val item0: TextView = itemView.findViewById(R.id.tvItem)
         private val item1: TextView = itemView.findViewById(R.id.tvItem1)
         private val item2: TextView = itemView.findViewById(R.id.tvItem2)
         private var currentItem: NGOItemViewModel? = null
@@ -52,17 +59,17 @@ class NGOItemAdapter : ListAdapter<NGOItemViewModel, NGOItemAdapter.ViewHolder>(
             }
         }
 
-        /* Bind VegItemViewModel data to views. */
         fun bind(item: NGOItemViewModel) {
             currentItem = item
             title.text = item.ngoName
+            item0.text = item.areaOfResponsibility
             item1.text = item.contact
             item2.text = item.address
 
             Glide.with(itemView.context)
                 .load(item.image)
-                .placeholder(R.drawable.ic_folder) // Placeholder image while loading
-                .error(R.drawable.ic_insert_img) // Image to show if loading fails
+                .placeholder(R.drawable.ic_folder)
+                .error(R.drawable.ic_insert_img)
                 .into(imageView)
         }
     }
@@ -94,10 +101,10 @@ class NGOItemAdapter : ListAdapter<NGOItemViewModel, NGOItemAdapter.ViewHolder>(
 
 object NGOItemDiffCallback : DiffUtil.ItemCallback<NGOItemViewModel>() {
     override fun areItemsTheSame(oldItem: NGOItemViewModel, newItem: NGOItemViewModel): Boolean {
-        return oldItem == newItem
+        return oldItem.documentId == newItem.documentId
     }
 
     override fun areContentsTheSame(oldItem: NGOItemViewModel, newItem: NGOItemViewModel): Boolean {
-        return oldItem.documentId == newItem.documentId
+        return oldItem == newItem
     }
 }

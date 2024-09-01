@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Calendar
 import java.util.Date
 
@@ -100,36 +101,55 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 val firebaseUser = auth.currentUser
                 if (firebaseUser != null) {
-                    // Check the user's creation timestamp
-                    firebaseUser.metadata?.creationTimestamp?.let { creationTime ->
-                        // Convert the creation timestamp to a Date object
-                        val creationDate = Date(creationTime)
+                    // Fetch the accountType from the user's data (e.g., Firestore)
+                    val userId = firebaseUser.uid
+                    val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
 
-                        // Define the target date (August 30, 2024)
-                        val targetDate = Calendar.getInstance().apply {
-                            set(2024, Calendar.AUGUST, 31)
-                        }.time
+                    userRef.get().addOnSuccessListener { document ->
+                        if (document != null && document.exists()) {
+                            val accountType = document.getString("accountType")
 
-                        if (creationDate.before(targetDate)) {
-                            // If the email is not verified, resend the verification email
-                            if (!firebaseUser.isEmailVerified) {
-                                firebaseUser.sendEmailVerification().addOnCompleteListener { emailTask ->
-                                    if (emailTask.isSuccessful) {
-                                        Toast.makeText(this, "Old user detected. Verification email resent.", Toast.LENGTH_SHORT).show()
-                                    } else {
-                                        Toast.makeText(this, "Failed to resend verification email.", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                                auth.signOut()
+                            if (accountType == "Admin") {
+                                // Proceed without checking email verification for admin
+                                showEmptyFieldDialog("Successfully Logged In", "Welcome back, Admin!")
                             } else {
-                                showEmptyFieldDialog("Successfully Logged In", "Welcome back!")
+                                // Check the user's creation timestamp
+                                firebaseUser.metadata?.creationTimestamp?.let { creationTime ->
+                                    // Convert the creation timestamp to a Date object
+                                    val creationDate = Date(creationTime)
+
+                                    // Define the target date (August 30, 2024)
+                                    val targetDate = Calendar.getInstance().apply {
+                                        set(2024, Calendar.AUGUST, 31)
+                                    }.time
+
+                                    if (creationDate.before(targetDate)) {
+                                        // If the email is not verified, resend the verification email
+                                        if (!firebaseUser.isEmailVerified) {
+                                            firebaseUser.sendEmailVerification().addOnCompleteListener { emailTask ->
+                                                if (emailTask.isSuccessful) {
+                                                    Toast.makeText(this, "Old user detected. Verification email resent.", Toast.LENGTH_SHORT).show()
+                                                } else {
+                                                    Toast.makeText(this, "Failed to resend verification email.", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+                                            auth.signOut()
+                                        } else {
+                                            showEmptyFieldDialog("Successfully Logged In", "Welcome back!")
+                                        }
+                                    } else {
+                                        Toast.makeText(this, "Please check your email for the verification link", Toast.LENGTH_LONG).show()
+                                        auth.signOut()
+                                    }
+                                } ?: run {
+                                    Toast.makeText(this, "Failed to retrieve creation timestamp.", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         } else {
-                            Toast.makeText(this, "Please check your email for the verification link", Toast.LENGTH_LONG).show()
-                            auth.signOut()
+                            Toast.makeText(this, "User data not found.", Toast.LENGTH_SHORT).show()
                         }
-                    } ?: run {
-                        Toast.makeText(this, "Failed to retrieve creation timestamp.", Toast.LENGTH_SHORT).show()
+                    }.addOnFailureListener { e ->
+                        Toast.makeText(this, "Failed to retrieve user data: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             } else {

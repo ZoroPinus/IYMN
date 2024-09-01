@@ -8,44 +8,54 @@
     android:background="@color/greenLight"
     tools:context=".Activity.NGOPartnersActivity">
 
+    <!-- Container for Fragment -->
     <FrameLayout
         android:id="@+id/NGOfragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Header layout -->
     <include
-        android:id="@id/headerLayout"
+        android:id="@+id/headerLayout"
         layout="@layout/custom_header"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Search Bar -->
     <EditText
         android:id="@+id/searchBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:hint="Search NGO Partners"
-        android:textColor="@color/black"
         android:inputType="text"
-        android:padding="8dp"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@+id/headerLayout"
-        android:layout_margin="8dp"/>
+        android:padding="16dp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout" />
 
+    <!-- RecyclerView for displaying NGO partners -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/NGOrecyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchBar"
+        app:layout_constraintTop_toBottomOf="@id/searchBar"
         app:layout_constraintVertical_bias="0.0"
         tools:itemCount="5"
         tools:listitem="@layout/ngo_item_layout" />
 
+    <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAddNgoPartner"
         android:layout_width="wrap_content"
@@ -55,6 +65,5 @@
         android:src="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

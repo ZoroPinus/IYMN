@@ -48,21 +48,7 @@ class CropFragment : Fragment() {
         fetchCropsFromFirestore()
 
         btnAddCrop.setOnClickListener {
-            // Replace 'YourNewFragment()' with the fragment you want to open
-            val newFragment = AddCropFragment()
-
-            // Begin fragment transaction
-            val fragmentManager = requireActivity().supportFragmentManager
-            val fragmentTransaction = fragmentManager.beginTransaction()
-
-            // Replace the current fragment with the new fragment
-            fragmentTransaction.replace(R.id.cropListFragmentContainer, newFragment)
-
-            // Optional: Add to back stack for handling back navigation
-            fragmentTransaction.addToBackStack(null)
-
-            // Commit the transaction
-            fragmentTransaction.commit()
+            replaceFragment(AddCropFragment())
         }
 
         return view
@@ -110,6 +96,15 @@ class CropFragment : Fragment() {
                 // Handle failure
                 Log.e(TAG, "Error deleting document", e)
             }
+    }
+
+    private fun replaceFragment(fragment: Fragment) {
+        val fragmentManager = parentFragmentManager
+        val transaction = fragmentManager.beginTransaction()
+
+        transaction.replace(R.id.fragmentContainer, fragment)
+        transaction.addToBackStack(null) // Optional: Adds the transaction to the back stack
+        transaction.commit()
     }
 
 }

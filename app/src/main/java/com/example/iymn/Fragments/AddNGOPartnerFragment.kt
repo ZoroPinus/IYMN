@@ -47,11 +47,12 @@ class AddNGOPartnerFragment : Fragment() {
             val ngoName = binding.etNGOName.text.toString()
             val address = binding.etAddress.text.toString()
             val contact = binding.etContact.text.toString()
+            val areaOfResponsibility = binding.etAreaOfResponsibility.text.toString()
 
             // Validate inputs and proceed to submit data
             if (ngoName.isNotEmpty() && address.isNotEmpty() && contact.isNotEmpty()) {
                 // Call a function to submit NGO data
-                submitNGOData(ngoName, address, contact, selectedImage)
+                submitNGOData(ngoName, address, contact, areaOfResponsibility, selectedImage)
             } else {
                 // Show an error or prompt to fill in all fields
                 // You can implement your own logic here
@@ -112,8 +113,8 @@ class AddNGOPartnerFragment : Fragment() {
         )
         return Uri.parse(path)
     }
-    private fun submitNGOData(ngoName: String, address: String, contact: String, imageUri: Uri?) {
-        if (ngoName.isBlank() || address.isBlank() || contact.isBlank()) {
+    private fun submitNGOData(ngoName: String, address: String, contact: String, areaOfResponsibility: String, imageUri: Uri?) {
+        if (ngoName.isBlank() || address.isBlank() || contact.isBlank()|| areaOfResponsibility.isBlank()) {
             showEmptyFieldDialog("Kindly complete the form")
             return
         }
@@ -130,6 +131,7 @@ class AddNGOPartnerFragment : Fragment() {
             "ngoName" to ngoName,
             "address" to address,
             "contact" to contact,
+            "areaOfResponsibility" to areaOfResponsibility,
             "image" to "" // Placeholder for the image URL
             // Add more fields as needed
         )

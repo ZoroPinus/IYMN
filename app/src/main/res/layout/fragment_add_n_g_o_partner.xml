@@ -66,6 +66,18 @@
             android:textColor="@color/black"
             android:textColorHint="@color/grayDark"
             android:hint="Contact"/>
+        <EditText
+            android:id="@+id/etAreaOfResponsibility"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/edittext_custom_bg"
+            android:padding="10dp"
+            android:inputType="number"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/grayDark"
+            android:hint="Area of Responsibility"/>
 
         <ImageButton
             android:id="@+id/btnInsertImg"
