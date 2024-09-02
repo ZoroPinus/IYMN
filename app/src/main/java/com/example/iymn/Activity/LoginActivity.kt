@@ -138,8 +138,12 @@ class LoginActivity : AppCompatActivity() {
                                             showEmptyFieldDialog("Successfully Logged In", "Welcome back!")
                                         }
                                     } else {
-                                        Toast.makeText(this, "Please check your email for the verification link", Toast.LENGTH_LONG).show()
-                                        auth.signOut()
+                                        if (!firebaseUser.isEmailVerified) {
+                                            Toast.makeText(this, "Please check your email for the verification link", Toast.LENGTH_LONG).show()
+                                            auth.signOut()
+                                        }else{
+                                            showEmptyFieldDialog("Successfully Logged In", "Welcome back!")
+                                        }
                                     }
                                 } ?: run {
                                     Toast.makeText(this, "Failed to retrieve creation timestamp.", Toast.LENGTH_SHORT).show()
